@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteOne Asset & Location Master Data Model</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --green-deep: #1C4532;
+            --green-mid: #276749;
+            --green-light: #D1FAE5;
+            --green-border: #A7F3D0;
+            --amber: #B45309;
+            --amber-light: #FEF3C7;
+            --amber-border: #FCD34D;
+            --slate-blue: #1E3A5F;
+            --slate-light: #DBEAFE;
+            --slate-border: #BFDBFE;
+            --stone: #57534E;
+            --stone-light: #F5F5F4;
+            --stone-border: #D6D3D1;
+            --bg: #FAFAF9;
+            --white: #FFFFFF;
+            --text: #1C1917;
+            --text-muted: #78716C;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        header {
+            background: var(--green-deep);
+            color: white;
+            padding: 28px 40px;
+            border-bottom: 3px solid var(--green-mid);
+        }
+        header .eyebrow {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #6EE7B7;
+            margin-bottom: 6px;
+        }
+        header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        header p {
+            color: #A7F3D0;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* LAYOUT */
+        .page-body {
+            display: flex;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            gap: 32px;
+        }
+
+        /* SIDEBAR NAV */
+        aside {
+            width: 220px;
+            flex-shrink: 0;
+        }
+        .outline-nav {
+            position: sticky;
+            top: 24px;
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+            background: var(--white);
+            border: 1px solid var(--stone-border);
+            border-radius: var(--radius);
+            padding: 16px 12px;
+            box-shadow: var(--shadow);
+        }
+        .outline-nav h3 {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0 8px;
+            margin-bottom: 10px;
+        }
+        .outline-nav a {
+            display: block;
+            padding: 6px 10px;
+            font-size: 12px;
+            color: var(--stone);
+            text-decoration: none;
+            border-radius: 6px;
+            border-left: 2px solid transparent;
+            transition: all 0.15s ease;
+            margin-bottom: 1px;
+        }
+        .outline-nav a:hover {
+            background: var(--stone-light);
+            color: var(--text);
+            padding-left: 14px;
+        }
+        .outline-nav a.active {
+            background: var(--green-light);
+            border-left-color: var(--green-mid);
+            color: var(--green-deep);
+            font-weight: 600;
+        }
+        .outline-nav .nav-sub {
+            padding-left: 18px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .outline-nav .nav-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 10px 10px 4px;
+            margin-top: 6px;
+        }
+
+        /* MAIN CONTENT */
+        main { flex: 1; min-width: 0; }
+
+        /* SECTIONS */
+        .section {
+            background: var(--white);
+            border: 1px solid var(--stone-border);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            background: var(--stone-light);
+            border-bottom: 1px solid var(--stone-border);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .section-header:hover { background: #EEECE9; }
+        .section-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-header h2 .section-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: var(--green-deep);
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .chevron {
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: transform 0.25s ease;
+            display: inline-block;
+        }
+        .chevron.open { transform: rotate(180deg); }
+        .section-body { padding: 24px; }
+        .section-intro {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--stone-border);
+        }
+
+        /* DOMAIN CARDS GRID */
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        /* ENTITY CARD */
+        .entity-card {
+            border: 2px solid;
+            border-radius: 10px;
+            padding: 20px;
+            transition: box-shadow 0.15s;
+        }
+        .entity-card:hover { box-shadow: var(--shadow-md); }
+        .entity-card.green {
+            border-color: var(--green-border);
+            background: #F0FDF4;
+        }
+        .entity-card.amber {
+            border-color: var(--amber-border);
+            background: var(--amber-light);
+        }
+        .entity-card.blue {
+            border-color: var(--slate-border);
+            background: var(--slate-light);
+        }
+        .entity-card.stone {
+            border-color: var(--stone-border);
+            background: var(--stone-light);
+        }
+        .entity-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .entity-icon {
+            font-size: 28px;
+            line-height: 1;
+        }
+        .entity-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .entity-card.green h3 { color: var(--green-deep); }
+        .entity-card.amber h3 { color: #78350F; }
+        .entity-card.blue h3 { color: var(--slate-blue); }
+        .entity-card.stone h3 { color: #292524; }
+        .entity-card p {
+            font-size: 13px;
+            color: var(--stone);
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+        .attr-box {
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .entity-card.green .attr-box { background: var(--green-light); border: 1px solid var(--green-border); }
+        .entity-card.amber .attr-box { background: #FEF9C3; border: 1px solid var(--amber-border); }
+        .entity-card.blue .attr-box { background: #EFF6FF; border: 1px solid var(--slate-border); }
+        .entity-card.stone .attr-box { background: #E7E5E4; border: 1px solid #A8A29E; }
+        .attr-box .attr-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .entity-card.green .attr-label { color: var(--green-mid); }
+        .entity-card.amber .attr-label { color: var(--amber); }
+        .entity-card.blue .attr-label { color: var(--slate-blue); }
+        .entity-card.stone .attr-label { color: #57534E; }
+        .attr-box ul { list-style: none; }
+        .attr-box ul li {
+            font-size: 12px;
+            color: var(--stone);
+            padding: 2px 0;
+        }
+        .attr-box ul li::before { content: "· "; color: var(--text-muted); }
+
+        /* EXAMPLE RECORD BLOCKS */
+        .example-block {
+            margin-top: 28px;
+        }
+        .example-block h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .example-block .example-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* MASTER RECORD DISPLAY */
+        .master-record {
+            border: 2px solid;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto 24px;
+        }
+        .master-record.green { border-color: var(--green-mid); background: #F0FDF4; }
+        .master-record.amber { border-color: #D97706; background: var(--amber-light); }
+        .master-record.blue { border-color: #3B82F6; background: var(--slate-light); }
+
+        .master-record-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .master-record-header .big-icon { font-size: 36px; }
+        .master-record-header .record-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .master-record-header .record-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .record-badge {
+            margin-left: auto;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+        .badge-active { background: #D1FAE5; color: #065F46; }
+        .badge-master { background: #DBEAFE; color: #1E3A5F; }
+
+        .record-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .record-field span:first-child {
+            display: block;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+        .record-field code {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            background: rgba(0,0,0,0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* RELATIONSHIP ARROW */
+        .rel-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 12px 0;
+        }
+        .rel-connector .arrow { font-size: 28px; color: var(--text-muted); }
+        .rel-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: var(--stone-light);
+            border: 1px solid var(--stone-border);
+            color: var(--text-muted);
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-top: 4px;
+        }
+
+        /* CHILD RECORDS GRID */
+        .child-records {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .child-record {
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .child-record.green { border-color: var(--green-border); background: #F0FDF4; }
+        .child-record.amber { border-color: var(--amber-border); background: var(--amber-light); }
+        .child-record.blue { border-color: var(--slate-border); background: var(--slate-light); }
+        .child-record.stone { border-color: var(--stone-border); background: var(--stone-light); }
+
+        .child-record-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .child-record-header .icon { font-size: 20px; }
+        .child-record-header h5 { font-size: 13px; font-weight: 700; }
+        .child-record.green h5 { color: var(--green-deep); }
+        .child-record.amber h5 { color: #78350F; }
+        .child-record.blue h5 { color: var(--slate-blue); }
+        .child-record-header code { font-size: 10px; color: var(--text-muted); font-family: monospace; display: block; }
+        .child-record .field-row { font-size: 11px; margin-bottom: 4px; }
+        .child-record .field-row .fl { font-weight: 600; color: var(--text-muted); }
+        .child-record .field-row .fv { color: var(--text); }
+        .child-record .field-row .fv.warn { color: #B45309; font-weight: 600; }
+        .child-record .field-row .fv.ok { color: #065F46; font-weight: 600; }
+
+        /* RELATIONSHIP SECTION */
+        .rel-section-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .rel-block {
+            border: 1px solid var(--stone-border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .rel-block-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .rel-block-header.green { background: var(--green-light); border-bottom: 1px solid var(--green-border); }
+        .rel-block-header.amber { background: var(--amber-light); border-bottom: 1px solid var(--amber-border); }
+        .rel-block-header.blue { background: var(--slate-light); border-bottom: 1px solid var(--slate-border); }
+        .rel-block-header.stone { background: var(--stone-light); border-bottom: 1px solid var(--stone-border); }
+        .rel-block-header h3 { font-size: 15px; font-weight: 700; }
+        .rel-block-header.green h3 { color: var(--green-deep); }
+        .rel-block-header.amber h3 { color: #78350F; }
+        .rel-block-header.blue h3 { color: var(--slate-blue); }
+        .rel-block-body { padding: 20px; }
+        .rel-block-desc {
+            font-size: 13px;
+            color: var(--stone);
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        /* RELATIONSHIP DIAGRAM */
+        .rel-diagram {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .rel-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .rel-node .node-box {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 2px solid;
+            white-space: nowrap;
+        }
+        .rel-node .node-box.green { background: #F0FDF4; border-color: var(--green-mid); color: var(--green-deep); }
+        .rel-node .node-box.amber { background: var(--amber-light); border-color: #D97706; color: #78350F; }
+        .rel-node .node-box.blue { background: var(--slate-light); border-color: #3B82F6; color: var(--slate-blue); }
+        .rel-node .node-box.stone { background: var(--stone-light); border-color: #A8A29E; color: #292524; }
+        .rel-node .node-label { font-size: 10px; color: var(--text-muted); }
+        .rel-arrow-seg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 60px;
+        }
+        .rel-arrow-line {
+            width: 100%;
+            height: 2px;
+            background: var(--stone-border);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rel-arrow-line::after {
+            content: "▶";
+            position: absolute;
+            right: -6px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .rel-arrow-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 4px;
+            white-space: nowrap;
+        }
+
+        .siteone-example {
+            background: #FFFBEB;
+            border: 1px solid var(--amber-border);
+            border-left: 4px solid var(--amber);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .siteone-example .ex-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-bottom: 6px;
+        }
+        .siteone-example p {
+            font-size: 13px;
+            color: var(--stone);
+            line-height: 1.6;
+        }
+
+        /* HIERARCHY TREE */
+        .hierarchy-tree {
+            font-size: 13px;
+            color: var(--text);
+        }
+        .htree-level {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            margin-bottom: 2px;
+            border-radius: 6px;
+        }
+        .htree-level:hover { background: var(--stone-light); }
+        .htree-level .level-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            min-width: 70px;
+            text-align: center;
+        }
+        .badge-l1 { background: var(--green-deep); color: white; }
+        .badge-l2 { background: var(--green-mid); color: white; }
+        .badge-l3 { background: #48BB78; color: white; }
+        .badge-l4 { background: var(--green-light); color: var(--green-deep); border: 1px solid var(--green-border); }
+        .htree-level .level-name { font-weight: 600; }
+        .htree-level .level-ex { color: var(--text-muted); font-size: 12px; }
+        .htree-indent { margin-left: 20px; border-left: 2px solid var(--green-border); padding-left: 8px; }
+
+        /* CATEGORY MATRIX */
+        .cat-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .cat-tile {
+            border: 1px solid var(--stone-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .cat-tile-head {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .cat-tile-head.green { background: var(--green-light); color: var(--green-deep); }
+        .cat-tile-head.amber { background: var(--amber-light); color: #78350F; }
+        .cat-tile-head.blue { background: var(--slate-light); color: var(--slate-blue); }
+        .cat-tile-head.stone { background: var(--stone-light); color: #292524; }
+        .cat-tile-body { padding: 10px 14px; background: var(--white); }
+        .cat-tile-body ul { list-style: none; }
+        .cat-tile-body ul li { font-size: 12px; color: var(--stone); padding: 2px 0; }
+        .cat-tile-body ul li::before { content: "· "; }
+
+        /* INFO CALLOUT */
+        .callout {
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+        .callout.info { background: var(--slate-light); border-left: 4px solid #3B82F6; color: var(--slate-blue); }
+        .callout.warn { background: var(--amber-light); border-left: 4px solid var(--amber); color: #78350F; }
+        .callout.success { background: var(--green-light); border-left: 4px solid var(--green-mid); color: var(--green-deep); }
+        .callout strong { font-weight: 700; }
+
+        @media (max-width: 900px) {
+            aside { display: none; }
+            .page-body { padding: 16px; }
+        }
+        @media (max-width: 600px) {
+            .domain-grid { grid-template-columns: 1fr; }
+            .record-fields { grid-template-columns: 1fr; }
+            .child-records { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="eyebrow">SiteOne Landscape Supply · Informatica IDMC</div>
+    <h1>Asset &amp; Location Master Data Model</h1>
+    <p>Domain model reference for Location mastering, Fleet &amp; Asset mastering, and supporting reference data — with SiteOne-specific examples.</p>
+</header>
+
+<div class="page-body">
+
+    <!-- SIDEBAR -->
+    <aside>
+        <nav class="outline-nav" id="outline-nav">
+            <h3>Contents</h3>
+            <div class="nav-section-label">Domains</div>
+            <a href="#data-domains">1. Data Domains Overview</a>
+            <a href="#location-domain" class="nav-sub">↳ Location</a>
+            <a href="#asset-domain" class="nav-sub">↳ Asset</a>
+            <a href="#category-domain" class="nav-sub">↳ Category &amp; Reference</a>
+
+            <div class="nav-section-label">Examples</div>
+            <a href="#location-example">2. Location Record Example</a>
+            <a href="#asset-example">3. Asset Record Example</a>
+
+            <div class="nav-section-label">Relationships</div>
+            <a href="#relationships">4. Relationship Types</a>
+            <a href="#rel-hierarchy" class="nav-sub">↳ Location Hierarchy</a>
+            <a href="#rel-categorization" class="nav-sub">↳ Categorization</a>
+            <a href="#rel-asset-location" class="nav-sub">↳ Asset ↔ Location</a>
+            <a href="#rel-fleet-compat" class="nav-sub">↳ Fleet Compatibility Bridge</a>
+
+            <div class="nav-section-label">Context</div>
+            <a href="#siteone-context">5. SiteOne Context</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+        <!-- ===== SECTION 1: DATA DOMAINS ===== -->
+        <section class="section" id="data-domains">
+            <div class="section-header" onclick="toggleSection('body-domains','chev-domains')">
+                <h2><span class="section-num">1</span> Data Domains: The Asset &amp; Location Entities</h2>
+                <span class="chevron open" id="chev-domains">&#9660;</span>
+            </div>
+            <div class="section-body" id="body-domains">
+                <p class="section-intro">
+                    The Asset &amp; Location domain covers two primary entities — <strong>Location</strong> and <strong>Asset</strong> — supported by a <strong>Category &amp; Reference</strong> layer that provides the shared classification taxonomy. Each entity is a distinct master record with its own lifecycle, governance rules, and downstream consumers. A location is where SiteOne operates; an asset is a physical object that exists at, moves between, or serves those locations.
+                </p>
+
+                <!-- LOCATION DOMAIN -->
+                <div id="location-domain" style="margin-bottom:32px;">
+                    <h3 style="font-family:'Fraunces',serif;font-size:18px;color:var(--green-deep);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--green-border);">
+                        📍 Location Domain
+                    </h3>
+                    <div class="domain-grid">
+
+                        <div class="entity-card green">
+                            <div class="entity-card-header">
+                                <span class="entity-icon">🏪</span>
+                                <h3>Branch</h3>
+                            </div>
+                            <p>A customer-facing SiteOne sales and service location. The branch is where contractors pick up orders, where sales reps are based, and where delivery routes originate. SiteOne operates 720+ branches across the US and Canada — each is the primary unit of operational, financial, and organizational accountability in the network.</p>
+                            <div class="attr-box">
+                                <div class="attr-label">Key Attributes</div>
+                                <ul>
+                                    <li>Branch ID / GLN (Global Location Number)</li>
+                                    <li>Branch name</li>
+                                    <li>Branch type (Standard Branch, Nursery Center, Stone Center)</li>
+                                    <li>Physical address, timezone, hours of operation</li>
+                                    <li>Org hierarchy link (Division / Region / Area)</li>
+                                    <li>Assigned cost center</li>
+                                    <li>Dock capability &amp; truck compatibility</li>
+                                    <li>Hazmat certifications</li>
+                                    <li>Lease / own status &amp; acquisition source</li>
+                                    <li>Active / inactive status</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="entity-card green">
+                            <div class="entity-card-header">
+                                <span class="entity-icon">🏭</span>
+                                <h3>Location</h3>
+                            </div>
+                            <p>A non-branch operating site in SiteOne's network. Includes distribution centers, warehouses, mobile/seasonal pop-up sites, and temporary locations. Locations support branches but are not customer-facing storefronts — they exist in the network to enable fulfillment, staging, and seasonal coverage.</p>
+                            <div class="attr-box">
+                                <div class="attr-label">Key Attributes</div>
+                                <ul>
+                                    <li>Location ID / GLN</li>
+                                    <li>Location type (Warehouse, Distribution Center, Mobile/Seasonal, Pop-Up)</li>
+                                    <li>Parent branch link (for mobile sites)</li>
+                                    <li>Physical address, timezone, operating hours</li>
+                                    <li>Dock type and capacity</li>
+                                    <li>Max vehicle length</li>
+                                    <li>Hazmat storage class</li>
+                                    <li>Cost center</li>
+                                    <li>Lease / own</li>
+                                    <li>Active / inactive status</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="grid-column:1/-1;background:var(--green-light);border:1px solid var(--green-border);border-radius:8px;padding:14px 18px;font-size:13px;color:var(--green-deep);line-height:1.65;">
+                            <strong>Branch vs. Location:</strong> Use <em>Branch</em> for any customer-facing SiteOne storefront where contractors conduct business and sales reps are assigned. Use <em>Location</em> for any non-storefront operating site — distribution centers, warehouses, and mobile or seasonal pop-up sites that support branches but do not serve customers directly.
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ASSET DOMAIN -->
+                <div id="asset-domain" style="margin-bottom:32px;">
+                    <h3 style="font-family:'Fraunces',serif;font-size:18px;color:#78350F;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--amber-border);">
+                        🚚 Asset Domain
+                    </h3>
+                    <div class="domain-grid">
+
+                        <div class="entity-card amber">
+                            <div class="entity-card-header">
+                                <span class="entity-icon">🚛</span>
+                                <h3>Vehicle / Fleet Asset</h3>
+                            </div>
+                            <p>A delivery truck, flatbed, or transport vehicle assigned to or shared between SiteOne branches. Fleet assets are the recommended starting point for SiteOne's MDM program — high value for delivery optimization, lower stakeholder disruption than customer or supplier. Currently tracked across 4–5 disconnected systems with no single master record, no linkage to locations, and no consistent identifiers.</p>
+                            <div class="attr-box">
+                                <div class="attr-label">Key Attributes</div>
+                                <ul>
+                                    <li>Asset ID / VIN / license plate</li>
+                                    <li>Make, model, year, color</li>
+                                    <li>Payload capacity &amp; dock compatibility type</li>
+                                    <li>Assigned home branch (location)</li>
+                                    <li>Fuel / power type</li>
+                                    <li>Last service date &amp; next scheduled maintenance</li>
+                                    <li>Tire / track specs</li>
+                                    <li>Operational status (active, in-maintenance, retired)</li>
+                                    <li>Cost center / reporting category</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="entity-card amber">
+                            <div class="entity-card-header">
+                                <span class="entity-icon">🦺</span>
+                                <h3>Machinery &amp; Equipment Asset</h3>
+                            </div>
+                            <p>Non-vehicle physical equipment used in SiteOne branch operations — forklifts, loaders, material handling equipment, and yard machinery. These assets have distinct attribute profiles from fleet: lift capacity, load center, operating weight, and attachment compatibility matter more than route planning. Equipment assets often stay at a single branch but may be shared or transferred during acquisitions.</p>
+                            <div class="attr-box">
+                                <div class="attr-label">Key Attributes</div>
+                                <ul>
+                                    <li>Asset ID / serial number</li>
+                                    <li>Asset type (forklift, loader, skid steer, etc.)</li>
+                                    <li>Brand / make / model</li>
+                                    <li>Purchase date &amp; expected lifespan</li>
+                                    <li>Warranty expiration</li>
+                                    <li>Lift capacity / load center / lift height</li>
+                                    <li>Operating weight &amp; attachments</li>
+                                    <li>Assigned location &amp; cost center</li>
+                                    <li>Compliance / safety certification status</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- CATEGORY / REFERENCE DOMAIN -->
+                <div id="category-domain">
+                    <h3 style="font-family:'Fraunces',serif;font-size:18px;color:var(--slate-blue);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--slate-border);">
+                        🗂 Category &amp; Reference Domain
+                    </h3>
+                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.65;">
+                        Categories are not entities themselves — they are reference data that classifies and connects Location and Asset records through a shared taxonomy. They enable consistent tagging, reporting, and cross-domain filtering without hardcoding rules into individual records.
+                    </p>
+                    <div class="cat-matrix">
+                        <div class="cat-tile">
+                            <div class="cat-tile-head blue">Asset Types</div>
+                            <div class="cat-tile-body">
+                                <ul>
+                                    <li>Delivery Vehicle</li>
+                                    <li>Flatbed Truck</li>
+                                    <li>Forklift</li>
+                                    <li>Loader / Skid Steer</li>
+                                    <li>Trailer</li>
+                                    <li>Material Handler</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="cat-tile">
+                            <div class="cat-tile-head green">Location Types</div>
+                            <div class="cat-tile-body">
+                                <ul>
+                                    <li>Standard Branch</li>
+                                    <li>Nursery Center</li>
+                                    <li>Stone Center</li>
+                                    <li>Distribution Center</li>
+                                    <li>Mobile / Temporary</li>
+                                    <li>Leased Pop-Up</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="cat-tile">
+                            <div class="cat-tile-head amber">Hazmat / Regulation</div>
+                            <div class="cat-tile-body">
+                                <ul>
+                                    <li>Pesticide Certified</li>
+                                    <li>Fertilizer Storage</li>
+                                    <li>Flammable Goods</li>
+                                    <li>DOT Hazmat Route</li>
+                                    <li>OSHA Equipment</li>
+                                    <li>State Nursery License</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="cat-tile">
+                            <div class="cat-tile-head stone">Org / Region</div>
+                            <div class="cat-tile-body">
+                                <ul>
+                                    <li>Division</li>
+                                    <li>Region</li>
+                                    <li>Area</li>
+                                    <li>MSA / Market</li>
+                                    <li>Cost Center</li>
+                                    <li>Sales Territory</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION 2: LOCATION RECORD EXAMPLE ===== -->
+        <section class="section" id="location-example">
+            <div class="section-header" onclick="toggleSection('body-loc-ex','chev-loc-ex')">
+                <h2><span class="section-num">2</span> Example: Location Master Record</h2>
+                <span class="chevron open" id="chev-loc-ex">&#9660;</span>
+            </div>
+            <div class="section-body" id="body-loc-ex">
+                <p class="section-intro">
+                    This example shows how a SiteOne branch acquired through an acquisition is represented as a Location master record. All operational, logistical, and organizational attributes are consolidated into a single golden record — replacing the previous state where this branch existed in up to four separate systems with conflicting data.
+                </p>
+
+                <div class="callout warn">
+                    <strong>Before MDM:</strong> This branch had conflicting records in UE (legacy POS), Salesforce (CRM/sales territory), a fleet dispatch system, and a manual spreadsheet maintained by the regional manager. Timezone was set to ET in two systems and CT in the others — resulting in missed customer call windows after acquisition.
+                </div>
+
+                <!-- Master Location Record -->
+                <div class="master-record green" style="max-width:640px;margin:0 auto 24px;">
+                    <div class="master-record-header">
+                        <span class="big-icon">🏪</span>
+                        <div>
+                            <div class="record-title">Location Master Record</div>
+                            <div class="record-subtitle">Domain: Branch / Location</div>
+                        </div>
+                        <span class="record-badge badge-active">ACTIVE</span>
+                    </div>
+                    <div class="record-fields">
+                        <div class="record-field"><span>MDM Location ID</span><code>LOC-00482</code></div>
+                        <div class="record-field"><span>GLN</span><code>0614141000012</code></div>
+                        <div class="record-field"><span>Branch Name</span>SiteOne – Roswell, GA</div>
+                        <div class="record-field"><span>Location Type</span>Standard Branch</div>
+                        <div class="record-field"><span>Address</span>1140 Alpharetta Hwy, Roswell, GA 30076</div>
+                        <div class="record-field"><span>Timezone</span>America/New_York (ET)</div>
+                        <div class="record-field"><span>Hours</span>Mon–Fri 7am–5pm · Sat 7am–12pm</div>
+                        <div class="record-field"><span>Org Hierarchy</span>Southeast Division › GA Region › Atlanta Area</div>
+                        <div class="record-field"><span>Cost Center</span><code>CC-4820</code></div>
+                        <div class="record-field"><span>Lease / Own</span>Leased</div>
+                        <div class="record-field"><span>Acquisition Source</span>Acquired – Heritage Nursery 2023</div>
+                        <div class="record-field"><span>Hazmat Cert</span>Pesticide · Fertilizer Storage</div>
+                    </div>
+                    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.1);">
+                        <div style="font-size:11px;font-weight:700;color:var(--green-mid);margin-bottom:6px;">LINKED ASSETS AT THIS LOCATION:</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                            <span style="background:white;border:1px solid var(--amber-border);color:#78350F;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">→ ASSET-1041 (Flatbed)</span>
+                            <span style="background:white;border:1px solid var(--amber-border);color:#78350F;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">→ ASSET-1042 (Delivery Truck)</span>
+                            <span style="background:white;border:1px solid var(--amber-border);color:#78350F;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">→ ASSET-2203 (Forklift)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arrow to dock details -->
+                <div class="rel-connector">
+                    <div class="arrow">↓</div>
+                    <div class="rel-label">Operational Detail</div>
+                </div>
+
+                <!-- Operational attribute cards -->
+                <div class="child-records" style="max-width:700px;margin:0 auto;">
+                    <div class="child-record green">
+                        <div class="child-record-header">
+                            <span class="icon">🚪</span>
+                            <div>
+                                <h5>Dock Capability</h5>
+                                <code>LOC-00482 · Dock Attrs</code>
+                            </div>
+                        </div>
+                        <div class="field-row"><span class="fl">Dock Type:</span> <span class="fv">Ground Level + Loading Dock</span></div>
+                        <div class="field-row"><span class="fl">Truck Compat:</span> <span class="fv ok">Flatbed · Box Truck · Tandem</span></div>
+                        <div class="field-row"><span class="fl">Max Length:</span> <span class="fv">53 ft</span></div>
+                        <div class="field-row"><span class="fl">Staging Area:</span> <span class="fv">Outdoor yard (5,200 sq ft)</span></div>
+                    </div>
+                    <div class="child-record blue">
+                        <div class="child-record-header">
+                            <span class="icon">📋</span>
+                            <div>
+                                <h5>Certifications</h5>
+                                <code>LOC-00482 · Reg Attrs</code>
+                            </div>
+                        </div>
+                        <div class="field-row"><span class="fl">Pesticide Cert:</span> <span class="fv ok">Active – exp 2027</span></div>
+                        <div class="field-row"><span class="fl">Fertilizer:</span> <span class="fv ok">Permitted – Class B</span></div>
+                        <div class="field-row"><span class="fl">Nursery License:</span> <span class="fv warn">Renewal due Q1 2026</span></div>
+                        <div class="field-row"><span class="fl">OSHA:</span> <span class="fv ok">Current</span></div>
+                    </div>
+                    <div class="child-record stone">
+                        <div class="child-record-header">
+                            <span class="icon">📊</span>
+                            <div>
+                                <h5>Financial</h5>
+                                <code>LOC-00482 · Finance Attrs</code>
+                            </div>
+                        </div>
+                        <div class="field-row"><span class="fl">Cost Center:</span> <span class="fv"><code>CC-4820</code></span></div>
+                        <div class="field-row"><span class="fl">P&amp;L Region:</span> <span class="fv">Southeast</span></div>
+                        <div class="field-row"><span class="fl">Lease Exp:</span> <span class="fv">2028-06-30</span></div>
+                        <div class="field-row"><span class="fl">Lease Owner:</span> <span class="fv">Heritage Properties LLC</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION 3: ASSET RECORD EXAMPLE ===== -->
+        <section class="section" id="asset-example">
+            <div class="section-header" onclick="toggleSection('body-asset-ex','chev-asset-ex')">
+                <h2><span class="section-num">3</span> Example: Asset Master Record (Fleet)</h2>
+                <span class="chevron open" id="chev-asset-ex">&#9660;</span>
+            </div>
+            <div class="section-body" id="body-asset-ex">
+                <p class="section-intro">
+                    This example shows a SiteOne delivery flatbed truck as an Asset master record. The asset's home branch is linked back to the Location master, enabling route planning systems to query both the truck's capabilities and the branch's dock compatibility in a single trusted data request — something currently impossible across 4–5 disconnected systems.
+                </p>
+
+                <div class="callout success">
+                    <strong>Why Fleet First:</strong> SiteOne identified vehicle/fleet master as the recommended MDM starting point. Fewer internal stakeholders, no customer-facing risk, and clear measurable ROI in delivery route optimization and maintenance cost tracking.
+                </div>
+
+                <div class="master-record amber" style="max-width:640px;margin:0 auto 24px;">
+                    <div class="master-record-header">
+                        <span class="big-icon">🚛</span>
+                        <div>
+                            <div class="record-title">Asset Master Record — Fleet</div>
+                            <div class="record-subtitle">Domain: Vehicle / Fleet Asset</div>
+                        </div>
+                        <span class="record-badge badge-active">ACTIVE</span>
+                    </div>
+                    <div class="record-fields">
+                        <div class="record-field"><span>MDM Asset ID</span><code>ASSET-1041</code></div>
+                        <div class="record-field"><span>VIN</span><code>1HTMM</code>... (masked)</div>
+                        <div class="record-field"><span>Asset Type</span>Flatbed Truck</div>
+                        <div class="record-field"><span>Make / Model</span>International · LT Series</div>
+                        <div class="record-field"><span>Year</span>2021</div>
+                        <div class="record-field"><span>Payload Capacity</span>24,000 lbs</div>
+                        <div class="record-field"><span>Dock Compat Type</span>Ground Level · Flatbed</div>
+                        <div class="record-field"><span>Home Branch</span>LOC-00482 (Roswell, GA)</div>
+                        <div class="record-field"><span>Fuel Type</span>Diesel</div>
+                        <div class="record-field"><span>Last Service</span>2026-06-14</div>
+                        <div class="record-field"><span>Next Service</span>2026-09-14</div>
+                        <div class="record-field"><span>Status</span>Active – In Service</div>
+                        <div class="record-field"><span>Cost Center</span><code>CC-4820</code></div>
+                        <div class="record-field"><span>Warranty Exp</span>2028-03-01</div>
+                        <div class="record-field"><span>Reporting Category</span>Delivery Fleet – Light</div>
+                    </div>
+                </div>
+
+                <div class="rel-connector">
+                    <div class="arrow">↓</div>
+                    <div class="rel-label">Dynamic Category Attributes</div>
+                </div>
+
+                <div class="child-records" style="max-width:700px;margin:0 auto;">
+                    <div class="child-record amber">
+                        <div class="child-record-header">
+                            <span class="icon">⚙️</span>
+                            <div>
+                                <h5>Fleet Specs</h5>
+                                <code>ASSET-1041 · Vehicle Attrs</code>
+                            </div>
+                        </div>
+                        <div class="field-row"><span class="fl">Bed Length:</span> <span class="fv">24 ft</span></div>
+                        <div class="field-row"><span class="fl">GVWR:</span> <span class="fv">33,000 lbs</span></div>
+                        <div class="field-row"><span class="fl">Tire Spec:</span> <span class="fv">295/75R22.5</span></div>
+                        <div class="field-row"><span class="fl">Liftgate:</span> <span class="fv ok">Installed – 2,500 lb</span></div>
+                    </div>
+                    <div class="child-record blue">
+                        <div class="child-record-header">
+                            <span class="icon">📋</span>
+                            <div>
+                                <h5>Compliance</h5>
+                                <code>ASSET-1041 · Reg Attrs</code>
+                            </div>
+                        </div>
+                        <div class="field-row"><span class="fl">DOT Reg:</span> <span class="fv ok">Compliant</span></div>
+                        <div class="field-row"><span class="fl">IFTA Sticker:</span> <span class="fv ok">Current – 2026</span></div>
+                        <div class="field-row"><span class="fl">Hazmat Rating:</span> <span class="fv warn">Non-hazmat only</span></div>
+                        <div class="field-row"><span class="fl">Annual Inspect:</span> <span class="fv ok">Passed 2026-01</span></div>
+                    </div>
+                    <div class="child-record stone">
+                        <div class="child-record-header">
+                            <span class="icon">🔧</span>
+                            <div>
+                                <h5>Maintenance Log</h5>
+                                <code>ASSET-1041 · Maint Attrs</code>
+                            </div>
+                        </div>
+                        <div class="field-row"><span class="fl">Odometer:</span> <span class="fv">87,412 mi</span></div>
+                        <div class="field-row"><span class="fl">Last Oil Change:</span> <span class="fv">2026-06-14</span></div>
+                        <div class="field-row"><span class="fl">Brake Service:</span> <span class="fv ok">2025-11 – OK</span></div>
+                        <div class="field-row"><span class="fl">Open Work Orders:</span> <span class="fv warn">1 – Minor wiper</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION 4: RELATIONSHIPS ===== -->
+        <section class="section" id="relationships">
+            <div class="section-header" onclick="toggleSection('body-rels','chev-rels')">
+                <h2><span class="section-num">4</span> Relationship Types</h2>
+                <span class="chevron open" id="chev-rels">&#9660;</span>
+            </div>
+            <div class="section-body" id="body-rels">
+                <p class="section-intro">
+                    Relationships define how Location and Asset records connect to each other and to the classification taxonomy. Each relationship type has a distinct purpose, cardinality, and set of downstream consumers. The following covers all relationship types defined in the data model.
+                </p>
+
+                <div class="rel-section-grid">
+
+                    <!-- REL 1: LOCATION HIERARCHY -->
+                    <div class="rel-block" id="rel-hierarchy">
+                        <div class="rel-block-header green">
+                            <span style="font-size:22px;">🗺</span>
+                            <h3>Location Taxonomy — Hierarchy Types</h3>
+                        </div>
+                        <div class="rel-block-body">
+                            <p class="rel-block-desc">
+                                Every SiteOne location record can be placed within three distinct hierarchy types, each serving a different business purpose. These hierarchies are maintained as reference data in MDM and linked to each Location record — ensuring that when a branch changes its placement in any hierarchy (common after acquisitions), all downstream reports, territory maps, and financial rollups update from a single change.
+                            </p>
+
+                            <!-- Hierarchy 1: Org -->
+                            <div style="background:var(--stone-light);border:1px solid var(--stone-border);border-radius:10px;padding:20px;margin-bottom:16px;">
+                                <div style="margin-bottom:12px;">
+                                    <div style="font-size:13px;font-weight:700;color:var(--green-deep);margin-bottom:2px;">Org Hierarchy</div>
+                                    <div style="font-size:11px;color:var(--text-muted);">Operational reporting, management accountability, P&amp;L rollup</div>
+                                </div>
+                                <div class="hierarchy-tree">
+                                    <div class="htree-level">
+                                        <span class="level-badge badge-l1">Division</span>
+                                        <span class="level-name">Southeast Division</span>
+                                        <span class="level-ex">— P&amp;L ownership, 180 branches</span>
+                                    </div>
+                                    <div class="htree-indent">
+                                        <div class="htree-level">
+                                            <span class="level-badge badge-l2">Region</span>
+                                            <span class="level-name">Georgia Region</span>
+                                            <span class="level-ex">— Regional VP, 42 branches</span>
+                                        </div>
+                                        <div class="htree-indent">
+                                            <div class="htree-level">
+                                                <span class="level-badge badge-l3">Area</span>
+                                                <span class="level-name">Atlanta Metro Area</span>
+                                                <span class="level-ex">— Area Manager, 11 branches</span>
+                                            </div>
+                                            <div class="htree-indent">
+                                                <div class="htree-level">
+                                                    <span class="level-badge badge-l4">Branch</span>
+                                                    <span class="level-name">Roswell, GA (LOC-00482)</span>
+                                                    <span class="level-ex">— Branch Manager</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hierarchy 2: Cost Center -->
+                            <div style="background:var(--stone-light);border:1px solid var(--stone-border);border-radius:10px;padding:20px;margin-bottom:16px;">
+                                <div style="margin-bottom:12px;">
+                                    <div style="font-size:13px;font-weight:700;color:var(--slate-blue);margin-bottom:2px;">Cost Center Hierarchy</div>
+                                    <div style="font-size:11px;color:var(--text-muted);">Financial reporting and budget allocation</div>
+                                </div>
+                                <div class="hierarchy-tree">
+                                    <div class="htree-level">
+                                        <span class="level-badge" style="background:#1E3A5F;color:white;min-width:70px;text-align:center;">Enterprise</span>
+                                        <span class="level-name">SiteOne Corporate</span>
+                                        <span class="level-ex">— Consolidated P&amp;L</span>
+                                    </div>
+                                    <div class="htree-indent" style="border-left-color:var(--slate-border);">
+                                        <div class="htree-level">
+                                            <span class="level-badge" style="background:#2563EB;color:white;min-width:70px;text-align:center;">Div Pool</span>
+                                            <span class="level-name">Southeast DIV-SE</span>
+                                            <span class="level-ex">— Division cost pool</span>
+                                        </div>
+                                        <div class="htree-indent" style="border-left-color:var(--slate-border);">
+                                            <div class="htree-level">
+                                                <span class="level-badge" style="background:#3B82F6;color:white;min-width:70px;text-align:center;">Area Pool</span>
+                                                <span class="level-name">Atlanta Area CC-ATL</span>
+                                                <span class="level-ex">— Area cost pool</span>
+                                            </div>
+                                            <div class="htree-indent" style="border-left-color:var(--slate-border);">
+                                                <div class="htree-level">
+                                                    <span class="level-badge" style="background:#DBEAFE;color:#1E3A5F;border:1px solid var(--slate-border);min-width:70px;text-align:center;">Branch CC</span>
+                                                    <span class="level-name">Roswell Branch CC-4820</span>
+                                                    <span class="level-ex">— Branch cost center</span>
+                                                </div>
+                                                <div class="htree-indent" style="border-left-color:var(--slate-border);">
+                                                    <div class="htree-level">
+                                                        <span class="level-badge" style="background:#EFF6FF;color:#1E3A5F;border:1px solid #BFDBFE;min-width:70px;text-align:center;font-size:9px;">Asset CC</span>
+                                                        <span class="level-name">Fleet Assets CC-4820-FL</span>
+                                                        <span class="level-ex">— Asset cost center</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hierarchy 3: Region / Market -->
+                            <div style="background:var(--stone-light);border:1px solid var(--stone-border);border-radius:10px;padding:20px;margin-bottom:16px;">
+                                <div style="margin-bottom:12px;">
+                                    <div style="font-size:13px;font-weight:700;color:#7C3AED;margin-bottom:2px;">Region / Market Hierarchy</div>
+                                    <div style="font-size:11px;color:var(--text-muted);">Sales territory management and market planning</div>
+                                </div>
+                                <div class="hierarchy-tree">
+                                    <div class="htree-level">
+                                        <span class="level-badge" style="background:#5B21B6;color:white;min-width:70px;text-align:center;">National</span>
+                                        <span class="level-name">National</span>
+                                        <span class="level-ex">— Enterprise sales view</span>
+                                    </div>
+                                    <div class="htree-indent" style="border-left-color:#DDD6FE;">
+                                        <div class="htree-level">
+                                            <span class="level-badge" style="background:#7C3AED;color:white;min-width:70px;text-align:center;">Market</span>
+                                            <span class="level-name">Atlanta Metro Market</span>
+                                            <span class="level-ex">— MSA / Market</span>
+                                        </div>
+                                        <div class="htree-indent" style="border-left-color:#DDD6FE;">
+                                            <div class="htree-level">
+                                                <span class="level-badge" style="background:#A855F7;color:white;min-width:70px;text-align:center;">Territory</span>
+                                                <span class="level-name">North Atlanta Territory</span>
+                                                <span class="level-ex">— Sales territory</span>
+                                            </div>
+                                            <div class="htree-indent" style="border-left-color:#DDD6FE;">
+                                                <div class="htree-level">
+                                                    <span class="level-badge" style="background:#EDE9FE;color:#5B21B6;border:1px solid #DDD6FE;min-width:70px;text-align:center;">Branches</span>
+                                                    <span class="level-name">Roswell, GA · Alpharetta, GA · Cumming, GA</span>
+                                                    <span class="level-ex">— Branch assignment</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="siteone-example">
+                                <div class="ex-label">SiteOne Example</div>
+                                <p>When SiteOne acquires Heritage Nursery, three hierarchy assignments happen simultaneously: the branch is placed in the Southeast Division org hierarchy, assigned a cost center under the Atlanta Area cost pool, and mapped to the North Atlanta Sales Territory. Each hierarchy serves a different downstream consumer — ops reporting, finance, and sales planning — all updated from a single MDM record at onboarding time.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REL 2: CATEGORIZATION -->
+                    <div class="rel-block" id="rel-categorization">
+                        <div class="rel-block-header blue">
+                            <span style="font-size:22px;">🏷</span>
+                            <h3>Location &amp; Asset Categorization</h3>
+                        </div>
+                        <div class="rel-block-body">
+                            <p class="rel-block-desc">
+                                Both Location and Asset records are tagged against shared category reference data — hazmat certifications, fleet compatibility types, and location type attributes. This many-to-many classification pattern allows a single record to carry multiple tags from multiple category hierarchies simultaneously, without duplicating the rule in every record. Categories are managed centrally as reference data and versioned — when a regulation changes (e.g., a new DOT hazmat classification), the category record is updated once and all linked assets and locations inherit the change.
+                            </p>
+
+                            <!-- Categorization types list -->
+                            <div style="margin-bottom:20px;">
+                                <div style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--slate-blue);margin-bottom:12px;">Categorization Types</div>
+                                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px;">
+
+                                    <div style="border:1px solid var(--stone-border);border-radius:8px;padding:14px;background:var(--white);">
+                                        <div style="font-size:12px;font-weight:700;color:#78350F;margin-bottom:4px;">1. Hazmat / Regulation Category</div>
+                                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Applied to: Locations &amp; Assets</div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">Defines what regulated materials a location is permitted to store or handle, and what hazardous cargo an asset is certified to transport.</p>
+                                    </div>
+
+                                    <div style="border:1px solid var(--stone-border);border-radius:8px;padding:14px;background:var(--white);">
+                                        <div style="font-size:12px;font-weight:700;color:var(--green-deep);margin-bottom:4px;">2. Fleet Compatibility Category</div>
+                                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Applied to: Locations &amp; Assets</div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">The critical matching layer: a location advertises which truck types its dock can accept; an asset advertises which dock types it is compatible with. The intersection enables automated delivery routing.</p>
+                                    </div>
+
+                                    <div style="border:1px solid var(--stone-border);border-radius:8px;padding:14px;background:var(--white);">
+                                        <div style="font-size:12px;font-weight:700;color:var(--green-mid);margin-bottom:4px;">3. Location Type Category</div>
+                                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Applied to: Locations only</div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">Determines which dynamic attribute set applies — Branch attributes vs. Warehouse attributes vs. Mobile Site attributes.</p>
+                                    </div>
+
+                                    <div style="border:1px solid var(--stone-border);border-radius:8px;padding:14px;background:var(--white);">
+                                        <div style="font-size:12px;font-weight:700;color:var(--slate-blue);margin-bottom:4px;">4. Asset Type Category</div>
+                                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Applied to: Assets only</div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">Determines which dynamic attribute set applies — Vehicle attributes vs. Heavy Machinery attributes vs. Material Handling attributes.</p>
+                                    </div>
+
+                                    <div style="border:1px solid var(--stone-border);border-radius:8px;padding:14px;background:var(--white);">
+                                        <div style="font-size:12px;font-weight:700;color:#5B21B6;margin-bottom:4px;">5. Org / Region Reference</div>
+                                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Applied to: Locations</div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">Links a location into one or more hierarchy structures (Org, Cost Center, Market / Territory). A single location can carry assignments from all three hierarchy types simultaneously.</p>
+                                    </div>
+
+                                </div>
+
+                                <!-- Per-type examples -->
+                                <div style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--slate-blue);margin-bottom:12px;">Categorization Examples — One Per Type</div>
+                                <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+
+                                    <div style="background:var(--amber-light);border:1px solid var(--amber-border);border-left:4px solid var(--amber);border-radius:8px;padding:12px 16px;">
+                                        <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px;">
+                                            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);">Hazmat / Regulation</span>
+                                            <span style="font-size:11px;color:var(--text-muted);">Applied to: Location</span>
+                                        </div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">Branch LOC-00482 tagged <strong>"Pesticide Certified"</strong> → can receive shipments of pre-emergent herbicide from suppliers. Branches without this tag are automatically excluded from herbicide delivery routing — no manual exception list required.</p>
+                                    </div>
+
+                                    <div style="background:#F0FDF4;border:1px solid var(--green-border);border-left:4px solid var(--green-mid);border-radius:8px;padding:12px 16px;">
+                                        <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px;">
+                                            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--green-mid);">Fleet Compatibility</span>
+                                            <span style="font-size:11px;color:var(--text-muted);">Applied to: Location &amp; Asset</span>
+                                        </div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">Branch LOC-00482 tagged <strong>"Flatbed Compatible"</strong> AND Asset ASSET-1041 tagged <strong>"Flatbed"</strong> → delivery system matches them for bulk granite mulch orders. A box truck (tagged "Box Truck") would not match this branch's dock.</p>
+                                    </div>
+
+                                    <div style="background:#F0FDF4;border:1px solid var(--green-border);border-left:4px solid #48BB78;border-radius:8px;padding:12px 16px;">
+                                        <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px;">
+                                            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--green-deep);">Location Type</span>
+                                            <span style="font-size:11px;color:var(--text-muted);">Applied to: Location</span>
+                                        </div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">LOC-00482 tagged <strong>"Standard Branch"</strong> → system applies the Branch attribute template (hours, dock, hazmat fields). LOC-00499 tagged <strong>"Mobile/Seasonal"</strong> → system applies a simpler attribute template with parent branch link and pop-up dates.</p>
+                                    </div>
+
+                                    <div style="background:var(--slate-light);border:1px solid var(--slate-border);border-left:4px solid #3B82F6;border-radius:8px;padding:12px 16px;">
+                                        <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px;">
+                                            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--slate-blue);">Asset Type</span>
+                                            <span style="font-size:11px;color:var(--text-muted);">Applied to: Asset</span>
+                                        </div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">ASSET-1041 tagged <strong>"Delivery Vehicle"</strong> → system applies Vehicle attribute template (VIN, payload, fuel, tire specs). ASSET-2203 tagged <strong>"Forklift"</strong> → system applies Heavy Machinery template (lift capacity, load center, operating weight).</p>
+                                    </div>
+
+                                    <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-left:4px solid #7C3AED;border-radius:8px;padding:12px 16px;">
+                                        <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px;">
+                                            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5B21B6;">Org / Region Reference</span>
+                                            <span style="font-size:11px;color:var(--text-muted);">Applied to: Location</span>
+                                        </div>
+                                        <p style="font-size:12px;color:var(--stone);line-height:1.6;">LOC-00482 tagged to <strong>"Southeast Division"</strong> (org), <strong>"CC-4820"</strong> (cost center), and <strong>"North Atlanta Territory"</strong> (market) simultaneously — three different hierarchy assignments on one record, each used by a different downstream system.</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Categorization diagram -->
+                            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+
+                                <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                                    <div class="rel-node">
+                                        <div class="node-box green">Branch / Location</div>
+                                        <div class="node-label">LOC-00482 · Roswell, GA</div>
+                                    </div>
+                                    <div class="rel-arrow-seg">
+                                        <div class="rel-arrow-line"></div>
+                                        <div class="rel-arrow-label">tagged as</div>
+                                    </div>
+                                    <div class="rel-node">
+                                        <div class="node-box stone">Hazmat Category</div>
+                                        <div class="node-label">Pesticide Certified</div>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                                    <div class="rel-node">
+                                        <div class="node-box green">Branch / Location</div>
+                                        <div class="node-label">LOC-00482 · Roswell, GA</div>
+                                    </div>
+                                    <div class="rel-arrow-seg">
+                                        <div class="rel-arrow-line"></div>
+                                        <div class="rel-arrow-label">tagged as</div>
+                                    </div>
+                                    <div class="rel-node">
+                                        <div class="node-box blue">Location Type</div>
+                                        <div class="node-label">Standard Branch</div>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                                    <div class="rel-node">
+                                        <div class="node-box amber">Fleet Asset</div>
+                                        <div class="node-label">ASSET-1041 · Flatbed</div>
+                                    </div>
+                                    <div class="rel-arrow-seg">
+                                        <div class="rel-arrow-line"></div>
+                                        <div class="rel-arrow-label">tagged as</div>
+                                    </div>
+                                    <div class="rel-node">
+                                        <div class="node-box stone">Fleet Compat Type</div>
+                                        <div class="node-label">Flatbed · Ground Level</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="siteone-example">
+                                <div class="ex-label">SiteOne Example</div>
+                                <p>A customer in Alpharetta orders 20 pallets of granite mulch requiring flatbed delivery. The delivery routing system queries MDM: which branches within 25 miles carry the "Flatbed" fleet compatibility category AND have the "Ground Level Dock" attribute? LOC-00482 matches both — the order routes there automatically, with no manual dispatcher lookup required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REL 3: ASSET ↔ LOCATION -->
+                    <div class="rel-block" id="rel-asset-location">
+                        <div class="rel-block-header amber">
+                            <span style="font-size:22px;">🔗</span>
+                            <h3>Asset ↔ Location Relationship</h3>
+                        </div>
+                        <div class="rel-block-body">
+                            <p class="rel-block-desc">
+                                An asset is always in a relationship with one or more locations. This is a typed relationship — the nature of the relationship (stored at, shared with, mobile location of, owned by) determines how the asset-location link is used in downstream systems. A truck permanently assigned to a branch is "Stored At." A forklift shared between two nearby branches is "Shared With." A mobile location (pop-up site) can have a "Mobile Location Of" relationship to a parent branch. Each relationship type carries its own attributes (effective date, primary flag, sharing agreement reference).
+                            </p>
+
+                            <!-- Asset-Location relationship diagram -->
+                            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+
+                                <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                                    <div class="rel-node">
+                                        <div class="node-box amber">ASSET-1041</div>
+                                        <div class="node-label">Flatbed Truck</div>
+                                    </div>
+                                    <div class="rel-arrow-seg">
+                                        <div class="rel-arrow-line"></div>
+                                        <div class="rel-arrow-label">Stored At</div>
+                                    </div>
+                                    <div class="rel-node">
+                                        <div class="node-box green">LOC-00482</div>
+                                        <div class="node-label">Roswell Branch (Primary)</div>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                                    <div class="rel-node">
+                                        <div class="node-box amber">ASSET-2203</div>
+                                        <div class="node-label">Forklift</div>
+                                    </div>
+                                    <div class="rel-arrow-seg">
+                                        <div class="rel-arrow-line"></div>
+                                        <div class="rel-arrow-label">Shared With</div>
+                                    </div>
+                                    <div class="rel-node">
+                                        <div class="node-box green">LOC-00483</div>
+                                        <div class="node-label">Alpharetta Branch (Secondary)</div>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+                                    <div class="rel-node">
+                                        <div class="node-box amber">LOC-00499</div>
+                                        <div class="node-label">Seasonal Pop-Up Site</div>
+                                    </div>
+                                    <div class="rel-arrow-seg">
+                                        <div class="rel-arrow-line"></div>
+                                        <div class="rel-arrow-label">Mobile Location Of</div>
+                                    </div>
+                                    <div class="rel-node">
+                                        <div class="node-box green">LOC-00482</div>
+                                        <div class="node-label">Roswell (Parent Branch)</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div style="overflow-x:auto;margin-bottom:16px;">
+                                <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                                    <thead>
+                                        <tr style="background:var(--stone-light);">
+                                            <th style="padding:8px 12px;text-align:left;border:1px solid var(--stone-border);font-weight:700;color:var(--text);">Relationship Type</th>
+                                            <th style="padding:8px 12px;text-align:left;border:1px solid var(--stone-border);font-weight:700;color:var(--text);">Description</th>
+                                            <th style="padding:8px 12px;text-align:left;border:1px solid var(--stone-border);font-weight:700;color:var(--text);">SiteOne Example</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:#78350F;">Stored At</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Asset's permanent home location. Cost, maintenance, and utilization roll up to this branch.</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Delivery flatbed based at Roswell branch — dispatched daily, returns nightly.</td>
+                                        </tr>
+                                        <tr style="background:#FAFAF9;">
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:#78350F;">Shared With</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Asset is used by a secondary location on an agreed schedule. Primary assignment still tracked.</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Forklift at Roswell shared with Alpharetta branch on Tuesdays and Thursdays.</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:#78350F;">Mobile Location Of</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">A temporary or mobile site that operates as an extension of a parent branch.</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Spring pop-up garden center in a Lowe's parking lot — managed by and billed to Roswell.</td>
+                                        </tr>
+                                        <tr style="background:#FAFAF9;">
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:#78350F;">Owned By (Org)</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Asset ownership at the organizational level, above a single branch (fleet pool, regional asset).</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Regional bucket truck owned at GA Region level, dispatched to whichever branch needs it.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="siteone-example">
+                                <div class="ex-label">SiteOne Example — M&amp;A Onboarding</div>
+                                <p>SiteOne acquires a 3-branch nursery group in North Carolina. During data onboarding, AI match-and-classify identifies 4 vehicles in the acquired fleet system. Each is created as an Asset master record and linked via "Stored At" to the appropriate new Location record. Within hours of data ingestion, the Southeast Division fleet report includes the 4 new assets — no manual entry, no orphaned records in a disconnected spreadsheet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- REL 4: FLEET COMPATIBILITY BRIDGE -->
+                    <div class="rel-block" id="rel-fleet-compat">
+                        <div class="rel-block-header blue">
+                            <span style="font-size:22px;">🔌</span>
+                            <h3>Fleet Compatibility Bridge — Location ↔ Category ↔ Asset</h3>
+                        </div>
+                        <div class="rel-block-body">
+                            <p class="rel-block-desc">
+                                Fleet Compatibility is a special relationship pattern: neither a direct location-to-asset link nor a simple tag. It is a shared category that both a Location and an Asset independently reference, and the overlap between them is where routing decisions are made. A location does not know which specific assets will serve it — it only publishes which compatibility types its dock can accept. An asset does not know which locations it will visit — it only publishes which dock types it is compatible with. When a delivery order is created, the routing system queries MDM for the intersection: branches where dock compatibility type matches the asset's fleet type.
+                            </p>
+
+                            <!-- Bridge diagram -->
+                            <div style="background:var(--stone-light);border:1px solid var(--stone-border);border-radius:10px;padding:24px;margin-bottom:16px;">
+
+                                <!-- Top row: Location → Category ← Asset -->
+                                <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:16px;">
+
+                                    <!-- Location node -->
+                                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                                        <div style="padding:12px 18px;border-radius:8px;font-size:13px;font-weight:700;border:2px solid var(--green-mid);background:#F0FDF4;color:var(--green-deep);text-align:center;">
+                                            Branch / Location<br><span style="font-size:11px;font-weight:400;color:var(--green-mid);">LOC-00482 · Roswell, GA</span>
+                                        </div>
+                                        <div style="font-size:10px;color:var(--text-muted);background:white;border:1px solid var(--green-border);padding:2px 10px;border-radius:20px;">Dock accepts: Flatbed · Box Truck</div>
+                                    </div>
+
+                                    <!-- Arrow: Location → Category -->
+                                    <div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:60px;">
+                                        <div style="width:100%;height:2px;background:var(--stone-border);position:relative;display:flex;align-items:center;justify-content:center;">
+                                            <span style="position:absolute;right:-6px;font-size:10px;color:var(--text-muted);">▶</span>
+                                        </div>
+                                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;">tagged as</div>
+                                    </div>
+
+                                    <!-- Category node (center, emphasized) -->
+                                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                                        <div style="padding:16px 22px;border-radius:10px;font-size:14px;font-weight:700;border:2px solid #3B82F6;background:var(--slate-light);color:var(--slate-blue);text-align:center;box-shadow:var(--shadow-md);">
+                                            Fleet Compatibility Category<br><span style="font-size:12px;font-weight:600;color:#3B82F6;">Flatbed Compatible</span>
+                                        </div>
+                                        <div style="font-size:10px;color:var(--slate-blue);background:white;border:1px solid var(--slate-border);padding:2px 10px;border-radius:20px;font-weight:600;">Shared Reference</div>
+                                    </div>
+
+                                    <!-- Arrow: Category ← Asset -->
+                                    <div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:60px;">
+                                        <div style="width:100%;height:2px;background:var(--stone-border);position:relative;display:flex;align-items:center;justify-content:center;">
+                                            <span style="position:absolute;left:-6px;font-size:10px;color:var(--text-muted);transform:scaleX(-1);display:inline-block;">▶</span>
+                                        </div>
+                                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;">tagged as</div>
+                                    </div>
+
+                                    <!-- Asset node -->
+                                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                                        <div style="padding:12px 18px;border-radius:8px;font-size:13px;font-weight:700;border:2px solid #D97706;background:var(--amber-light);color:#78350F;text-align:center;">
+                                            Asset<br><span style="font-size:11px;font-weight:400;color:var(--amber);">ASSET-1041 · Flatbed Truck</span>
+                                        </div>
+                                        <div style="font-size:10px;color:var(--text-muted);background:white;border:1px solid var(--amber-border);padding:2px 10px;border-radius:20px;">Asset type: Flatbed</div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Downward arrow + result -->
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                    <div style="font-size:22px;color:var(--text-muted);">↓</div>
+                                    <div style="background:#D1FAE5;border:1px solid var(--green-border);border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--green-deep);">
+                                        ✓ Match — ASSET-1041 eligible to serve LOC-00482 for flatbed deliveries
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Relationship types table -->
+                            <div style="overflow-x:auto;margin-bottom:16px;">
+                                <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                                    <thead>
+                                        <tr style="background:var(--stone-light);">
+                                            <th style="padding:8px 12px;text-align:left;border:1px solid var(--stone-border);font-weight:700;color:var(--text);">Pattern</th>
+                                            <th style="padding:8px 12px;text-align:left;border:1px solid var(--stone-border);font-weight:700;color:var(--text);">How It Works</th>
+                                            <th style="padding:8px 12px;text-align:left;border:1px solid var(--stone-border);font-weight:700;color:var(--text);">SiteOne Example</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:var(--green-deep);">Location publishes dock type</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Branch tags itself with compatible vehicle types</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Roswell tags "Flatbed" and "Box Truck" — not "Tandem Axle" (dock too short)</td>
+                                        </tr>
+                                        <tr style="background:#FAFAF9;">
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:#78350F;">Asset publishes vehicle type</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Each fleet asset tags its vehicle / dock type</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">ASSET-1041 tags "Flatbed" — matches any branch that accepts flatbeds</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:var(--slate-blue);">Routing query uses intersection</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">System finds branches where dock type ∩ asset type is non-empty</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Order for bulk mulch: find flatbed-compatible branches within 30 miles</td>
+                                        </tr>
+                                        <tr style="background:#FAFAF9;">
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);font-weight:600;color:var(--stone);">Incompatibility as a guard</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">No match = routing system excludes the pairing automatically</td>
+                                            <td style="padding:8px 12px;border:1px solid var(--stone-border);color:var(--stone);">Stone center with low-clearance dock excluded from tandem-axle routes</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="siteone-example">
+                                <div class="ex-label">SiteOne Example — M&amp;A Onboarding</div>
+                                <p>During M&amp;A onboarding of a 2-branch nursery in Tennessee, the new branches are tagged with their dock compatibility types as part of data intake. Before a single delivery is dispatched from those new locations, the routing system already knows which of SiteOne's fleet assets can serve them — no manual dispatcher configuration required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION 5: SITEONE CONTEXT ===== -->
+        <section class="section" id="siteone-context">
+            <div class="section-header" onclick="toggleSection('body-context','chev-context')">
+                <h2><span class="section-num">5</span> SiteOne-Specific Context &amp; Prioritization</h2>
+                <span class="chevron open" id="chev-context">&#9660;</span>
+            </div>
+            <div class="section-body" id="body-context">
+                <p class="section-intro">
+                    Context from the July 2026 discovery workshop that informs how and why this domain model was designed for SiteOne's specific situation.
+                </p>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-bottom:24px;">
+
+                    <div style="border:1px solid var(--green-border);border-radius:10px;padding:18px;background:#F0FDF4;">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--green-mid);margin-bottom:8px;">Why Fleet First</div>
+                        <p style="font-size:13px;color:var(--stone);line-height:1.65;">Vehicle/fleet master was chosen as the recommended MDM pilot because it has the fewest internal stakeholders, zero customer-facing risk, and a clear, measurable ROI: delivery route optimization and maintenance cost reduction. Fleet data currently lives across 4–5 systems with no linkage to locations.</p>
+                    </div>
+
+                    <div style="border:1px solid var(--amber-border);border-radius:10px;padding:18px;background:var(--amber-light);">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">720+ Branches</div>
+                        <p style="font-size:13px;color:var(--stone);line-height:1.65;">SiteOne operates 720+ branches across the US and Canada, with 90+ identified location attributes including dock specifications, truck capacity, and hazmat certifications. Timezone and hours-of-operation errors in the current system cause missed customer call windows — a direct revenue and satisfaction impact.</p>
+                    </div>
+
+                    <div style="border:1px solid var(--slate-border);border-radius:10px;padding:18px;background:var(--slate-light);">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--slate-blue);margin-bottom:8px;">10–14 Acquisitions / Year</div>
+                        <p style="font-size:13px;color:var(--stone);line-height:1.65;">Each acquisition brings 1–4 new locations and associated fleet assets requiring rapid, clean data onboarding. Today this is manual, human-intensive work involving customer, supplier, product, and location matching. A unified MDM foundation with AI match-and-classify makes this process scalable and repeatable.</p>
+                    </div>
+
+                    <div style="border:1px solid var(--stone-border);border-radius:10px;padding:18px;background:var(--stone-light);">
+                        <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone);margin-bottom:8px;">Delivery Operations Use Case</div>
+                        <p style="font-size:13px;color:var(--stone);line-height:1.65;">The primary downstream consumer of the Asset + Location master is SiteOne's delivery operations and route planning. A routing query today requires manually checking multiple systems; with MDM, one query returns: which branches in range have a flatbed with the right dock compatibility and are certified for the product being shipped.</p>
+                    </div>
+
+                </div>
+
+                <div class="callout info">
+                    <strong>Recommended Implementation Sequence:</strong> Start with Vehicle/Fleet master (lowest disruption, clear ROI) → Layer in Location mastering (builds on fleet, org hierarchy needed for M&amp;A) → Expand to Supplier and Customer domains once the location-as-reference-anchor is established. Location is the connective tissue between all four MDM domains — a clean location master makes Customer, Supplier, and Product mastering all easier.
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    function toggleSection(bodyId, chevId) {
+        const body = document.getElementById(bodyId);
+        const chev = document.getElementById(chevId);
+        const isOpen = body.style.display !== 'none';
+        body.style.display = isOpen ? 'none' : 'block';
+        if (isOpen) {
+            chev.classList.remove('open');
+        } else {
+            chev.classList.add('open');
+        }
+    }
+
+    // Active nav highlighting on scroll
+    const navLinks = document.querySelectorAll('.outline-nav a');
+    const sections = document.querySelectorAll('section[id], div[id]');
+
+    function updateActiveNav() {
+        let current = '';
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 80) current = section.id;
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveNav);
+    updateActiveNav();
+</script>
+
+</body>
+</html>
