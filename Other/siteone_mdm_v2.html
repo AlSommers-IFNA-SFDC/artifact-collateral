@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiteOne — Master Data Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #F2EFE9;
+  --white: #FDFCFA;
+  --text: #1A1714;
+  --muted: #6B6560;
+  --green: #1C4532;
+  --green-mid: #2D6A4F;
+  --green-light: #D8EFE3;
+  --amber: #8B4A0F;
+  --amber-light: #F5E6D3;
+  --blue: #1B365D;
+  --blue-light: #D6E4F0;
+  --purple: #3B1F6E;
+  --purple-light: #E5DCF5;
+  --rule: #D8D3CC;
+  --sidebar-w: 230px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+/* ─ LAYOUT ─ */
+.app { display: flex; height: 100vh; }
+
+/* ─ SIDEBAR ─ */
+.sidebar {
+  width: var(--sidebar-w); flex-shrink: 0;
+  background: var(--green);
+  display: flex; flex-direction: column;
+  border-right: 1px solid rgba(0,0,0,.15);
+}
+.sb-brand {
+  padding: 28px 22px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.sb-eyebrow {
+  font-size: 9px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; color: #7EC8A4; margin-bottom: 6px;
+}
+.sb-brand h1 {
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+  color: #fff; line-height: 1.3;
+}
+.sb-brand p { font-size: 11px; color: #A8D5BE; margin-top: 4px; }
+.sb-nav { flex: 1; overflow-y: auto; padding: 14px 12px 20px; }
+
+/* nav items */
+.ni {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 11px; border-radius: 7px; cursor: pointer;
+  margin-bottom: 1px; border: none; background: none;
+  width: 100%; text-align: left; transition: background .15s;
+}
+.ni:hover { background: rgba(255,255,255,.07); }
+.ni.active { background: rgba(255,255,255,.14); }
+.ni .nn {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px; font-weight: 700;
+  background: rgba(255,255,255,.15); color: #fff;
+}
+.ni.active .nn { background: #7EC8A4; color: var(--green); }
+.ni .nl { font-size: 12px; color: rgba(255,255,255,.7); line-height: 1.35; }
+.ni.active .nl { color: #fff; font-weight: 600; }
+
+/* sub items */
+.sb-subs { padding: 2px 0 4px 22px; }
+.nsi {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 10px; border-radius: 6px; cursor: pointer;
+  margin-bottom: 1px; border: none; background: none;
+  width: 100%; text-align: left; transition: background .15s;
+}
+.nsi:hover { background: rgba(255,255,255,.06); }
+.nsi.active { background: rgba(255,255,255,.11); }
+.nsi .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.28); flex-shrink: 0; }
+.nsi.active .dot { background: #F0C070; }
+.nsi span { font-size: 11px; color: rgba(255,255,255,.55); }
+.nsi.active span { color: #fff; }
+
+/* ─ CONTENT AREA ─ */
+.content { flex: 1; overflow: hidden; position: relative; }
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s ease;
+}
+.screen.active { opacity: 1; pointer-events: all; }
+
+/* ─ TOP BAR ─ */
+.topbar {
+  padding: 18px 56px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+  display: flex; align-items: baseline; gap: 16px;
+  flex-shrink: 0;
+}
+.topbar .eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.topbar h2 {
+  font-family: 'Fraunces', serif; font-size: 13px; font-weight: 400;
+  color: var(--muted); margin-left: auto;
+}
+
+/* ─ HORIZONTAL PAGE NAV ─ */
+.pagenav {
+  display: flex; align-items: center; gap: 0;
+  padding: 0 56px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.pnb {
+  padding: 12px 0; margin-right: 28px;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  cursor: pointer; border: none; background: none;
+  border-bottom: 2px solid transparent;
+  transition: all .15s; white-space: nowrap;
+}
+.pnb:hover { color: var(--text); }
+.pnb.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+.pnb.active.am { color: var(--amber); border-bottom-color: var(--amber); }
+.pnb.active.bl { color: var(--blue); border-bottom-color: var(--blue); }
+.pnb.active.pu { color: var(--purple); border-bottom-color: var(--purple); }
+
+/* ─ PAGE BODY ─ */
+.page { display: none; flex: 1; overflow-y: auto; padding: 52px 56px; }
+.page.active { display: block; }
+
+/* ─ TYPOGRAPHY ─ */
+h1.hero {
+  font-family: 'Fraunces', serif; font-size: 44px; font-weight: 600;
+  color: var(--text); line-height: 1.15; margin-bottom: 24px;
+  max-width: 680px;
+}
+h2.section {
+  font-family: 'Fraunces', serif; font-size: 32px; font-weight: 600;
+  color: var(--text); line-height: 1.2; margin-bottom: 20px;
+}
+h3.domain-title {
+  font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600;
+  line-height: 1.2; margin-bottom: 6px;
+}
+h3.domain-title.gr { color: var(--green); }
+h3.domain-title.am { color: var(--amber); }
+h3.domain-title.bl { color: var(--blue); }
+h3.domain-title.pu { color: var(--purple); }
+
+p.body-text {
+  font-size: 15px; color: var(--text); line-height: 1.75;
+  max-width: 660px; margin-bottom: 20px;
+}
+p.body-text.wide { max-width: 820px; }
+p.muted { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+
+.rule { border: none; border-top: 1px solid var(--rule); margin: 32px 0; }
+.rule.tight { margin: 20px 0; }
+
+/* ─ STAT ROW ─ */
+.stats {
+  display: flex; gap: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 40px;
+}
+.stat {
+  flex: 1; padding: 24px 28px;
+  border-right: 1px solid var(--rule);
+}
+.stat:last-child { border-right: none; }
+.stat .num {
+  font-family: 'Fraunces', serif; font-size: 38px; font-weight: 600;
+  color: var(--green); line-height: 1; margin-bottom: 6px;
+}
+.stat .lbl { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* ─ PAIN ITEMS (minimal) ─ */
+.pain-item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex; gap: 24px; align-items: flex-start;
+}
+.pain-item:first-child { border-top: 1px solid var(--rule); }
+.pain-domain {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; white-space: nowrap;
+  width: 110px; flex-shrink: 0; margin-top: 3px;
+}
+.pain-domain.gr { color: var(--green-mid); }
+.pain-domain.am { color: var(--amber); }
+.pain-domain.bl { color: var(--blue); }
+.pain-domain.pu { color: var(--purple); }
+.pain-domain.red { color: #9B1C1C; }
+.pain-text { font-size: 14px; color: var(--text); line-height: 1.65; }
+
+/* ─ GOAL ITEMS ─ */
+.goal-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.goal-item:first-child { border-top: 1px solid var(--rule); }
+.goal-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+}
+.goal-text { font-size: 14px; color: var(--text); line-height: 1.65; max-width: 620px; }
+
+/* ─ QUOTE ─ */
+.blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 24px;
+  margin: 32px 0;
+  max-width: 700px;
+}
+.blockquote p {
+  font-family: 'Fraunces', serif; font-size: 19px; font-style: italic;
+  font-weight: 400; color: var(--text); line-height: 1.6; margin-bottom: 8px;
+}
+.blockquote cite { font-size: 12px; color: var(--muted); font-style: normal; }
+
+/* ─ PRIORITY TABLE ─ */
+.ptable { width: 100%; border-collapse: collapse; max-width: 800px; }
+.ptable th {
+  text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); padding: 10px 16px;
+  border-bottom: 2px solid var(--rule);
+}
+.ptable td { padding: 16px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.ptable tr:hover td { background: rgba(0,0,0,.02); }
+.ptable .seq {
+  font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600;
+  color: var(--rule); width: 40px;
+}
+.ptable .uc-name {
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+  color: var(--text); margin-bottom: 3px;
+}
+.ptable .uc-sub { font-size: 12px; color: var(--muted); }
+.ptable .uc-desc { font-size: 13px; color: var(--text); line-height: 1.55; max-width: 360px; }
+.pill {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.pill-lo { background: #D1FAE5; color: #065F46; }
+.pill-med { background: #FEF3C7; color: #92400E; }
+.pill-hi { background: #DBEAFE; color: #1E3A5F; }
+.pill-huge { background: #EDE9FE; color: #3B1F6E; }
+.pill-green { background: var(--green-light); color: var(--green); }
+
+/* ─ DOMAIN USE CASE PAGES ─ */
+.uc-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.uc-eyebrow.gr { color: var(--green-mid); }
+.uc-eyebrow.am { color: var(--amber); }
+.uc-eyebrow.bl { color: var(--blue); }
+.uc-eyebrow.pu { color: var(--purple); }
+
+.today-item { padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.today-item:first-child { border-top: 1px solid var(--rule); }
+.today-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: #9B1C1C; margin-bottom: 4px;
+}
+.today-text { font-size: 14px; color: var(--text); line-height: 1.65; max-width: 640px; }
+
+.unlock-item { padding: 18px 0; border-bottom: 1px solid var(--rule); }
+.unlock-item:first-child { border-top: 1px solid var(--rule); }
+.unlock-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.unlock-label.gr { color: var(--green-mid); }
+.unlock-label.am { color: var(--amber); }
+.unlock-label.bl { color: var(--blue); }
+.unlock-label.pu { color: var(--purple); }
+.unlock-text { font-size: 14px; color: var(--text); line-height: 1.65; max-width: 640px; }
+
+.callout {
+  background: var(--green); border-radius: 10px;
+  padding: 20px 26px; max-width: 760px; margin-top: 28px;
+}
+.callout .cl { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #7EC8A4; margin-bottom: 6px; }
+.callout p { font-size: 14px; color: rgba(255,255,255,.9); line-height: 1.65; }
+.callout p strong { color: #fff; }
+.callout.am { background: var(--amber); }
+.callout.am .cl { color: #F5D5B0; }
+.callout.bl { background: var(--blue); }
+.callout.bl .cl { color: #A8C8E8; }
+.callout.pu { background: var(--purple); }
+.callout.pu .cl { color: #C8B8ED; }
+
+/* ─ DOMAIN EXPLORER ─ */
+.domain-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; max-width: 880px; }
+.dc {
+  background: var(--white); padding: 24px 28px;
+  cursor: pointer; transition: background .15s;
+}
+.dc:hover { background: #F8F5F0; }
+.dc.open { background: #F0ECE5; }
+.dc-top { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.dc-icon { font-size: 24px; }
+.dc-name { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+.dc-name.gr { color: var(--green); }
+.dc-name.am { color: var(--amber); }
+.dc-name.bl { color: var(--blue); }
+.dc-name.pu { color: var(--purple); }
+.dc-sub { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+.dc-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.dc-expand { display: none; margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 16px; }
+.dc.open .dc-expand { display: block; }
+.ep-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.ep {
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  border: 1px solid;
+}
+.ep.gr { background: var(--green-light); border-color: #6EE7B7; color: var(--green); }
+.ep.am { background: var(--amber-light); border-color: #FCD34D; color: var(--amber); }
+.ep.bl { background: var(--blue-light); border-color: #93C5FD; color: var(--blue); }
+.ep.pu { background: var(--purple-light); border-color: #C4B5FD; color: var(--purple); }
+
+/* mini diagram */
+.minid { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+.mn {
+  padding: 6px 12px; border-radius: 7px;
+  font-size: 11px; font-weight: 600; border: 1.5px solid; white-space: nowrap;
+}
+.mn.gr { background: var(--green-light); border-color: var(--green-mid); color: var(--green); }
+.mn.am { background: var(--amber-light); border-color: #D97706; color: var(--amber); }
+.mn.bl { background: var(--blue-light); border-color: #3B82F6; color: var(--blue); }
+.mn.pu { background: var(--purple-light); border-color: #7C3AED; color: var(--purple); }
+.mn.st { background: #F0EDE8; border-color: #C8C3BC; color: var(--muted); }
+.marr { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 28px; max-width: 60px; }
+.marl { width: 100%; height: 1px; background: var(--rule); position: relative; }
+.marl::after { content: "▶"; position: absolute; right: -6px; top: -7px; font-size: 9px; color: var(--muted); }
+.marll { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; white-space: nowrap; }
+.diagram-note { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 10px; }
+
+/* ─ CONNECTION GRAPH ─ */
+.graph-wrap { background: var(--white); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; margin-bottom: 36px; }
+.graph-wrap svg { width: 100%; height: 320px; display: block; }
+.unlock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.uc {
+  background: var(--white); padding: 20px 22px;
+}
+.uc:hover { background: #F8F5F0; }
+.uc-dom { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.uc-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.uc-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-eyebrow">Master Data Program</div>
+    <h1>SiteOne Landscape Supply</h1>
+    <p>Informatica IDMC · 2026</p>
+  </div>
+  <div class="sb-nav">
+
+    <button class="ni active" onclick="go('s1','p-heard')">
+      <span class="nn">1</span>
+      <span class="nl">What We Heard</span>
+    </button>
+    <div class="sb-subs">
+      <button class="nsi active" id="n-heard" onclick="go('s1','p-heard')"><span class="dot"></span><span>What SiteOne Told Us</span></button>
+      <button class="nsi" id="n-goals" onclick="go('s1','p-goals')"><span class="dot"></span><span>What SiteOne Wants</span></button>
+    </div>
+
+    <button class="ni" onclick="go('s2','p-priority')">
+      <span class="nn">2</span>
+      <span class="nl">Domain Prioritization</span>
+    </button>
+
+    <button class="ni" onclick="go('s3','p-fleet-today')">
+      <span class="nn">3</span>
+      <span class="nl">The Four Use Cases</span>
+    </button>
+    <div class="sb-subs">
+      <button class="nsi" id="n-fleet" onclick="go('s3','p-fleet-today')"><span class="dot"></span><span>AI Fleet Optimization</span></button>
+      <button class="nsi" id="n-cust" onclick="go('s3','p-cust-today')"><span class="dot"></span><span>Customer Personalization</span></button>
+      <button class="nsi" id="n-supp" onclick="go('s3','p-supp-today')"><span class="dot"></span><span>Supplier Mastering</span></button>
+      <button class="nsi" id="n-prod" onclick="go('s3','p-prod-today')"><span class="dot"></span><span>Product &amp; Packaging</span></button>
+    </div>
+
+    <button class="ni" onclick="go('s4','p-explorer')">
+      <span class="nn">4</span>
+      <span class="nl">Domain Explorer</span>
+    </button>
+
+    <button class="ni" onclick="go('s5','p-connects')">
+      <span class="nn">5</span>
+      <span class="nl">How It All Connects</span>
+    </button>
+
+  </div>
+</nav>
+
+<!-- ═══ SCREENS ═══ -->
+<div class="content">
+
+<!-- ══ SCREEN 1: WHAT WE HEARD ══ -->
+<div class="screen active" id="s1">
+  <div class="topbar">
+    <span class="eyebrow">Workshop Readout · July 29, 2026</span>
+    <h2 id="s1-title">What SiteOne Told Us</h2>
+  </div>
+  <div class="pagenav">
+    <button class="pnb active" id="pn-heard" onclick="showPage('s1','p-heard')">What SiteOne Told Us</button>
+    <button class="pnb" id="pn-goals" onclick="showPage('s1','p-goals')">What SiteOne Wants to Achieve</button>
+  </div>
+
+  <!-- PAGE: TOLD US -->
+  <div class="page active" id="p-heard">
+    <h2 class="section">What we heard.</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">$16M+</div><div class="lbl">Daily sales through<br>a 2005 POS system</div></div>
+      <div class="stat"><div class="num">720+</div><div class="lbl">Branches with 90+ attributes<br>not consistently managed</div></div>
+      <div class="stat"><div class="num">10–14</div><div class="lbl">Acquisitions per year —<br>all onboarded manually</div></div>
+      <div class="stat"><div class="num">4–5</div><div class="lbl">Disconnected systems<br>for fleet data alone</div></div>
+      <div class="stat"><div class="num">8×</div><div class="lbl">Duplicate supplier records<br>for a single vendor</div></div>
+    </div>
+
+    <div class="pain-item">
+      <div class="pain-domain red">UE System</div>
+      <div class="pain-text">SiteOne processes the vast majority of its $16M daily in sales through a POS system built in 2005. Modernization is urgent but slow — the goal is replacement, not a bridge, and decades of data debt make every step harder.</div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-domain gr">Asset &amp; Location</div>
+      <div class="pain-text">Fleet data lives across four or five disconnected systems with no linkage to branch locations. Timezone and hours-of-operation errors cause missed customer calls. No single record knows what a truck can carry and what a branch dock can accept.</div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-domain bl">Customer</div>
+      <div class="pain-text">"Customer equals a node, not a person." No golden record — duplicates span UE and Salesforce. A sync assumed to be working was discovered broken. The same contractor may exist as three to five records receiving conflicting messages, making personalization at scale impossible.</div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-domain am">Supplier</div>
+      <div class="pain-text">Up to eight records for a single vendor across US and Canadian systems. The onboarding form has minimal validation. The true supplier count is unknown, and every acquisition brings an unresolved overlap problem.</div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-domain pu">Product</div>
+      <div class="pain-text">PIMcore requires costly maintenance and custom code for what should be standard data quality. Packaging hierarchy is not tied to the product record, which means routing AI cannot calculate optimal truck load. The base-variant model is inconsistent, breaking inventory accuracy and cross-sell logic.</div>
+    </div>
+  </div>
+
+  <!-- PAGE: GOALS -->
+  <div class="page" id="p-goals">
+    <div class="blockquote">
+      <p>"We need a point of view on where you can help — and a change management approach, not just technology."</p>
+      <cite>SiteOne Leadership · July 29, 2026</cite>
+    </div>
+
+    <div class="goal-item">
+      <div class="goal-label">Delivery Operations</div>
+      <div class="goal-text">Route planning that knows which trucks can serve which docks — across 720 branches, in real time. Routing AI is blocked today without trusted, unified fleet and location data.</div>
+    </div>
+    <div class="goal-item">
+      <div class="goal-label">Customer Retention &amp; Growth</div>
+      <div class="goal-text">Cross-sell, up-sell, and personalization at scale powered by a trusted, unduplicated account record. Loyalty, Tailend, coupon and contractor activation programs all depend on clean data that does not exist today.</div>
+    </div>
+    <div class="goal-item">
+      <div class="goal-label">Procurement Excellence</div>
+      <div class="goal-text">Golden supplier records enabling contract compliance, category-level benchmarking, and private brand expansion. The ability to see total spend per supplier, across all locations, for the first time.</div>
+    </div>
+    <div class="goal-item">
+      <div class="goal-label">AI &amp; Analytics Readiness</div>
+      <div class="goal-text">Trusted master data as the foundation for every AI initiative. Packaging hierarchy, product attribution, and demand sensing all require clean product and location data that Athena and other tools can actually rely on.</div>
+    </div>
+    <div class="goal-item">
+      <div class="goal-label">Scalable M&amp;A Integration</div>
+      <div class="goal-text">Each of 10 to 14 annual acquisitions currently triggers a four-workstream manual project: customer match, supplier reconciliation, location onboarding, and product catalog merge — all at once. A unified MDM foundation transforms this from a bespoke project into a repeatable, accelerating process.</div>
+    </div>
+  </div>
+</div><!-- /s1 -->
+
+<!-- ══ SCREEN 2: PRIORITIZATION ══ -->
+<div class="screen" id="s2">
+  <div class="topbar">
+    <span class="eyebrow">Strategic Roadmap</span>
+    <h2>Recommended Implementation Sequence</h2>
+  </div>
+  <div class="page active" id="p-priority" style="display:block;">
+    <h2 class="section">Start where disruption is low<br>and impact is immediate.</h2>
+    <p class="body-text">Each domain was evaluated on business impact — the value unlocked when mastered — and disruption to BAU — the organizational effort and change risk required. The recommended sequence starts where you get the most return with the least friction, then builds from there.</p>
+
+    <table class="ptable">
+      <thead>
+        <tr>
+          <th style="width:40px;"></th>
+          <th>Use Case</th>
+          <th>Approach</th>
+          <th style="width:120px;">Disruption</th>
+          <th style="width:100px;">Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="seq">1</td>
+          <td>
+            <div class="uc-name">AI Fleet &amp; Location Optimization</div>
+            <div class="uc-sub">Assets &amp; Branch Locations</div>
+          </td>
+          <td class="uc-desc">Collect fleet and location data from disparate sources, consolidate in MDM. Work is already happening — MDM formalizes and governs it. Fewer stakeholders, zero customer-facing risk.</td>
+          <td><span class="pill pill-lo">Low</span></td>
+          <td><span class="pill pill-green">High</span></td>
+        </tr>
+        <tr>
+          <td class="seq">2</td>
+          <td>
+            <div class="uc-name">Supplier Onboarding &amp; Mastering</div>
+            <div class="uc-sub">Supplier &amp; Supplier Location</div>
+          </td>
+          <td class="uc-desc">Identify sources, determine sync strategy, implement search-before-create. Governance at the point of entry stops new duplicates immediately.</td>
+          <td><span class="pill pill-med">Medium</span></td>
+          <td><span class="pill pill-green">High</span></td>
+        </tr>
+        <tr>
+          <td class="seq">3</td>
+          <td>
+            <div class="uc-name">Customer Personalization &amp; Mastering</div>
+            <div class="uc-sub">Account &amp; Contact</div>
+          </td>
+          <td class="uc-desc">Begin with the consolidation pattern — MDM as analytics and marketing source only. No system write-back until data trust is established. Governance before system work.</td>
+          <td><span class="pill pill-med">Low → Med</span></td>
+          <td><span class="pill pill-huge">Huge</span></td>
+        </tr>
+        <tr>
+          <td class="seq">4</td>
+          <td>
+            <div class="uc-name">Product &amp; Packaging Efficiencies</div>
+            <div class="uc-sub">Base Product, Variant, Category, Pack Config</div>
+          </td>
+          <td class="uc-desc">Use PIMcore as seed data. Eliminate PIMcore and the duplicate MySQL instance. Build packaging hierarchy enabling AI routing and Blue Yonder PO matching. Work product line by product line.</td>
+          <td><span class="pill pill-med">Medium</span></td>
+          <td><span class="pill pill-huge">Huge</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- /s2 -->
+
+<!-- ══ SCREEN 3: FOUR USE CASES ══ -->
+<div class="screen" id="s3">
+  <div class="topbar">
+    <span class="eyebrow">Use Case Deep Dives</span>
+    <h2 id="s3-title">AI Fleet Optimization</h2>
+  </div>
+  <div class="pagenav" id="s3-nav">
+    <button class="pnb active" id="pn-fleet-today" onclick="showPage('s3','p-fleet-today')">🚛 Today</button>
+    <button class="pnb" id="pn-fleet-unlock" onclick="showPage('s3','p-fleet-unlock')">🚛 Value Unlock</button>
+    <button class="pnb" id="pn-cust-today" onclick="showPage('s3','p-cust-today')" style="margin-left:20px;padding-left:12px;border-left:1px solid var(--rule);">🤝 Today</button>
+    <button class="pnb" id="pn-cust-unlock" onclick="showPage('s3','p-cust-unlock')">🤝 Value Unlock</button>
+    <button class="pnb" id="pn-supp-today" onclick="showPage('s3','p-supp-today')" style="margin-left:20px;padding-left:12px;border-left:1px solid var(--rule);">📦 Today</button>
+    <button class="pnb" id="pn-supp-unlock" onclick="showPage('s3','p-supp-unlock')">📦 Value Unlock</button>
+    <button class="pnb" id="pn-prod-today" onclick="showPage('s3','p-prod-today')" style="margin-left:20px;padding-left:12px;border-left:1px solid var(--rule);">🌿 Today</button>
+    <button class="pnb" id="pn-prod-unlock" onclick="showPage('s3','p-prod-unlock')">🌿 Value Unlock</button>
+  </div>
+
+  <!-- FLEET TODAY -->
+  <div class="page active" id="p-fleet-today">
+    <div class="uc-eyebrow gr">Use Case 1 · Assets &amp; Branch Locations</div>
+    <h3 class="domain-title gr">AI Fleet Optimization —<br>where things stand today.</h3>
+    <p class="body-text">Location data — branch hours, addresses, timezone, dock capability — lives in multiple disconnected systems. Timezone and hours errors are not hypothetical: they cause missed customer calls, delivery routing failures, and incorrect information surfaced to customers looking for branch details.</p>
+    <p class="body-text">Fleet and equipment data is tracked across four or five separate systems with no master record and no reliable way to know which asset is assigned to which location.</p>
+    <p class="body-text">The org hierarchy — Division → Region → Area → Branch — must be consistent for financial rollups and operational reporting. In the current state, that hierarchy can differ across systems, making consolidated reporting an exercise in manual reconciliation before any analysis can begin.</p>
+    <div class="callout">
+      <div class="cl">Why start here</div>
+      <p>The Asset domain has fewer stakeholders than Customer or Product, and the value is immediate and measurable. Clean branch data improves customer-facing accuracy today. Clean fleet data improves delivery routing tomorrow. And because every acquisition brings 1–4 new locations, a repeatable onboarding process here pays dividends 10–14 times a year.</p>
+    </div>
+  </div>
+
+  <!-- FLEET UNLOCK -->
+  <div class="page" id="p-fleet-unlock">
+    <div class="uc-eyebrow gr">Use Case 1 · Assets &amp; Branch Locations</div>
+    <h3 class="domain-title gr">Business value unlock.</h3>
+    <div class="unlock-item">
+      <div class="unlock-label gr">Delivery Operations</div>
+      <div class="unlock-text">Route planning and order tracking require trusted fleet and location data together. Today those live in separate systems; unifying them is a direct delivery optimization win. A routing query that currently requires a dispatcher and three systems becomes a single MDM lookup in milliseconds.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label gr">Last-Mile Fulfillment</div>
+      <div class="unlock-text">A branch that knows its own dock capability, service area, and truck compatibility can make accurate delivery promises. Incorrect capability data leads to failed deliveries and customer service escalations. Fleet Compatibility Category links truck type to dock type — a flatbed is never dispatched to a short-dock branch.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label gr">M&amp;A Location Onboarding</div>
+      <div class="unlock-text">Each acquisition brings 1–4 new locations needing rapid, clean data setup. A standard onboarding template with validation rules means new locations are live and accurate in hours, not weeks. AI match-and-classify handles the intake; MDM governs the result.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label gr">Reporting and Rollup</div>
+      <div class="unlock-text">The org hierarchy — Division → Region → Area → Branch — must be consistent for financial and operational reporting. Clean location master data makes consolidated views automatic, not manual. Cost center mapping is governed and correct from the moment a branch is created.</div>
+    </div>
+  </div>
+
+  <!-- CUSTOMER TODAY -->
+  <div class="page" id="p-cust-today">
+    <div class="uc-eyebrow bl">Use Case 2 · Account &amp; Contact</div>
+    <h3 class="domain-title bl">Customer Personalization —<br>where things stand today.</h3>
+    <p class="body-text">SiteOne's customer is an Account — a contractor, landscaper, or commercial buyer — not an individual. The Account is the master node. Contacts hang off accounts. That architecture is sound; the problem is that neither the Account nor the Contact is clean.</p>
+    <p class="body-text">Duplicates span UE and Salesforce. A sync assumed to be working was discovered broken via Data Cloud — it took a week to remediate. Contact duplication was deliberately introduced as a workaround to one-contact-per-account system constraints, and the result is the same contractor showing up as three to five separate records across systems.</p>
+    <p class="body-text">Marketing cannot target at scale. Loyalty, Tailend, and contractor activation programs require a single trusted account record. Without one, every campaign risks hitting the same customer multiple times with conflicting messages.</p>
+    <div class="callout bl">
+      <div class="cl">Recommended approach</div>
+      <p>Start with the <strong>consolidation pattern</strong>: use the mastered record as a source for analytics and marketing only. No write-back to source systems until data trust is established. Governance and definitions before system work. The risk of merging customers incorrectly — disrupting AR, credit lines, and sales history — is real, and the right answer is to build confidence before changing operational systems.</p>
+    </div>
+  </div>
+
+  <!-- CUSTOMER UNLOCK -->
+  <div class="page" id="p-cust-unlock">
+    <div class="uc-eyebrow bl">Use Case 2 · Account &amp; Contact</div>
+    <h3 class="domain-title bl">Business value unlock.</h3>
+    <div class="unlock-item">
+      <div class="unlock-label bl">Personalization at Scale</div>
+      <div class="unlock-text">One account, one message, across branch and digital channels. Customer data virtualized in Data Cloud for segmentation and activation. Courtney's team can run campaigns with confidence — knowing the contractor they're targeting is one record, not five.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label bl">Cross-Sell and Up-Sell Revenue</div>
+      <div class="unlock-text">Trusted account records linked to purchase history unlock product recommendations. Which contractors buy mulch but not edging? Which accounts haven't purchased in 60 days? These queries only work when the account record is clean and unduplicated.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label bl">Customer Retention Insight</div>
+      <div class="unlock-text">Understanding why accounts leave requires understanding when they were last active, what they bought, and which branch served them. None of this is possible without a unified customer record. Fix the account, and the retention data that already exists becomes usable.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label bl">M&amp;A Customer Integration</div>
+      <div class="unlock-text">AI match-and-classify ingests acquired customer records, identifies overlap with existing SiteOne accounts, and preserves five-year sales history and AR. External match capability can profile overlap before close — so SiteOne knows what it's buying before the ink is dry.</div>
+    </div>
+  </div>
+
+  <!-- SUPPLIER TODAY -->
+  <div class="page" id="p-supp-today">
+    <div class="uc-eyebrow am">Use Case 3 · Supplier &amp; Supplier Location</div>
+    <h3 class="domain-title am">Supplier Mastering —<br>where things stand today.</h3>
+    <p class="body-text">Up to eight distinct supplier records exist for a single vendor across US and Canadian systems. The true supplier count is unknown. There is no reliable way to know total spend per supplier, which contracts are in effect, or which locations a supplier serves.</p>
+    <p class="body-text">The supplier onboarding form is mostly automated submission with limited credit checks. Branch-level staff can enter a new supplier on the fly with no validation — and they do. Each of SiteOne's 10 to 14 annual acquisitions brings an unresolved overlap problem: which of the acquired company's suppliers are already in the SiteOne network? Today, answering that question is a manual project.</p>
+    <div class="callout am">
+      <div class="cl">The private brand connection</div>
+      <p>SiteOne cannot expand its private label program without knowing which supplier produces which product. Clean supplier-to-product linkage is the prerequisite for private brand expansion. That linkage does not exist today.</p>
+    </div>
+  </div>
+
+  <!-- SUPPLIER UNLOCK -->
+  <div class="page" id="p-supp-unlock">
+    <div class="uc-eyebrow am">Use Case 3 · Supplier &amp; Supplier Location</div>
+    <h3 class="domain-title am">Business value unlock.</h3>
+    <div class="unlock-item">
+      <div class="unlock-label am">Procurement Optimization</div>
+      <div class="unlock-text">A trusted supplier record enables contract compliance checks, category-level benchmarking, and multi-location negotiation leverage. SiteOne can see total spend per supplier for the first time — and use that visibility to negotiate better terms across the enterprise.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label am">M&amp;A Pre-Close Analysis</div>
+      <div class="unlock-text">Informatica's external match capability profiles acquired-company supplier overlap before integration closes. SiteOne knows which contracts are duplicated, which are complementary, and which to consolidate — before the acquisition is complete. This alone justifies the investment at 10–14 deals per year.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label am">Search Before Create</div>
+      <div class="unlock-text">Implementing search-before-create in Salesforce and branch onboarding apps stops duplicate supplier records at the point of entry. Reference 360 standardizes tax ID, legal name, and key attributes. Data quality improves from the first day of go-live.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label am">Private Brand Enablement</div>
+      <div class="unlock-text">Clean supplier-to-product linkage is the foundation for private label expansion. Identify which suppliers have capacity, which products to migrate to private label, and where margin improvement is greatest — using data that already exists in the system, properly connected.</div>
+    </div>
+  </div>
+
+  <!-- PRODUCT TODAY -->
+  <div class="page" id="p-prod-today">
+    <div class="uc-eyebrow pu">Use Case 4 · Base Product, Variant, Category, Pack Config</div>
+    <h3 class="domain-title pu">Product &amp; Packaging —<br>where things stand today.</h3>
+    <p class="body-text">PIMcore requires costly maintenance and custom code for what should be standard data quality and attribution. It cannot support multiple simultaneous product hierarchies — finance, sales territory, hazard classification — without duplicating the product record.</p>
+    <p class="body-text">Packaging information is not held against the product record. Pallet weight, case dimensions, and unit-of-measure relationships are unknown or inconsistent. This is not a minor gap: it means routing AI cannot calculate optimal truck load, Blue Yonder PO matching fails, and the 20% of products that Athena cannot automatically attribute have no governed review workflow.</p>
+    <p class="body-text">The base-variant model is inconsistent. Variants — size, grade, species — are not reliably linked to their base products, breaking inventory accuracy, planogram management, and cross-sell logic at the source.</p>
+    <div class="callout pu">
+      <div class="cl">The tech stack opportunity</div>
+      <p>Eliminating PIMcore and the duplicate MySQL instance reduces maintenance cost, removes a manual export/import cycle, and gives product teams a <strong>single governed workspace</strong> in P360 for all enrichment work. The product domain is also the one where AI attribution is most advanced — the foundation is there, it needs to be completed and governed.</p>
+    </div>
+  </div>
+
+  <!-- PRODUCT UNLOCK -->
+  <div class="page" id="p-prod-unlock">
+    <div class="uc-eyebrow pu">Use Case 4 · Base Product, Variant, Category, Pack Config</div>
+    <h3 class="domain-title pu">Business value unlock.</h3>
+    <div class="unlock-item">
+      <div class="unlock-label pu">Packaging-Driven Route Optimization</div>
+      <div class="unlock-text">Pack configuration — dimensions and weight — tied to the product record enables routing AI to calculate the optimal truck load per delivery. Match the right product to the right vehicle type and dock configuration. This connection between Product and Asset is one of the highest-value cross-domain relationships in the entire program.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label pu">Blue Yonder PO and Invoice Matching</div>
+      <div class="unlock-text">GS1-certified packaging hierarchy unlocks automated PO-to-invoice matching in Blue Yonder. AI can back-fill packaging levels from historical PO data where they are currently unknown — the answer is already in the data, it just needs to be extracted and governed.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label pu">Simplified Technology Stack</div>
+      <div class="unlock-text">Eliminating PIMcore and the duplicate MySQL instance reduces maintenance cost, removes a manual export/import cycle, and gives product teams a single governed workspace in P360. Repeatable, syndicated exports replace one-off scripts. Time to market for new products improves.</div>
+    </div>
+    <div class="unlock-item">
+      <div class="unlock-label pu">Multiple Hierarchies from One Model</div>
+      <div class="unlock-text">P360 supports simultaneous product hierarchies — finance, sales territory, hazard class, and procurement category can each have their own view without duplicating the product record. Different teams get the view they need; the data is maintained once.</div>
+    </div>
+  </div>
+
+</div><!-- /s3 -->
+
+<!-- ══ SCREEN 4: DOMAIN EXPLORER ══ -->
+<div class="screen" id="s4">
+  <div class="topbar">
+    <span class="eyebrow">Data Architecture</span>
+    <h2>Entities Being Mastered</h2>
+  </div>
+  <div class="page active" id="p-explorer" style="display:block;">
+    <h2 class="section">The entities behind each use case.</h2>
+    <p class="body-text">Each domain has a defined set of master entities — the records MDM governs and makes trustworthy. Select any domain to see the entities, how they relate to each other, and how they connect to other domains.</p>
+
+    <div class="domain-cards">
+
+      <!-- FLEET -->
+      <div class="dc" id="dc-fleet" onclick="dcToggle('dc-fleet')">
+        <div class="dc-top"><span class="dc-icon">🚛</span><div><div class="dc-name gr">AI Fleet Optimization</div><div class="dc-sub">Assets &amp; Branch Locations</div></div></div>
+        <div class="dc-desc">Branch, Location, Vehicle, and Equipment records mastered as the unified operational backbone of SiteOne's delivery and fulfillment network.</div>
+        <div class="dc-expand">
+          <div class="ep-row"><span class="ep gr">Branch</span><span class="ep gr">Location</span><span class="ep gr">Fleet Asset</span><span class="ep gr">Equipment Asset</span></div>
+          <div class="minid">
+            <div class="mn gr">Branch</div>
+            <div class="marr"><div class="marl"></div><div class="marll">has many</div></div>
+            <div class="mn gr">Location</div>
+            <div class="marr"><div class="marl"></div><div class="marll">stores</div></div>
+            <div class="mn gr">Fleet Asset</div>
+            <div class="marr"><div class="marl"></div><div class="marll">typed via</div></div>
+            <div class="mn st">Fleet Compat<br>Category</div>
+          </div>
+          <p class="diagram-note">Fleet Compatibility Category is the shared reference that bridges truck type to dock type — the key relationship enabling automated dispatch matching and routing AI across SiteOne's 720+ branches.</p>
+        </div>
+      </div>
+
+      <!-- CUSTOMER -->
+      <div class="dc" id="dc-cust" onclick="dcToggle('dc-cust')">
+        <div class="dc-top"><span class="dc-icon">🤝</span><div><div class="dc-name bl">Customer Personalization</div><div class="dc-sub">Account &amp; Contact</div></div></div>
+        <div class="dc-desc">Account (the business customer node) and Contact (the individual) resolved into golden records — the foundation for personalization, cross-sell, and retention analytics.</div>
+        <div class="dc-expand">
+          <div class="ep-row"><span class="ep bl">Account</span><span class="ep bl">Contact</span></div>
+          <div class="minid">
+            <div class="mn bl">Account</div>
+            <div class="marr"><div class="marl"></div><div class="marll">has many</div></div>
+            <div class="mn bl">Contact</div>
+            <div class="marr"><div class="marl"></div><div class="marll">served by</div></div>
+            <div class="mn gr">Branch</div>
+            <div class="marr"><div class="marl"></div><div class="marll">purchases</div></div>
+            <div class="mn pu">Base Product</div>
+          </div>
+          <p class="diagram-note">Account is the master node — not the individual. The Account → Branch relationship enables territory analytics. Account → Product enables cross-sell intelligence. Both relationships are blocked today by duplicate account records.</p>
+        </div>
+      </div>
+
+      <!-- SUPPLIER -->
+      <div class="dc" id="dc-supp" onclick="dcToggle('dc-supp')">
+        <div class="dc-top"><span class="dc-icon">📦</span><div><div class="dc-name am">Supplier Mastering</div><div class="dc-sub">Supplier &amp; Supplier Location</div></div></div>
+        <div class="dc-desc">Supplier (the golden vendor record) and Supplier Location (the specific operating site) deduplicated and governed — enabling procurement trust and M&amp;A reconciliation.</div>
+        <div class="dc-expand">
+          <div class="ep-row"><span class="ep am">Supplier</span><span class="ep am">Supplier Location</span></div>
+          <div class="minid">
+            <div class="mn am">Supplier</div>
+            <div class="marr"><div class="marl"></div><div class="marll">has many</div></div>
+            <div class="mn am">Supplier Location</div>
+            <div class="marr"><div class="marl"></div><div class="marll">provides</div></div>
+            <div class="mn pu">Base Product</div>
+            <div class="marr"><div class="marl"></div><div class="marll">ships to</div></div>
+            <div class="mn gr">Branch</div>
+          </div>
+          <p class="diagram-note">Supplier → Supplier Location models regional vendor complexity (US vs. Canada). Supplier → Product enables procurement analytics and private brand development. Supplier Location → Branch enables supply chain routing.</p>
+        </div>
+      </div>
+
+      <!-- PRODUCT -->
+      <div class="dc" id="dc-prod" onclick="dcToggle('dc-prod')">
+        <div class="dc-top"><span class="dc-icon">🌿</span><div><div class="dc-name pu">Product &amp; Packaging</div><div class="dc-sub">Base, Variant/SKU, Category, Pack Config</div></div></div>
+        <div class="dc-desc">Four entities forming the product hierarchy that powers routing, ordering, and AI attribution across the SiteOne catalog.</div>
+        <div class="dc-expand">
+          <div class="ep-row"><span class="ep pu">Base Product</span><span class="ep pu">Variant / SKU</span><span class="ep pu">Category</span><span class="ep pu">Pack Configuration</span></div>
+          <div class="minid">
+            <div class="mn pu">Base Product</div>
+            <div class="marr"><div class="marl"></div><div class="marll">has variants</div></div>
+            <div class="mn pu">Variant/SKU</div>
+            <div class="marr"><div class="marl"></div><div class="marll">packaged as</div></div>
+            <div class="mn pu">Pack Config</div>
+            <div class="marr"><div class="marl"></div><div class="marll">classified by</div></div>
+            <div class="mn st">Category</div>
+          </div>
+          <p class="diagram-note">Pack Configuration is the key missing link — product physical dimensions and weight tied to routing logic. Without it, truck load optimization and Blue Yonder PO matching cannot be automated. Base Product → Supplier links complete the supply chain picture.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /s4 -->
+
+<!-- ══ SCREEN 5: HOW IT ALL CONNECTS ══ -->
+<div class="screen" id="s5">
+  <div class="topbar">
+    <span class="eyebrow">SiteOne Data Management</span>
+    <h2>The full picture</h2>
+  </div>
+  <div class="page active" id="p-connects" style="display:block;">
+
+    <div class="graph-wrap">
+      <svg viewBox="0 0 960 310" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="ag" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#2D6A4F"/></marker>
+          <marker id="ab" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#1B365D"/></marker>
+          <marker id="aa" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#8B4A0F"/></marker>
+          <marker id="ap" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#3B1F6E"/></marker>
+          <marker id="as" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#C8C3BC"/></marker>
+        </defs>
+
+        <!-- relationship lines -->
+        <line x1="290" y1="78" x2="570" y2="78" stroke="#2D6A4F" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ag)"/>
+        <rect x="362" y="62" width="166" height="17" rx="4" fill="#FDFCFA" opacity=".95"/>
+        <text x="445" y="75" text-anchor="middle" font-size="9" fill="#2D6A4F" font-weight="600">Pack Config → Optimal Truck Load</text>
+
+        <line x1="290" y1="232" x2="570" y2="232" stroke="#1B365D" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ab)"/>
+        <rect x="348" y="236" width="194" height="17" rx="4" fill="#FDFCFA" opacity=".95"/>
+        <text x="445" y="249" text-anchor="middle" font-size="9" fill="#1B365D" font-weight="600">Account → Cross-Sell / Up-Sell</text>
+
+        <line x1="156" y1="138" x2="156" y2="188" stroke="#2D6A4F" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ag)"/>
+        <rect x="80" y="157" width="56" height="14" rx="3" fill="#FDFCFA" opacity=".95"/>
+        <text x="108" y="168" text-anchor="middle" font-size="8.5" fill="#2D6A4F" font-weight="600">Routing</text>
+
+        <line x1="724" y1="138" x2="724" y2="188" stroke="#8B4A0F" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#aa)"/>
+        <rect x="732" y="157" width="82" height="14" rx="3" fill="#FDFCFA" opacity=".95"/>
+        <text x="773" y="168" text-anchor="middle" font-size="8.5" fill="#8B4A0F" font-weight="600">Supply Chain</text>
+
+        <line x1="218" y1="220" x2="570" y2="220" stroke="#C8C3BC" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>
+        <rect x="344" y="205" width="122" height="13" rx="3" fill="#FDFCFA" opacity=".9"/>
+        <text x="405" y="215" text-anchor="middle" font-size="8" fill="#6B6560" font-style="italic">M&amp;A: all domains at once</text>
+
+        <!-- FLEET domain box -->
+        <rect x="36" y="24" width="254" height="114" rx="9" fill="#D8EFE3" stroke="#6EE7B7" stroke-width="1.5"/>
+        <text x="56" y="48" font-size="11" font-weight="700" fill="#1C4532">🚛  AI Fleet Optimization</text>
+        <rect x="56" y="57" width="60" height="19" rx="5" fill="#fff" stroke="#6EE7B7"/>
+        <text x="86" y="70" text-anchor="middle" font-size="9.5" font-weight="600" fill="#2D6A4F">Branch</text>
+        <rect x="122" y="57" width="66" height="19" rx="5" fill="#fff" stroke="#6EE7B7"/>
+        <text x="155" y="70" text-anchor="middle" font-size="9.5" font-weight="600" fill="#2D6A4F">Location</text>
+        <rect x="194" y="57" width="78" height="19" rx="5" fill="#fff" stroke="#6EE7B7"/>
+        <text x="233" y="70" text-anchor="middle" font-size="9.5" font-weight="600" fill="#2D6A4F">Fleet Asset</text>
+        <rect x="56" y="83" width="90" height="19" rx="5" fill="#fff" stroke="#6EE7B7"/>
+        <text x="101" y="96" text-anchor="middle" font-size="9.5" font-weight="600" fill="#2D6A4F">Equipment Asset</text>
+        <rect x="56" y="112" width="130" height="7" rx="3" fill="#A7F3D0"/>
+        <text x="192" y="119" font-size="8.5" fill="#2D6A4F">Fleet Compat Category</text>
+
+        <!-- PRODUCT domain box -->
+        <rect x="570" y="24" width="254" height="114" rx="9" fill="#E5DCF5" stroke="#C4B5FD" stroke-width="1.5"/>
+        <text x="590" y="48" font-size="11" font-weight="700" fill="#3B1F6E">🌿  Product &amp; Packaging</text>
+        <rect x="590" y="57" width="74" height="19" rx="5" fill="#fff" stroke="#C4B5FD"/>
+        <text x="627" y="70" text-anchor="middle" font-size="9.5" font-weight="600" fill="#3B1F6E">Base Product</text>
+        <rect x="670" y="57" width="68" height="19" rx="5" fill="#fff" stroke="#C4B5FD"/>
+        <text x="704" y="70" text-anchor="middle" font-size="9.5" font-weight="600" fill="#3B1F6E">Variant/SKU</text>
+        <rect x="590" y="83" width="62" height="19" rx="5" fill="#fff" stroke="#C4B5FD"/>
+        <text x="621" y="96" text-anchor="middle" font-size="9.5" font-weight="600" fill="#3B1F6E">Category</text>
+        <rect x="658" y="83" width="82" height="19" rx="5" fill="#fff" stroke="#C4B5FD"/>
+        <text x="699" y="96" text-anchor="middle" font-size="9.5" font-weight="600" fill="#3B1F6E">Pack Config</text>
+        <rect x="590" y="112" width="130" height="7" rx="3" fill="#DDD6FE"/>
+        <text x="726" y="119" font-size="8.5" fill="#3B1F6E">Hazmat / Reg Category</text>
+
+        <!-- CUSTOMER domain box -->
+        <rect x="36" y="188" width="254" height="90" rx="9" fill="#D6E4F0" stroke="#93C5FD" stroke-width="1.5"/>
+        <text x="56" y="212" font-size="11" font-weight="700" fill="#1B365D">🤝  Customer Personalization</text>
+        <rect x="56" y="220" width="62" height="19" rx="5" fill="#fff" stroke="#93C5FD"/>
+        <text x="87" y="233" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1B365D">Account</text>
+        <rect x="124" y="220" width="62" height="19" rx="5" fill="#fff" stroke="#93C5FD"/>
+        <text x="155" y="233" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1B365D">Contact</text>
+        <rect x="56" y="247" width="120" height="7" rx="3" fill="#BFDBFE"/>
+        <text x="182" y="254" font-size="8.5" fill="#1B365D">Segment / Channel</text>
+
+        <!-- SUPPLIER domain box -->
+        <rect x="570" y="188" width="254" height="90" rx="9" fill="#F5E6D3" stroke="#FCD34D" stroke-width="1.5"/>
+        <text x="590" y="212" font-size="11" font-weight="700" fill="#8B4A0F">📦  Supplier Mastering</text>
+        <rect x="590" y="220" width="62" height="19" rx="5" fill="#fff" stroke="#FCD34D"/>
+        <text x="621" y="233" text-anchor="middle" font-size="9.5" font-weight="600" fill="#8B4A0F">Supplier</text>
+        <rect x="658" y="220" width="96" height="19" rx="5" fill="#fff" stroke="#FCD34D"/>
+        <text x="706" y="233" text-anchor="middle" font-size="9.5" font-weight="600" fill="#8B4A0F">Supplier Location</text>
+        <rect x="590" y="247" width="120" height="7" rx="3" fill="#FDE68A"/>
+        <text x="716" y="254" font-size="8.5" fill="#8B4A0F">Cert / Contract</text>
+
+        <!-- center node -->
+        <circle cx="430" cy="155" r="32" fill="#FDFCFA" stroke="#D8D3CC" stroke-width="1.5"/>
+        <text x="430" y="150" text-anchor="middle" font-size="8.5" font-weight="700" fill="#6B6560">ONE</text>
+        <text x="430" y="162" text-anchor="middle" font-size="8.5" font-weight="700" fill="#6B6560">VERSION</text>
+        <text x="430" y="173" text-anchor="middle" font-size="7.5" fill="#C8C3BC">of truth</text>
+        <line x1="402" y1="142" x2="292" y2="112" stroke="#D8D3CC" stroke-width="1"/>
+        <line x1="402" y1="168" x2="292" y2="210" stroke="#D8D3CC" stroke-width="1"/>
+        <line x1="458" y1="142" x2="568" y2="112" stroke="#D8D3CC" stroke-width="1"/>
+        <line x1="458" y1="168" x2="568" y2="210" stroke="#D8D3CC" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="unlock-grid">
+      <div class="uc">
+        <div class="uc-dom">Pack Config ↔ Fleet Asset</div>
+        <div class="uc-title">Optimal Truck Load</div>
+        <div class="uc-body">Product pack dimensions and weight matched to truck capacity lets routing AI calculate the optimal load per delivery — reducing wasted trips and improving margin per route.</div>
+      </div>
+      <div class="uc">
+        <div class="uc-dom">Fleet Asset ↔ Account</div>
+        <div class="uc-title">Last-Mile Routing Efficiency</div>
+        <div class="uc-body">Fleet compatibility matched to customer dock type and delivery radius eliminates manual dispatcher decisions and enables route optimization AI across 720+ branches.</div>
+      </div>
+      <div class="uc">
+        <div class="uc-dom">Account ↔ Base Product</div>
+        <div class="uc-title">Cross-Sell &amp; Up-Sell</div>
+        <div class="uc-body">Purchase history at the account level, linked to a clean product catalog, drives personalized recommendations and surfaces revenue opportunities that today go unnoticed.</div>
+      </div>
+      <div class="uc">
+        <div class="uc-dom">Base Product ↔ Supplier</div>
+        <div class="uc-title">Supply Chain Optimization</div>
+        <div class="uc-body">Clean product-to-supplier linkage enables contract benchmarking, category negotiation, and private brand expansion — built on data that already exists, properly connected.</div>
+      </div>
+      <div class="uc">
+        <div class="uc-dom">Branch ↔ Account</div>
+        <div class="uc-title">Branch Capability Promise</div>
+        <div class="uc-body">The home branch relationship — hazmat handling, dock capability, service radius — determines what SiteOne can promise each account. Trusted branch data prevents broken commitments.</div>
+      </div>
+      <div class="uc">
+        <div class="uc-dom">All Four Domains</div>
+        <div class="uc-title">M&amp;A at Acquisition Speed</div>
+        <div class="uc-body">Every acquisition touches all four domains at once. A unified MDM foundation transforms a four-workstream manual project into a repeatable, accelerating process — 10–14 times a year.</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /s5 -->
+
+</div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+// ── SCREEN + PAGE NAV ──
+const allScreens = ['s1','s2','s3','s4','s5'];
+const allNavBtns = document.querySelectorAll('.ni');
+
+// page maps: screen -> [page ids]
+const screenPages = {
+  s1: ['p-heard','p-goals'],
+  s2: ['p-priority'],
+  s3: ['p-fleet-today','p-fleet-unlock','p-cust-today','p-cust-unlock','p-supp-today','p-supp-unlock','p-prod-today','p-prod-unlock'],
+  s4: ['p-explorer'],
+  s5: ['p-connects']
+};
+
+// top-bar title map per page
+const pageTitles = {
+  's1': { 'p-heard': 'What SiteOne Told Us', 'p-goals': 'What SiteOne Wants to Achieve' },
+  's3': {
+    'p-fleet-today': 'AI Fleet Optimization', 'p-fleet-unlock': 'AI Fleet Optimization',
+    'p-cust-today': 'Customer Personalization', 'p-cust-unlock': 'Customer Personalization',
+    'p-supp-today': 'Supplier Mastering', 'p-supp-unlock': 'Supplier Mastering',
+    'p-prod-today': 'Product & Packaging', 'p-prod-unlock': 'Product & Packaging'
+  }
+};
+
+// sidebar sub-item map: page -> nav id
+const pageToNsub = {
+  'p-fleet-today':'n-fleet','p-fleet-unlock':'n-fleet',
+  'p-cust-today':'n-cust','p-cust-unlock':'n-cust',
+  'p-supp-today':'n-supp','p-supp-unlock':'n-supp',
+  'p-prod-today':'n-prod','p-prod-unlock':'n-prod',
+  'p-heard':'n-heard','p-goals':'n-goals'
+};
+
+function go(screenId, pageId) {
+  // switch screen
+  allScreens.forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.classList.toggle('active', s === screenId);
+  });
+  // highlight nav item
+  allNavBtns.forEach(b => {
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.startsWith("go('"+screenId+"'"));
+  });
+  // show page within screen
+  if (pageId) showPage(screenId, pageId);
+}
+
+function showPage(screenId, pageId) {
+  const pages = screenPages[screenId] || [];
+  pages.forEach(pid => {
+    const el = document.getElementById(pid);
+    if (el) el.classList.toggle('active', pid === pageId);
+  });
+  // update top title
+  const titleEl = document.getElementById(screenId + '-title');
+  if (titleEl && pageTitles[screenId] && pageTitles[screenId][pageId]) {
+    titleEl.textContent = pageTitles[screenId][pageId];
+  }
+  // update pagenav buttons
+  document.querySelectorAll('.pnb').forEach(b => {
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.includes("'"+pageId+"'"));
+    // reset color classes
+    b.classList.remove('am','bl','pu');
+    if (b.classList.contains('active')) {
+      if (pageId.includes('cust')) b.classList.add('bl');
+      else if (pageId.includes('supp')) b.classList.add('am');
+      else if (pageId.includes('prod')) b.classList.add('pu');
+    }
+  });
+  // update sidebar sub nav
+  document.querySelectorAll('.nsi').forEach(n => n.classList.remove('active'));
+  const nsubId = pageToNsub[pageId];
+  if (nsubId) { const el = document.getElementById(nsubId); if(el) el.classList.add('active'); }
+}
+
+// ── DOMAIN EXPLORER TOGGLE ──
+const dcIds = ['dc-fleet','dc-cust','dc-supp','dc-prod'];
+function dcToggle(id) {
+  const wasOpen = document.getElementById(id).classList.contains('open');
+  dcIds.forEach(c => document.getElementById(c).classList.remove('open'));
+  if (!wasOpen) document.getElementById(id).classList.add('open');
+}
+</script>
+</body>
+</html>
