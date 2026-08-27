@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Master Recipe — Informatica MDM for Grocery & Retail</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  color-scheme: light;
+  --black:      #080808;
+  --charcoal:   #141414;
+  --dark:       #1C1C1C;
+  --steel:      #2A2A2A;
+  --copper:     #7A4E1A;
+  --copper-lt:  #B07830;
+  --saffron:    #C8980A;
+  --saffron-lt: #E8B418;
+  --parchment:  #C8A870;
+  --cream:      #F5F0E8;
+  --white:      #FDFAF4;
+  --fog:        #8A8A7A;
+  --fog-lt:     #B8B0A0;
+  --romaine:    #2A5A2A;
+  --romaine-lt: #3A7A3A;
+  --sage:       #5A7A4A;
+  --danger:     #C42020;
+  --danger-lt:  #E03030;
+  --danger-pale:#F5E8E8;
+  --warn:       #D07010;
+  --tile:       #E8E0D0;
+  --tile-grout: #C8C0B0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--black);
+  color: var(--cream);
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════
+   NAV — chalkboard style
+══════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0.85rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.4s, border-color 0.4s;
+}
+.nav.scrolled {
+  background: rgba(8,8,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(200,152,10,0.2);
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--saffron-lt);
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 1.8rem; list-style: none; }
+.nav-links a {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fog);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--saffron-lt); }
+@media(max-width:600px){ .nav-links { display:none; } }
+
+/* ══════════════════════════════════════
+   HERO — the restaurant at night
+══════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5rem 2rem 9rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, #050505 0%, #0A0A08 40%, #121208 70%, #181810 100%);
+}
+
+/* Kitchen tile floor pattern */
+.hero-tiles {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(232,224,208,0.8) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,224,208,0.8) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 1;
+}
+
+/* Hanging pot rack silhouette */
+.pot-rack {
+  position: absolute;
+  top: 8%; left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.12;
+}
+
+/* Steam wisps */
+.steam {
+  position: absolute;
+  bottom: 15%;
+  z-index: 2;
+  pointer-events: none;
+}
+.steam-wisp {
+  position: absolute;
+  width: 3px;
+  border-radius: 50%;
+  background: rgba(245,240,232,0.15);
+  animation: steamrise var(--d,4s) var(--dl,0s) ease-in infinite;
+}
+@keyframes steamrise {
+  0%   { transform: translateY(0) scaleX(1); opacity:0; height:0; }
+  20%  { opacity:0.4; }
+  80%  { opacity:0.15; }
+  100% { transform: translateY(-80px) scaleX(3); opacity:0; height:80px; }
+}
+
+/* Hero copy */
+.hero-content { position: relative; z-index: 5; }
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  color: var(--saffron-lt);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 1.0;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+.hero-title em { font-style: italic; color: var(--saffron-lt); }
+.hero-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--parchment);
+  margin-bottom: 2rem;
+}
+.hero-desc {
+  font-size: 1rem;
+  color: var(--fog);
+  max-width: 560px;
+  margin: 0 auto 3rem;
+  line-height: 1.78;
+  font-weight: 300;
+}
+
+/* Big knife / chef's hat hero art */
+.hero-art {
+  position: absolute;
+  right: 6%;
+  top: 18%;
+  z-index: 2;
+  opacity: 0.07;
+  pointer-events: none;
+  animation: artbob 8s ease-in-out infinite;
+}
+@keyframes artbob { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-10px) rotate(-3deg)} }
+
+.hero-art-left {
+  position: absolute;
+  left: 4%;
+  bottom: 20%;
+  z-index: 2;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.scroll-cue {
+  display: flex; flex-direction:column; align-items:center; gap:0.4rem;
+  color: var(--fog); font-family:'Space Mono',monospace; font-size:0.58rem;
+  letter-spacing:0.15em; text-transform:uppercase; cursor:pointer;
+  transition:color 0.2s; position:relative; z-index:5;
+}
+.scroll-cue:hover { color: var(--saffron-lt); }
+.scroll-arr {
+  width:20px; height:20px;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  transform:rotate(45deg);
+  animation: sarr 1.8s ease-in-out infinite;
+}
+@keyframes sarr { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(5px)} }
+
+/* ══════════════════════════════════════
+   WAVE / SECTION SEPARATORS
+══════════════════════════════════════ */
+.sep { width:100%; overflow:hidden; line-height:0; }
+.sep svg { display:block; }
+
+/* ══════════════════════════════════════
+   SHARED
+══════════════════════════════════════ */
+.label-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  color: var(--saffron-lt);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: block;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.12;
+  margin-bottom: 1.2rem;
+}
+.section-title em { font-style: italic; color: var(--saffron-lt); }
+.section-body {
+  font-size: 0.95rem;
+  color: var(--fog);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 640px;
+}
+
+.reveal { opacity:0; transform:translateY(22px); transition:opacity 0.6s ease,transform 0.6s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ══════════════════════════════════════
+   SECTION 1 — THE RECALL
+══════════════════════════════════════ */
+.recall-section {
+  background: var(--charcoal);
+  padding: 6rem 2rem;
+}
+.recall-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+@media(max-width:700px){ .recall-inner { grid-template-columns:1fr; gap:2rem; } }
+
+/* FDA-style recall notice */
+.recall-notice {
+  background: var(--danger-pale);
+  border: 3px solid var(--danger);
+  border-radius: 4px;
+  padding: 1.8rem;
+  position: relative;
+  color: var(--black);
+}
+.recall-notice::before {
+  content: '⚠ URGENT RECALL NOTICE ⚠';
+  display: block;
+  background: var(--danger);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-align: center;
+  padding: 0.4rem;
+  margin: -1.8rem -1.8rem 1.4rem;
+  border-radius: 1px 1px 0 0;
+}
+.recall-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--danger);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.recall-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--danger);
+  margin-bottom: 0.8rem;
+  line-height: 1.3;
+}
+.recall-body {
+  font-size: 0.78rem;
+  color: #2A1010;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+}
+.recall-fields {
+  border-top: 1px solid rgba(196,32,32,0.2);
+  padding-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.rf-row { display:flex; gap:0.5rem; align-items:baseline; }
+.rf-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--danger);
+  flex-shrink: 0;
+  min-width: 80px;
+}
+.rf-value { font-size: 0.78rem; color: #2A1010; font-weight: 500; }
+.rf-value.conflict { color: var(--danger); font-style: italic; }
+
+/* The data problem behind the recall */
+.recall-text { color: var(--cream); }
+
+/* Scatter chaos - the three conflicting records */
+.conflict-records {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.conflict-record {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 3px solid var(--danger);
+  border-radius: 3px;
+  padding: 0.8rem 1rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.conflict-record .cr-source {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--danger-lt);
+  margin-bottom: 0.3rem;
+}
+.conflict-record .cr-name { color: var(--white); font-weight: 500; margin-bottom: 0.1rem; }
+.conflict-record .cr-detail { color: var(--fog); }
+.conflict-record .cr-detail span.bad { color: var(--danger-lt); text-decoration: line-through; }
+.conflict-record .cr-detail span.warn { color: #E09030; }
+
+.conflict-arrow {
+  text-align: center;
+  color: var(--saffron-lt);
+  font-size: 1.2rem;
+  margin: 0.3rem 0;
+}
+
+/* ══════════════════════════════════════
+   SECTION 2 — MASTER RECIPE (CANONICAL)
+══════════════════════════════════════ */
+.recipe-section {
+  background: var(--dark);
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Recipe card style */
+.recipe-card-wrap {
+  display: flex;
+  justify-content: center;
+}
+.recipe-card {
+  background: var(--cream);
+  color: var(--black);
+  border-radius: 3px;
+  padding: 2.4rem 2.8rem;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+}
+/* Recipe card aged paper top edge */
+.recipe-card::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: 0; right: 0;
+  height: 4px;
+  background: var(--saffron);
+  border-radius: 3px 3px 0 0;
+}
+/* Coffee stain ring */
+.recipe-card::after {
+  content: '';
+  position: absolute;
+  bottom: 1.5rem; right: 1.5rem;
+  width: 55px; height: 55px;
+  border: 3px solid rgba(122,78,26,0.15);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(122,78,26,0.07);
+}
+
+.rc-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 0.5rem;
+}
+.rc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.2rem;
+}
+.rc-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--copper);
+  margin-bottom: 1.2rem;
+}
+.rc-divider {
+  border: none;
+  border-top: 1px solid var(--tile-grout);
+  margin-bottom: 1.2rem;
+}
+.rc-section-head {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin-bottom: 0.6rem;
+}
+.rc-ingredients { list-style: none; margin-bottom: 1.2rem; }
+.rc-ingredients li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px dashed rgba(122,78,26,0.15);
+  color: #2A2010;
+}
+.rc-ingredients li .qty {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--romaine);
+  font-weight: 700;
+}
+.rc-ingredients li .qty.verified::after { content: ' ✓'; color: var(--romaine); }
+.rc-note {
+  background: rgba(200,152,10,0.08);
+  border-left: 3px solid var(--saffron);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: #2A2010;
+  font-style: italic;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Right side text */
+.recipe-text { color: var(--cream); }
+
+/* ══════════════════════════════════════
+   SECTION 3 — THE CONTAMINATION THREAT
+   (Kitchen's version of the kraken)
+══════════════════════════════════════ */
+.threat-section {
+  background: var(--black);
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.threat-inner { max-width: 900px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
+
+/* The rotten lettuce SVG */
+.lettuce-graphic {
+  margin: 3rem auto;
+  position: relative;
+  width: min(420px, 100%);
+}
+
+.threat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+  gap: 1rem;
+  max-width: 820px;
+  margin: 2.5rem auto 0;
+}
+.threat-card {
+  background: rgba(196,32,32,0.07);
+  border: 1px solid rgba(196,32,32,0.22);
+  border-radius: 4px;
+  padding: 1.1rem;
+  text-align: left;
+}
+.tc-icon { font-size: 1.5rem; margin-bottom: 0.4rem; display: block; }
+.tc-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--danger-lt);
+  margin-bottom: 0.35rem;
+}
+.tc-body { font-size: 0.78rem; color: var(--fog); line-height: 1.65; }
+
+/* ══════════════════════════════════════
+   SECTION 4 — THE FOUR KITCHEN STATIONS
+   (The 4 Pillars)
+══════════════════════════════════════ */
+.stations-section {
+  background: var(--charcoal);
+  padding: 5rem 2rem 6rem;
+}
+.stations-header { text-align:center; margin-bottom:3.5rem; }
+
+.stations-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media(max-width:900px){ .stations-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:500px){ .stations-grid { grid-template-columns:1fr; } }
+
+/* Kitchen docket / order ticket style */
+.station-card {
+  background: var(--white);
+  color: var(--black);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+  outline: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.station-card:focus-visible { outline: 2px solid var(--saffron-lt); outline-offset: 3px; }
+.station-card:hover, .station-card.active {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* Docket top stripe — perforated edge look */
+.docket-top {
+  padding: 0.8rem 1rem 0.6rem;
+  border-bottom: 2px dashed var(--tile-grout);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.docket-station {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.docket-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  color: var(--fog);
+}
+
+/* Colored stripe per station */
+.station-card[data-s="1"] .docket-top { background: #E8F2E8; color: var(--romaine); }
+.station-card[data-s="2"] .docket-top { background: #F5EDDC; color: var(--copper); }
+.station-card[data-s="3"] .docket-top { background: #E8EDF5; color: #2A3A6A; }
+.station-card[data-s="4"] .docket-top { background: #F5EAE0; color: #6A3A1A; }
+
+/* Docket body */
+.docket-body { padding: 1rem; }
+.docket-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+.docket-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.15rem;
+}
+.docket-kitchen-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fog);
+  margin-bottom: 0.6rem;
+}
+.docket-desc {
+  font-size: 0.78rem;
+  color: #3A3A3A;
+  line-height: 1.65;
+}
+
+/* Expandable docket detail — like a longer order ticket */
+.docket-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s;
+  opacity: 0;
+}
+.station-card.active .docket-detail {
+  max-height: 400px;
+  opacity: 1;
+}
+.docket-detail-inner {
+  border-top: 1px dashed var(--tile-grout);
+  padding: 0.9rem 1rem 0.9rem;
+}
+.docket-hook {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 0.3rem;
+}
+.docket-hook-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--romaine);
+  margin-bottom: 0.6rem;
+  line-height: 1.55;
+}
+.docket-detail-body {
+  font-size: 0.78rem;
+  color: #4A4A4A;
+  line-height: 1.7;
+}
+
+/* Docket tear / perforation bottom */
+.docket-tear {
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--tile-grout) 0, var(--tile-grout) 6px,
+    transparent 6px, transparent 12px
+  );
+  opacity: 0.4;
+  margin: 0 0.5rem;
+}
+
+.docket-hint {
+  display: inline-flex; align-items:center; gap:0.3rem;
+  padding: 0 1rem 0.7rem;
+  font-family:'Space Mono',monospace; font-size:0.5rem;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--fog-lt); transition:color 0.2s;
+}
+.station-card:hover .docket-hint { color: var(--saffron); }
+.station-card.active .docket-hint { display:none; }
+
+/* ══════════════════════════════════════
+   SECTION 5 — THE FULL KITCHEN DIAGRAM
+══════════════════════════════════════ */
+.kitchen-diagram-section {
+  background: linear-gradient(180deg, var(--charcoal) 0%, var(--black) 100%);
+  padding: 5rem 2rem 7rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.kitchen-diagram-section .tile-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image:
+    linear-gradient(rgba(232,224,208,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,224,208,1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+.footer {
+  background: var(--black);
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(200,152,10,0.15);
+}
+.footer::before {
+  content: '🍽';
+  position: absolute;
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  font-size:18rem;
+  opacity:0.02;
+  pointer-events:none;
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--saffron-lt);
+  margin-bottom: 0.5rem;
+}
+.footer-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--fog);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.footer-desc {
+  font-size: 0.9rem;
+  color: var(--fog);
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  line-height: 1.75;
+  font-weight: 300;
+}
+.footer-cta {
+  display: inline-block;
+  background: var(--saffron);
+  color: var(--black);
+  padding: 0.85rem 2.2rem;
+  border-radius: 2px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.2s;
+}
+.footer-cta:hover { background: var(--saffron-lt); transform: translateY(-2px); }
+.footer-credit {
+  margin-top: 3rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  color: rgba(245,240,232,0.15);
+  text-transform: uppercase;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .steam-wisp, .hero-art, .scroll-arr { animation:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav" role="navigation">
+  <span class="nav-logo">🍽 The Master Recipe · Informatica MDM</span>
+  <ul class="nav-links">
+    <li><a href="#recall">The Recall</a></li>
+    <li><a href="#recipe">The Master Recipe</a></li>
+    <li><a href="#threat">The Threat</a></li>
+    <li><a href="#stations">Kitchen Stations</a></li>
+    <li><a href="#diagram">The Full Kitchen</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-tiles" aria-hidden="true"></div>
+
+  <!-- Steam wisps from pots -->
+  <div class="steam" style="left:20%;" aria-hidden="true">
+    <div class="steam-wisp" style="left:0;--d:3.5s;--dl:0s;height:40px;"></div>
+    <div class="steam-wisp" style="left:8px;--d:4s;--dl:1.2s;height:50px;"></div>
+    <div class="steam-wisp" style="left:16px;--d:3s;--dl:0.6s;height:35px;"></div>
+  </div>
+  <div class="steam" style="right:18%;" aria-hidden="true">
+    <div class="steam-wisp" style="left:0;--d:4s;--dl:0.8s;height:45px;"></div>
+    <div class="steam-wisp" style="left:10px;--d:3.2s;--dl:0s;height:38px;"></div>
+  </div>
+
+  <!-- Knife silhouette -->
+  <div class="hero-art" aria-hidden="true">
+    <svg width="80" height="340" viewBox="0 0 80 340" xmlns="http://www.w3.org/2000/svg">
+      <path d="M35,0 L45,0 L50,220 L30,220 Z" fill="var(--cream)"/>
+      <path d="M30,220 L50,220 L52,260 L28,260 Z" fill="var(--cream)" opacity="0.6"/>
+      <rect x="28" y="258" width="24" height="80" rx="3" fill="var(--copper-lt)" opacity="0.8"/>
+    </svg>
+  </div>
+  <div class="hero-art-left" aria-hidden="true">
+    <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+      <!-- Chef's hat -->
+      <ellipse cx="70" cy="100" rx="50" ry="15" fill="var(--cream)" opacity="0.8"/>
+      <rect x="30" y="55" width="80" height="50" rx="0" fill="var(--cream)"/>
+      <ellipse cx="70" cy="55" rx="45" ry="30" fill="var(--cream)"/>
+      <ellipse cx="70" cy="55" rx="35" ry="22" fill="var(--cream)" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Informatica · Intelligent Master Data Management</p>
+    <h1 class="hero-title" id="hero-title">The <em>Master</em><br>Recipe</h1>
+    <p class="hero-subtitle">A Chef's Guide to Clean Grocery & Retail Data</p>
+    <p class="hero-desc">
+      Your supplier data lives in three different systems with three different spellings of the same farm. Your product data has four UPC codes for one SKU. When the FDA calls about contaminated romaine, you'll find out exactly what bad data costs — in fines, in headlines, and in lives.
+    </p>
+    <a href="#recall" class="scroll-cue" aria-label="Enter the kitchen">
+      <div class="scroll-arr" aria-hidden="true"></div>
+      Enter the Kitchen
+    </a>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#050505;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="#141414"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 1: THE RECALL ══════════════════ -->
+<section class="recall-section" id="recall" aria-labelledby="recall-heading">
+  <div class="recall-inner">
+
+    <!-- The recall notice -->
+    <div class="recall-notice reveal" role="alert" aria-label="Example FDA recall notice">
+      <div class="recall-logo">U.S. Food & Drug Administration · Class I Recall</div>
+      <p class="recall-headline">Voluntary Recall: Romaine Lettuce — E. coli O157:H7 Risk</p>
+      <p class="recall-body">
+        A multi-state outbreak has been linked to romaine lettuce supplied by <strong>Greenfield Farms LLC</strong>. The FDA is requesting immediate removal of all implicated product from retail shelves. Retailers must identify and pull all affected SKUs within 4 hours of notification.
+      </p>
+      <div class="recall-fields">
+        <div class="rf-row"><span class="rf-label">Supplier:</span><span class="rf-value conflict">3 conflicting records found</span></div>
+        <div class="rf-row"><span class="rf-label">SKU Count:</span><span class="rf-value conflict">Varies by system (14 / 19 / 22?)</span></div>
+        <div class="rf-row"><span class="rf-label">Stores:</span><span class="rf-value conflict">Cannot confirm — hierarchy unknown</span></div>
+        <div class="rf-row"><span class="rf-label">Pull time:</span><span class="rf-value conflict">4 hrs required · 11 hrs actual</span></div>
+        <div class="rf-row" style="margin-top:0.5rem; padding-top:0.5rem; border-top:1px dashed rgba(196,32,32,0.3);">
+          <span class="rf-label">Root cause:</span><span class="rf-value" style="color:var(--danger); font-weight:600;">No unified supplier record. Data lived in three systems with three names.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- The data story behind it -->
+    <div class="reveal recall-text">
+      <span class="label-tag">🥬 The Real Ingredient Problem</span>
+      <h2 class="section-title" id="recall-heading">The Recall Didn't<br>Fail in the Field.<br>It Failed in <em>Your Data.</em></h2>
+      <p class="section-body" style="margin-bottom:1.5rem;">
+        The FDA knew within hours. Your systems didn't. Because "Greenfield Farms LLC," "Greenfield Farm," and "GF Farms - Lettuce Div." were three separate supplier records across your ERP, procurement, and food safety systems — none linked, none reconciled.
+      </p>
+
+      <div class="conflict-records" role="list" aria-label="Three conflicting supplier records for the same farm">
+        <div class="conflict-record" role="listitem">
+          <div class="cr-source">ERP · Supplier #4471</div>
+          <div class="cr-name">Greenfield Farms LLC</div>
+          <div class="cr-detail">SKUs: <span class="bad">14 mapped</span> · Stores: <span class="bad">Regional only</span></div>
+        </div>
+        <div class="conflict-arrow" aria-hidden="true">⚔️ vs ⚔️</div>
+        <div class="conflict-record" role="listitem">
+          <div class="cr-source">Procurement · Vendor V-8821</div>
+          <div class="cr-name">Greenfield Farm</div>
+          <div class="cr-detail">SKUs: <span class="bad">19 mapped</span> · Stores: <span class="warn">All banners</span></div>
+        </div>
+        <div class="conflict-arrow" aria-hidden="true">⚔️ vs ⚔️</div>
+        <div class="conflict-record" role="listitem">
+          <div class="cr-source">Food Safety · FS-003-GF</div>
+          <div class="cr-name">GF Farms – Lettuce Div.</div>
+          <div class="cr-detail">SKUs: <span class="bad">22 mapped</span> · Stores: <span class="bad">Incomplete</span></div>
+        </div>
+      </div>
+
+      <p class="section-body" style="margin-top:1rem; font-size:0.85rem; font-style:italic; color:var(--fog-lt);">
+        With a Canonical Anchor, one recall notice triggers one search across one authoritative record — and every impacted SKU, in every store, under every banner, surfaces in minutes. Not hours.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#141414;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,0 720,40 1080,20 C1260,10 1380,30 1440,20 L1440,40 L0,40 Z" fill="#1C1C1C"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 2: THE MASTER RECIPE (CANONICAL ANCHOR) ══ -->
+<section class="recipe-section" id="recipe" aria-labelledby="recipe-heading">
+  <div style="max-width:960px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;">
+    <div style="grid-column:1" class="recipe-text reveal">
+      <span class="label-tag">📋 The Canonical Anchor</span>
+      <h2 class="section-title" id="recipe-heading">Every Great Kitchen<br>Has a <em>Master Recipe.</em></h2>
+      <p class="section-body" style="margin-bottom:1.2rem;">
+        The best restaurants don't let every chef improvise the béchamel from scratch. There's one master recipe, written down, authoritative — and every station works from it. That's exactly what the Canonical Anchor does for your supplier, product, and customer data.
+      </p>
+      <p class="section-body" style="margin-bottom:1.2rem;">
+        It's not a "golden record" sitting in a cold storage drawer. It's the living, active master recipe — continuously updated, field-verified across every source, and instantly accessible to every station in your enterprise kitchen.
+      </p>
+      <p class="section-body">
+        When the FDA calls, you don't search four systems. You pull one card and every answer is already there: supplier name, certified SKUs, store distribution, parent company, food safety certifications. <strong style="color:var(--cream);">One card. Total confidence.</strong>
+      </p>
+    </div>
+
+    <!-- The actual recipe card -->
+    <div style="grid-column:2" class="recipe-card-wrap reveal">
+      <div class="recipe-card" role="img" aria-label="Master Recipe card: Canonical Anchor for Greenfield Farms LLC">
+        <p class="rc-eyebrow">⚓ Canonical Anchor · CA-00-4471</p>
+        <h3 class="rc-title">Greenfield Farms LLC</h3>
+        <p class="rc-subtitle">Master Supplier Record — Produce / Leafy Greens</p>
+        <hr class="rc-divider"/>
+        <p class="rc-section-head">Verified Ingredients (Source Fields)</p>
+        <ul class="rc-ingredients" aria-label="Verified supplier record fields">
+          <li><span>Legal Name</span><span class="qty verified">Greenfield Farms LLC</span></li>
+          <li><span>ERP ID</span><span class="qty verified">Supplier #4471</span></li>
+          <li><span>Procurement ID</span><span class="qty verified">Vendor V-8821</span></li>
+          <li><span>Food Safety ID</span><span class="qty verified">FS-003-GF</span></li>
+          <li><span>Active SKUs</span><span class="qty verified">22 (resolved)</span></li>
+          <li><span>Store Distribution</span><span class="qty verified">All 847 banners</span></li>
+          <li><span>Parent Company</span><span class="qty verified">GreenCo Holdings</span></li>
+          <li><span>Certifications</span><span class="qty verified">GAP · Organic · FSMA</span></li>
+        </ul>
+        <p class="rc-note">
+          Chef's note: All three source records tethered and traceable. Pull time in a recall scenario: <strong>under 8 minutes</strong>. Previous best: 11 hours.
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <style>
+    @media(max-width:700px){
+      .recipe-section > div { grid-template-columns:1fr !important; }
+      .recipe-section > div > div[style*="grid-column:2"] { grid-column:1 !important; }
+    }
+  </style>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#1C1C1C;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="#080808"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 3: THE THREAT (Contamination / bad data) ══ -->
+<section class="threat-section" id="threat" aria-labelledby="threat-heading">
+  <div class="threat-inner">
+    <div class="reveal">
+      <span class="label-tag">☠️ What Contaminates Your Data</span>
+      <h2 class="section-title" id="threat-heading">Bad Data Spreads<br>Like <em>Contamination.</em></h2>
+      <p class="section-body" style="margin:0 auto; text-align:center;">
+        In food safety, contamination moves fast and quietly — invisible until people get sick. Bad master data does the same thing. By the time it surfaces in a wrong report, a failed recall, or a missed supplier risk, it's already been in your systems for years.
+      </p>
+    </div>
+
+    <!-- Rotten lettuce / contamination SVG -->
+    <div class="lettuce-graphic reveal" aria-hidden="true">
+      <svg width="100%" viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="rotGrad" cx="50%" cy="60%" r="50%">
+            <stop offset="0%" stop-color="#4A1A1A" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+          <filter id="blur2"><feGaussianBlur stdDeviation="3"/></filter>
+        </defs>
+        <!-- Shadow -->
+        <ellipse cx="210" cy="200" rx="140" ry="16" fill="rgba(0,0,0,0.5)"/>
+        <!-- Contamination glow -->
+        <ellipse cx="210" cy="130" rx="160" ry="80" fill="url(#rotGrad)"/>
+
+        <!-- Big wilted lettuce leaves -->
+        <!-- Leaf 1 (back left, wilted down) -->
+        <path d="M210,130 C170,100 100,90 60,110 C40,120 45,145 70,148 C110,153 170,140 210,130 Z" fill="#2A4A1A" opacity="0.7"/>
+        <path d="M210,130 C170,105 110,98 70,115 C55,122 58,138 78,142 C115,148 170,138 210,130 Z" fill="#3A6020" opacity="0.8"/>
+        <!-- Rot spots on leaf 1 -->
+        <ellipse cx="100" cy="125" rx="12" ry="8" fill="#1A3010" opacity="0.6"/>
+        <ellipse cx="130" cy="118" rx="8" ry="5" fill="#0A1A08" opacity="0.7"/>
+        <ellipse cx="80" cy="132" rx="9" ry="6" fill="#1A2A10" opacity="0.5"/>
+
+        <!-- Leaf 2 (back right, wilted) -->
+        <path d="M210,130 C250,100 320,90 360,110 C380,120 375,145 350,148 C310,153 250,140 210,130 Z" fill="#2A4A1A" opacity="0.7"/>
+        <path d="M210,130 C250,105 310,98 350,115 C365,122 362,138 342,142 C305,148 250,138 210,130 Z" fill="#3A6020" opacity="0.8"/>
+        <!-- Rot spots -->
+        <ellipse cx="300" cy="125" rx="11" ry="7" fill="#1A3010" opacity="0.6"/>
+        <ellipse cx="330" cy="118" rx="7" ry="5" fill="#0A1A08" opacity="0.7"/>
+
+        <!-- Central leaves (front, most visible, worst rot) -->
+        <path d="M210,160 C180,120 150,90 140,60 C138,50 148,40 158,48 C172,58 188,88 210,120 Z" fill="#2A5018" opacity="0.9"/>
+        <path d="M210,160 C180,125 155,95 148,65 C146,54 154,44 163,52 C176,62 192,92 210,125 Z" fill="#3A6820"/>
+        <path d="M210,160 C240,120 270,90 280,60 C282,50 272,40 262,48 C248,58 232,88 210,120 Z" fill="#2A5018" opacity="0.9"/>
+        <path d="M210,160 C240,125 265,95 272,65 C274,54 266,44 257,52 C244,62 228,92 210,125 Z" fill="#3A6820"/>
+
+        <!-- Central rot — the "contaminated" core -->
+        <ellipse cx="210" cy="155" rx="30" ry="20" fill="#1A3010"/>
+        <ellipse cx="210" cy="153" rx="22" ry="14" fill="#2A1808" opacity="0.8"/>
+        <ellipse cx="210" cy="151" rx="14" ry="9" fill="#1A0E06" opacity="0.9"/>
+
+        <!-- Hazard symbol overlay -->
+        <circle cx="210" cy="152" r="18" fill="none" stroke="rgba(196,32,32,0.5)" stroke-width="2"/>
+        <text x="210" y="158" font-size="14" text-anchor="middle" fill="rgba(196,32,32,0.7)">☣</text>
+
+        <!-- Wilting veins on leaves -->
+        <path d="M158,48 Q175,80 185,115 Q195,135 210,150" stroke="#1A3010" stroke-width="1.5" fill="none" opacity="0.5"/>
+        <path d="M262,48 Q245,80 235,115 Q225,135 210,150" stroke="#1A3010" stroke-width="1.5" fill="none" opacity="0.5"/>
+        <path d="M70,115 Q130,122 175,132 Q195,136 210,140" stroke="#1A3010" stroke-width="1" fill="none" opacity="0.4"/>
+        <path d="M350,115 Q290,122 245,132 Q225,136 210,140" stroke="#1A3010" stroke-width="1" fill="none" opacity="0.4"/>
+
+        <!-- Warning tags on leaves -->
+        <rect x="82" y="105" width="52" height="18" rx="2" fill="rgba(196,32,32,0.85)"/>
+        <text x="108" y="117" font-family="monospace" font-size="7.5" text-anchor="middle" fill="white" font-weight="bold">DUPLICATE</text>
+
+        <rect x="278" y="105" width="58" height="18" rx="2" fill="rgba(196,32,32,0.85)"/>
+        <text x="307" y="117" font-family="monospace" font-size="7.5" text-anchor="middle" fill="white" font-weight="bold">NO LINEAGE</text>
+
+        <rect x="155" y="52" width="46" height="18" rx="2" fill="rgba(208,112,16,0.9)"/>
+        <text x="178" y="64" font-family="monospace" font-size="7.5" text-anchor="middle" fill="white" font-weight="bold">STALE SKU</text>
+
+        <rect x="219" y="52" width="56" height="18" rx="2" fill="rgba(208,112,16,0.9)"/>
+        <text x="247" y="64" font-family="monospace" font-size="7.5" text-anchor="middle" fill="white" font-weight="bold">BLIND HIER.</text>
+      </svg>
+    </div>
+
+    <!-- Four contamination threats -->
+    <div class="threat-cards reveal" role="list" aria-label="Four ways bad data contaminates your enterprise">
+      <div class="threat-card" role="listitem">
+        <span class="tc-icon" aria-hidden="true">🦠</span>
+        <p class="tc-title">The Duplicate Pathogen</p>
+        <p class="tc-body">Three records for the same supplier breed like bacteria. Each one spawns inconsistent SKU mappings, wrong order histories, and a recall you can't trace to the source.</p>
+      </div>
+      <div class="threat-card" role="listitem">
+        <span class="tc-icon" aria-hidden="true">📦</span>
+        <p class="tc-title">The Missing Lineage Toxin</p>
+        <p class="tc-body">Cleaning data without preserving lineage is like washing the kitchen but throwing away the HACCP log. The auditor wants the history. "We deleted it" is not an answer.</p>
+      </div>
+      <div class="threat-card" role="listitem">
+        <span class="tc-icon" aria-hidden="true">🏢</span>
+        <p class="tc-title">The Hidden Hierarchy Mold</p>
+        <p class="tc-body">You buy romaine from three "different" suppliers — until a recall reveals they all grow in the same valley under the same parent company. One bad harvest. Total exposure.</p>
+      </div>
+      <div class="threat-card" role="listitem">
+        <span class="tc-icon" aria-hidden="true">🕰️</span>
+        <p class="tc-title">The Stale Data Spoilage</p>
+        <p class="tc-body">A golden record that isn't connected to live supply chain signals is produce past its sell-by date. Looks fine in the system. Already a liability on the shelf.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#080808;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="#141414"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 4: THE 4 KITCHEN STATIONS ══ -->
+<section class="stations-section" id="stations" aria-labelledby="stations-heading">
+  <div class="stations-header reveal">
+    <span class="label-tag">👨‍🍳 Your Kitchen Stations</span>
+    <h2 class="section-title" id="stations-heading" style="color:var(--cream);">Four Stations.<br><em>One Flawless Service.</em></h2>
+    <p style="color:var(--fog); font-size:0.9rem; max-width:500px; margin:0 auto; line-height:1.7; font-weight:300;">
+      Every professional kitchen runs on stations. Each one owns a part of the mise en place. Click any ticket to read the full order.
+    </p>
+  </div>
+
+  <div class="stations-grid" role="list">
+
+    <!-- STATION 1: The Anchor — Garde Manger (cold station, foundational) -->
+    <article class="station-card reveal" data-s="1" role="listitem" tabindex="0" aria-expanded="false">
+      <div class="docket-top">
+        <span class="docket-station">⚓ Garde Manger</span>
+        <span class="docket-num">#01</span>
+      </div>
+      <div class="docket-body">
+        <span class="docket-icon" aria-hidden="true">⚓</span>
+        <p class="docket-title">The Anchor</p>
+        <p class="docket-kitchen-name">Station: Definitive Truth · Cold Prep</p>
+        <p class="docket-desc">Preps the foundational record that every other station cooks from. One canonical supplier, product, or customer ID — resolved from every source system, locked in as the mise en place of record.</p>
+        <div class="docket-detail" aria-hidden="true">
+          <div class="docket-detail-inner">
+            <p class="docket-hook">Head Chef's Note</p>
+            <p class="docket-hook-text">"Eliminates the kitchen argument about which prep sheet to follow."</p>
+            <p class="docket-detail-body">Every system has its own version of your supplier record — the ERP calls them one thing, procurement calls them another. The Anchor picks the best-verified value per field across all sources and locks it in. When the recall call comes at 2am, one search, one answer, no argument between stations.</p>
+          </div>
+        </div>
+      </div>
+      <div class="docket-tear" aria-hidden="true"></div>
+      <span class="docket-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Read the order
+      </span>
+    </article>
+
+    <!-- STATION 2: The Chain — Sous vide / Pastry (precision, traceability) -->
+    <article class="station-card reveal" data-s="2" role="listitem" tabindex="0" aria-expanded="false">
+      <div class="docket-top">
+        <span class="docket-station">⛓️ Pastry · Precision</span>
+        <span class="docket-num">#02</span>
+      </div>
+      <div class="docket-body">
+        <span class="docket-icon" aria-hidden="true">⛓️</span>
+        <p class="docket-title">The Chain</p>
+        <p class="docket-kitchen-name">Station: Traceable Lineage · Provenance</p>
+        <p class="docket-desc">Keeps the full provenance of every record intact — which farm, which field, which harvest date. Every upstream source ID stays tethered to the canonical record. No history lost.</p>
+        <div class="docket-detail" aria-hidden="true">
+          <div class="docket-detail-inner">
+            <p class="docket-hook">Head Chef's Note</p>
+            <p class="docket-hook-text">"Guarantees the chain of custody. Compliance auditors can taste the difference."</p>
+            <p class="docket-detail-body">Farm-to-fork traceability isn't just a marketing promise — it's an FDA requirement. The Chain permanently links your Canonical Anchor back to every legacy system ID so you can trace any product back to its source in seconds. A recall with clean lineage takes minutes. Without it, it takes days — or becomes a class-action.</p>
+          </div>
+        </div>
+      </div>
+      <div class="docket-tear" aria-hidden="true"></div>
+      <span class="docket-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Read the order
+      </span>
+    </article>
+
+    <!-- STATION 3: The Chart — Expeditor (knows the whole dining room) -->
+    <article class="station-card reveal" data-s="3" role="listitem" tabindex="0" aria-expanded="false">
+      <div class="docket-top">
+        <span class="docket-station">🧭 The Expeditor</span>
+        <span class="docket-num">#03</span>
+      </div>
+      <div class="docket-body">
+        <span class="docket-icon" aria-hidden="true">🧭</span>
+        <p class="docket-title">The Chart</p>
+        <p class="docket-kitchen-name">Station: Network Context · Relationships</p>
+        <p class="docket-desc">Maps who owns whom — supplier parent companies, banner hierarchies, private label relationships. Reveals the hidden connections that change everything about risk and revenue.</p>
+        <div class="docket-detail" aria-hidden="true">
+          <div class="docket-detail-inner">
+            <p class="docket-hook">Head Chef's Note</p>
+            <p class="docket-hook-text">"Drives category revenue and exposes the supply risks hiding in plain sight."</p>
+            <p class="docket-detail-body">Your three "different" romaine suppliers share a parent company and grow in overlapping fields — one contamination event hits all three. The Chart makes that visible before the recall, not during it. For category buyers, it also reveals which supplier relationships represent consolidated negotiating leverage — and which leave you exposed.</p>
+          </div>
+        </div>
+      </div>
+      <div class="docket-tear" aria-hidden="true"></div>
+      <span class="docket-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Read the order
+      </span>
+    </article>
+
+    <!-- STATION 4: The Net — Line cook (hot, live, reactive) -->
+    <article class="station-card reveal" data-s="4" role="listitem" tabindex="0" aria-expanded="false">
+      <div class="docket-top">
+        <span class="docket-station">🌐 Sauté · Hot Line</span>
+        <span class="docket-num">#04</span>
+      </div>
+      <div class="docket-body">
+        <span class="docket-icon" aria-hidden="true">🌐</span>
+        <p class="docket-title">The Net</p>
+        <p class="docket-kitchen-name">Station: Behavioral Integration · Live Data</p>
+        <p class="docket-desc">The hot line. Bridges master supplier and product identity straight into live POS signals, inventory movements, order streams, and customer purchase behavior — in real time.</p>
+        <div class="docket-detail" aria-hidden="true">
+          <div class="docket-detail-inner">
+            <p class="docket-hook">Head Chef's Note</p>
+            <p class="docket-hook-text">"Turns static supplier records into live commercial intelligence."</p>
+            <p class="docket-detail-body">A recipe card in a filing cabinet doesn't cook dinner. The Net ensures your master data is wired directly into every active system — POS, replenishment, supply chain signals, customer behavior. When demand spikes for an item or a supplier ships short, you know in real time and adjust before the shelf goes empty or the waste mounts.</p>
+          </div>
+        </div>
+      </div>
+      <div class="docket-tear" aria-hidden="true"></div>
+      <span class="docket-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Read the order
+      </span>
+    </article>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 5: THE FULL KITCHEN DIAGRAM ══ -->
+<section class="kitchen-diagram-section" id="diagram" aria-labelledby="diagram-heading">
+  <div class="tile-bg" aria-hidden="true"></div>
+
+  <div class="reveal" style="position:relative;z-index:2;">
+    <span class="label-tag">🍽 The Full Kitchen</span>
+    <h2 class="section-title" id="diagram-heading">From Chaos to<br><em>Michelin Stars.</em></h2>
+    <p style="color:var(--fog); font-size:0.9rem; max-width:520px; margin:0 auto 1rem; line-height:1.7; font-weight:300;">
+      Four stations. One head chef. One master recipe. Here's how it all comes together.
+    </p>
+  </div>
+
+  <div class="reveal" style="max-width:920px; margin:2.5rem auto 0; position:relative; z-index:2;">
+    <svg width="100%" viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Diagram: four kitchen stations feed the master recipe, past the contamination threat, to a Michelin-starred service">
+      <defs>
+        <marker id="chefArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10z" fill="#E8B418"/>
+        </marker>
+        <radialGradient id="plateGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C8980A" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <radialGradient id="dangerGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C42020" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Kitchen floor tiles -->
+      <rect width="880" height="280" rx="6" fill="#0E0E0E"/>
+      <line x1="0" y1="260" x2="880" y2="260" stroke="rgba(232,224,208,0.06)" stroke-width="1"/>
+
+      <!-- ── FOUR STATION BOXES ── -->
+      <!-- Station 1: Anchor -->
+      <rect x="8" y="55" width="138" height="148" rx="4" fill="rgba(42,90,42,0.18)" stroke="rgba(42,90,42,0.45)" stroke-width="1.5"/>
+      <rect x="8" y="55" width="138" height="24" rx="4" fill="rgba(42,90,42,0.4)"/>
+      <text x="77" y="71" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#6AAA6A" letter-spacing="0.5">GARDE MANGER</text>
+      <text x="77" y="100" font-family="serif" font-size="20" text-anchor="middle" fill="#F0E8D0">⚓</text>
+      <text x="77" y="120" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Anchor</text>
+      <text x="77" y="134" font-family="monospace" font-size="7" text-anchor="middle" fill="#788A98" letter-spacing="0.5">DEFINITIVE TRUTH</text>
+      <line x1="25" y1="143" x2="129" y2="143" stroke="rgba(42,90,42,0.3)" stroke-width="1"/>
+      <text x="77" y="157" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">One record.</text>
+      <text x="77" y="170" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">Zero arguments.</text>
+      <text x="77" y="192" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.35)" font-style="italic">ERP · CRM · Billing</text>
+
+      <!-- Station 2: Chain -->
+      <rect x="160" y="55" width="138" height="148" rx="4" fill="rgba(122,78,26,0.18)" stroke="rgba(122,78,26,0.4)" stroke-width="1.5"/>
+      <rect x="160" y="55" width="138" height="24" rx="4" fill="rgba(122,78,26,0.4)"/>
+      <text x="229" y="71" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#C0904A" letter-spacing="0.5">PASTRY · PRECISION</text>
+      <text x="229" y="100" font-family="serif" font-size="20" text-anchor="middle" fill="#F0E8D0">⛓️</text>
+      <text x="229" y="120" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Chain</text>
+      <text x="229" y="134" font-family="monospace" font-size="7" text-anchor="middle" fill="#788A98" letter-spacing="0.5">TRACEABLE LINEAGE</text>
+      <line x1="178" y1="143" x2="280" y2="143" stroke="rgba(122,78,26,0.3)" stroke-width="1"/>
+      <text x="229" y="157" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">Full provenance.</text>
+      <text x="229" y="170" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">Audit-ready.</text>
+      <text x="229" y="192" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.35)" font-style="italic">Farm · Field · Harvest</text>
+
+      <!-- Station 3: Chart -->
+      <rect x="312" y="55" width="138" height="148" rx="4" fill="rgba(42,58,106,0.18)" stroke="rgba(42,58,106,0.45)" stroke-width="1.5"/>
+      <rect x="312" y="55" width="138" height="24" rx="4" fill="rgba(42,58,106,0.4)"/>
+      <text x="381" y="71" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#7A9ACC" letter-spacing="0.5">THE EXPEDITOR</text>
+      <text x="381" y="100" font-family="serif" font-size="20" text-anchor="middle" fill="#F0E8D0">🧭</text>
+      <text x="381" y="120" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Chart</text>
+      <text x="381" y="134" font-family="monospace" font-size="7" text-anchor="middle" fill="#788A98" letter-spacing="0.5">NETWORK CONTEXT</text>
+      <line x1="330" y1="143" x2="432" y2="143" stroke="rgba(42,58,106,0.3)" stroke-width="1"/>
+      <text x="381" y="157" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">See the whole</text>
+      <text x="381" y="170" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">supplier network.</text>
+      <text x="381" y="192" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.35)" font-style="italic">Hierarchy · Risk · Revenue</text>
+
+      <!-- Station 4: Net -->
+      <rect x="464" y="55" width="138" height="148" rx="4" fill="rgba(106,58,26,0.18)" stroke="rgba(106,58,26,0.4)" stroke-width="1.5"/>
+      <rect x="464" y="55" width="138" height="24" rx="4" fill="rgba(106,58,26,0.4)"/>
+      <text x="533" y="71" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#C0884A" letter-spacing="0.5">SAUTÉ · HOT LINE</text>
+      <text x="533" y="100" font-family="serif" font-size="20" text-anchor="middle" fill="#F0E8D0">🌐</text>
+      <text x="533" y="120" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Net</text>
+      <text x="533" y="134" font-family="monospace" font-size="7" text-anchor="middle" fill="#788A98" letter-spacing="0.5">LIVE SIGNALS</text>
+      <line x1="482" y1="143" x2="584" y2="143" stroke="rgba(106,58,26,0.3)" stroke-width="1"/>
+      <text x="533" y="157" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">Real-time POS.</text>
+      <text x="533" y="170" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.5)">Live supply chain.</text>
+      <text x="533" y="192" font-family="sans-serif" font-size="8" text-anchor="middle" fill="rgba(240,232,208,0.35)" font-style="italic">POS · Inventory · Demand</text>
+
+      <!-- Connector arrows between stations -->
+      <line x1="148" y1="130" x2="158" y2="130" stroke="#E8B418" stroke-width="1.5" marker-end="url(#chefArrow)" opacity="0.55"/>
+      <line x1="300" y1="130" x2="310" y2="130" stroke="#E8B418" stroke-width="1.5" marker-end="url(#chefArrow)" opacity="0.55"/>
+      <line x1="452" y1="130" x2="462" y2="130" stroke="#E8B418" stroke-width="1.5" marker-end="url(#chefArrow)" opacity="0.55"/>
+
+      <!-- ── MAIN SERVICE ARROW ── -->
+      <line x1="606" y1="130" x2="646" y2="130" stroke="#E8B418" stroke-width="2.5" marker-end="url(#chefArrow)"/>
+      <text x="626" y="120" font-family="monospace" font-size="7" text-anchor="middle" fill="#E8B418" letter-spacing="0.5">SERVICE</text>
+
+      <!-- ── CONTAMINATION THREAT (small) in path ── -->
+      <circle cx="640" cy="210" r="28" fill="url(#dangerGlow)"/>
+      <!-- Small wilted lettuce -->
+      <ellipse cx="640" cy="210" rx="22" ry="14" fill="#1A3010"/>
+      <text x="640" y="215" font-size="12" text-anchor="middle" fill="#2A5018">🥬</text>
+      <text x="640" y="215" font-size="11" text-anchor="middle" fill="rgba(196,32,32,0.7)">☣</text>
+      <!-- Crossed out -->
+      <line x1="616" y1="196" x2="664" y2="224" stroke="rgba(196,32,32,0.6)" stroke-width="2.5"/>
+      <line x1="664" y1="196" x2="616" y2="224" stroke="rgba(196,32,32,0.6)" stroke-width="2.5"/>
+      <circle cx="640" cy="210" r="24" fill="none" stroke="rgba(196,32,32,0.4)" stroke-width="2"/>
+      <text x="640" y="244" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(196,32,32,0.55)" letter-spacing="0.5">NEUTRALISED</text>
+
+      <!-- Cannonball — recall response shot -->
+      <path d="M380,170 Q510,160 612,200" stroke="rgba(200,152,10,0.45)" stroke-width="1.5" stroke-dasharray="4,4" fill="none"/>
+      <circle cx="612" cy="200" r="5" fill="#C8980A" opacity="0.7"/>
+
+      <!-- ── THE PLATED DISH / DESTINATION ── -->
+      <circle cx="780" cy="130" r="62" fill="url(#plateGlow)"/>
+      <!-- Plate -->
+      <ellipse cx="780" cy="140" rx="52" ry="10" fill="#2A2A2A"/>
+      <ellipse cx="780" cy="136" rx="50" ry="9" fill="#383838"/>
+      <ellipse cx="780" cy="133" rx="46" ry="8" fill="#F5F0E8"/>
+      <ellipse cx="780" cy="131" rx="42" ry="7" fill="#FDFAF4"/>
+      <!-- Food on plate — beautifully presented -->
+      <ellipse cx="780" cy="130" rx="26" ry="10" fill="#3A6820" opacity="0.9"/>
+      <ellipse cx="775" cy="127" rx="12" ry="5" fill="#4A7828"/>
+      <ellipse cx="785" cy="128" rx="10" ry="4" fill="#5A8830"/>
+      <circle cx="780" cy="124" r="5" fill="#E8B418"/>
+      <!-- Michelin stars -->
+      <text x="770" y="116" font-size="9" fill="#E8B418">⭐</text>
+      <text x="780" y="110" font-size="9" fill="#E8B418">⭐</text>
+      <text x="790" y="116" font-size="9" fill="#E8B418">⭐</text>
+      <!-- Sauce drizzle -->
+      <path d="M756,134 Q770,128 780,130 Q790,132 804,128" stroke="rgba(200,152,10,0.7)" stroke-width="1.5" fill="none"/>
+      <!-- Plate label -->
+      <text x="780" y="168" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#E8B418">Michelin Service</text>
+      <text x="780" y="182" font-family="monospace" font-size="7" text-anchor="middle" fill="#788A98" letter-spacing="0.5">YOUR DESTINATION</text>
+      <!-- Cloche handle -->
+      <ellipse cx="780" cy="80" rx="32" ry="22" fill="rgba(50,50,50,0.4)" stroke="rgba(200,152,10,0.3)" stroke-width="1"/>
+      <text x="780" y="86" font-family="monospace" font-size="9" text-anchor="middle" fill="rgba(200,152,10,0.5)" letter-spacing="1">MDM</text>
+      <circle cx="780" cy="65" r="6" fill="#3A3A3A" stroke="#C8980A" stroke-width="1.5"/>
+
+      <!-- Recall speed badge -->
+      <rect x="695" y="58" width="96" height="32" rx="3" fill="rgba(42,90,42,0.7)" stroke="rgba(42,90,42,0.8)" stroke-width="1"/>
+      <text x="743" y="70" font-family="monospace" font-size="7" text-anchor="middle" fill="#6AAA6A" letter-spacing="0.3">RECALL RESPONSE</text>
+      <text x="743" y="82" font-family="Georgia,serif" font-size="9" font-weight="bold" text-anchor="middle" fill="#F0E8D0">11hrs → 8min</text>
+
+    </svg>
+  </div>
+
+  <!-- Legend -->
+  <div style="display:flex; justify-content:center; gap:1.8rem; margin-top:2rem; flex-wrap:wrap;" class="reveal" aria-hidden="true">
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fog);">⚓ Anchor — Definitive Truth</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fog);">⛓️ Chain — Lineage</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fog);">🧭 Chart — Network</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fog);">🌐 Net — Live Signals</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(196,80,80,0.7);">☣ Contamination — Neutralised</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--saffron-lt);">⭐ Michelin Service — Your Reward</span>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════ -->
+<footer class="footer" aria-labelledby="footer-heading">
+  <p class="footer-logo">The Master Recipe</p>
+  <p class="footer-tag">Informatica · Intelligent Master Data Management · Grocery & Retail</p>
+  <p class="footer-desc">
+    Your data has always been the ingredient list. The four pillars are the kitchen that turns chaos into a dish worth serving — fast enough to pull a recall in minutes, smart enough to see supplier risk before it blooms.
+  </p>
+  <a href="#stations" class="footer-cta">Read the Kitchen Orders</a>
+  <p class="footer-credit">Click any station docket to read the full brief · Informatica MDM · Built for grocery, retail, and every business where data quality is a matter of safety</p>
+</footer>
+
+<script>
+// Nav scroll
+(function(){
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60), {passive:true});
+})();
+
+// Station card toggle
+(function(){
+  const cards = document.querySelectorAll('.station-card');
+  cards.forEach(card => {
+    function toggle(){
+      const was = card.classList.contains('active');
+      cards.forEach(c => {
+        c.classList.remove('active');
+        c.setAttribute('aria-expanded','false');
+        const d = c.querySelector('.docket-detail');
+        if(d) d.setAttribute('aria-hidden','true');
+      });
+      if(!was){
+        card.classList.add('active');
+        card.setAttribute('aria-expanded','true');
+        const d = card.querySelector('.docket-detail');
+        if(d) d.setAttribute('aria-hidden','false');
+      }
+    }
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', e => {
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }
+    });
+  });
+})();
+
+// Scroll reveal
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, {threshold:0.08});
+    els.forEach(el => obs.observe(el));
+  } else {
+    els.forEach(el => el.classList.add('visible'));
+  }
+})();
+</script>
+</body>
+</html>
