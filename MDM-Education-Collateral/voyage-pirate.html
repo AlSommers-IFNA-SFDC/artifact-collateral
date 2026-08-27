@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Four Pillars · Dead Data's Chest — Pirate Theme</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  color-scheme: light;
+  --black:    #0A0A0A;
+  --darkwood: #1A1008;
+  --wood:     #2E1C06;
+  --rust:     #7A1E10;
+  --blood:    #A82218;
+  --gold:     #C9880A;
+  --gold-lt:  #F0AE1A;
+  --aged:     #8C7B5C;
+  --parchment:#D4B896;
+  --fog:      #5A6870;
+  --ocean:    #0C2030;
+  --ocean-lt: #143040;
+  --green-dk: #0A1A0A;
+  --white:    #F5EDD8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  overflow: hidden;
+}
+
+.stage {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── STORMY SKY ──────────────────────────────────── */
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    #060606 0%,
+    #0A0E14 25%,
+    #0C1820 50%,
+    #0C2030 72%,
+    #0C2A3C 100%
+  );
+  z-index: 0;
+}
+
+/* Storm clouds */
+.clouds {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Stars — fewer, dimmer, stormy */
+.stars { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--parchment);
+  animation: twinkle var(--d,5s) var(--delay,0s) infinite ease-in-out;
+}
+@keyframes twinkle {
+  0%,100%{opacity:0} 50%{opacity:var(--op,0.3)}
+}
+
+/* Skull & crossbones watermark */
+.skull-bg {
+  position: absolute;
+  right: -2%;
+  top: 5%;
+  font-size: 22rem;
+  opacity: 0.025;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Lightning flash */
+.lightning {
+  position: absolute;
+  top: 5%; right: 20%;
+  z-index: 3;
+  pointer-events: none;
+  animation: flash 9s ease-in-out infinite;
+  opacity: 0;
+}
+.lightning path { fill: #E0D060; }
+@keyframes flash {
+  0%,7%,100%{ opacity:0 }
+  3%,5%{ opacity:0.7 }
+}
+
+/* ── OCEAN ─────────────────────────────────────── */
+.ocean-layer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 36%;
+  z-index: 3;
+}
+.wave-svg {
+  position: absolute;
+  width: 200%;
+  bottom: 0;
+}
+.w1 { animation: wscroll 12s linear infinite; }
+.w2 { animation: wscroll 8s linear infinite reverse; bottom: 8px; }
+.w3 { animation: wscroll 16s linear infinite; bottom: 0; }
+@keyframes wscroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* ── CONTENT ─────────────────────────────────────── */
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.4rem 2rem 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.header-left .eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  color: var(--gold-lt);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.header-left h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--white);
+}
+
+.header-left h1 em {
+  font-style: italic;
+  color: var(--gold-lt);
+}
+
+.header-right {
+  text-align: right;
+  max-width: 280px;
+}
+.header-right p {
+  font-size: 0.75rem;
+  color: var(--aged);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.header-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+  opacity: 0.35;
+}
+
+/* ── VOYAGE DIAGRAM ──────────────────────────────── */
+.voyage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 0;
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Aged parchment card style */
+.pillar {
+  background: rgba(44,28,6,0.6);
+  border: 1px solid rgba(196,146,10,0.2);
+  border-radius: 3px;
+  padding: 1rem 0.9rem;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Aged paper texture via pseudo-element */
+.pillar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(196,146,10,0.015) 20px,
+    rgba(196,146,10,0.015) 40px
+  );
+  pointer-events: none;
+}
+
+.pillar:hover, .pillar.active {
+  background: rgba(60,38,8,0.75);
+  border-color: rgba(240,174,26,0.5);
+  transform: translateY(-3px);
+}
+
+.pillar[data-n="1"] { border-top: 3px solid #1A6470; }
+.pillar[data-n="2"] { border-top: 3px solid var(--gold); }
+.pillar[data-n="3"] { border-top: 3px solid #1A3A5C; }
+.pillar[data-n="4"] { border-top: 3px solid #28583A; }
+
+/* Icon watermark */
+.pillar::after {
+  content: attr(data-icon);
+  position: absolute;
+  bottom: -0.3rem; right: 0.2rem;
+  font-size: 4.5rem;
+  opacity: 0.04;
+  pointer-events: none;
+  line-height: 1;
+  transition: opacity 0.3s;
+  z-index: 0;
+}
+.pillar:hover::after, .pillar.active::after { opacity: 0.1; }
+
+.pillar > * { position: relative; z-index: 1; }
+
+.pillar-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: var(--aged);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+.pillar-ico { font-size: 1.6rem; margin-bottom: 0.4rem; }
+.pillar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+  color: var(--white);
+}
+.pillar-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--aged);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.pillar-body {
+  font-size: 0.72rem;
+  color: rgba(245,237,216,0.6);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.pillar-expand {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.3s;
+  opacity: 0;
+  position: relative;
+  z-index: 1;
+}
+.pillar.active .pillar-expand {
+  max-height: 200px;
+  opacity: 1;
+}
+.pillar-expand-inner {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(196,146,10,0.2);
+  font-size: 0.7rem;
+  color: rgba(245,237,216,0.5);
+  line-height: 1.6;
+  font-style: italic;
+}
+.pillar-expand-inner strong {
+  display: block;
+  font-style: normal;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-lt);
+  margin-bottom: 0.2rem;
+}
+
+/* ── ARROW ─────────────────────────────────────── */
+.voyage-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.2rem;
+  flex-shrink: 0;
+  gap: 0.3rem;
+}
+
+.arrow-shaft {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #1A6470, var(--gold-lt));
+  position: relative;
+  border-radius: 2px;
+}
+.arrow-shaft::after {
+  content: '';
+  position: absolute;
+  right: -8px; top: -5px;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid var(--gold-lt);
+}
+
+.arrow-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  color: var(--gold-lt);
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+  white-space: nowrap;
+}
+
+/* ── DESTINATION: TREASURE ───────────────────────── */
+.destination {
+  flex-shrink: 0;
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.treasure-graphic {
+  width: 160px;
+  height: 160px;
+}
+
+.dest-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--gold-lt);
+}
+.dest-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: var(--aged);
+  text-transform: uppercase;
+  text-align: center;
+}
+.dest-tagline {
+  font-size: 0.68rem;
+  color: var(--aged);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 160px;
+  font-style: italic;
+}
+
+/* ── BOTTOM X-MARKS-THE-SPOT ROW ─────────────────── */
+.xrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 0.8rem;
+  flex-shrink: 0;
+}
+.xseg {
+  height: 2px;
+  flex: 1;
+  max-width: 80px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--gold) 0, var(--gold) 4px,
+    transparent 4px, transparent 10px
+  );
+  opacity: 0.4;
+}
+.xlabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--aged);
+  text-transform: uppercase;
+  padding: 0 0.5rem;
+}
+.xmark {
+  font-size: 0.75rem;
+  color: var(--gold);
+  opacity: 0.6;
+}
+
+.footnote {
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+  color: rgba(245,237,216,0.18);
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Chest glow animation */
+@keyframes glowpulse {
+  0%,100%{ filter: drop-shadow(0 0 6px rgba(240,174,26,0.3)); }
+  50%     { filter: drop-shadow(0 0 18px rgba(240,174,26,0.65)); }
+}
+.chest-glow {
+  animation: glowpulse 3s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="sky" aria-hidden="true"></div>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <div class="skull-bg" aria-hidden="true">☠️</div>
+
+  <!-- Lightning -->
+  <svg class="lightning" width="40" height="80" viewBox="0 0 40 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M28,0 L12,38 L22,38 L10,80 L32,30 L20,30 Z"/>
+  </svg>
+
+  <!-- Storm clouds -->
+  <svg class="clouds" viewBox="0 0 1440 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.18;">
+    <path d="M-50,80 Q50,40 150,80 Q250,120 350,60 Q450,20 550,70 Q650,110 750,50 Q850,10 950,60 Q1050,100 1150,50 Q1250,10 1350,60 Q1420,90 1490,50 L1490,0 L-50,0 Z" fill="#1a2530"/>
+    <path d="M-50,120 Q100,70 200,110 Q320,150 420,90 Q540,40 650,100 Q760,150 870,80 Q980,30 1100,90 Q1210,140 1350,80 Q1430,50 1490,90 L1490,0 L-50,0 Z" fill="#141c24" opacity="0.7"/>
+  </svg>
+
+  <!-- Ocean -->
+  <div class="ocean-layer" aria-hidden="true">
+    <svg class="wave-svg w1" viewBox="0 0 1440 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,70 C240,110 480,30 720,70 C960,110 1200,30 1440,70 L1440,140 L0,140 Z" fill="#0C2840" opacity="0.8"/>
+      <path d="M1440,70 C1200,110 960,30 720,70 C480,110 240,30 0,70 L0,140 L1440,140 Z" fill="#0C2840" opacity="0.5"/>
+    </svg>
+    <svg class="wave-svg w2" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,50 C360,90 720,10 1080,50 C1260,70 1380,30 1440,50 L1440,120 L0,120 Z" fill="#0A1E2E" opacity="0.7"/>
+    </svg>
+    <svg class="wave-svg w3" viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,40 C180,60 360,20 540,40 C720,60 900,20 1080,40 C1260,60 1380,20 1440,40 L1440,80 L0,80 Z" fill="#0A0A0A"/>
+      <path d="M1440,40 C1260,60 1080,20 900,40 C720,60 540,20 360,40 C180,60 60,20 0,40 L0,80 L1440,80 Z" fill="#0A0A0A" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+
+    <header class="page-header">
+      <div class="header-left">
+        <p class="eyebrow">☠️ Informatica · Dead Data's Chest</p>
+        <h1>X Marks the Truth.<br><em>Claim the Gold.</em></h1>
+      </div>
+      <div class="header-right">
+        <p>Every siloed sea chart leads to different treasure. Four pillars are your map to the real prize — a single, incorruptible identity for every customer and supplier. The data that was always yours, finally plundered from the chaos.</p>
+      </div>
+    </header>
+    <div class="header-divider"></div>
+
+    <div class="voyage" role="main">
+
+      <!-- 4 Pillar Cards -->
+      <div class="pillars" role="list" aria-label="The four pillars: your treasure map">
+
+        <article class="pillar" data-n="1" data-icon="⚓" role="listitem" tabindex="0" aria-expanded="false">
+          <p class="pillar-num">First Mark</p>
+          <span class="pillar-ico" aria-hidden="true">⚓</span>
+          <p class="pillar-title">The Anchor</p>
+          <p class="pillar-sub">Claim Your Territory</p>
+          <p class="pillar-body">One canonical ID to rule them all. Resolves the conflict between every silo — ERP, CRM, billing — and hoists one flag over the absolute truth of every record.</p>
+          <div class="pillar-expand" aria-hidden="true">
+            <div class="pillar-expand-inner">
+              <strong>The Plunder</strong>
+              No more debating which system holds the real gold. Leadership gets one trusted map — no rivals, no duplicates, no mutiny from conflicting data.
+            </div>
+          </div>
+        </article>
+
+        <article class="pillar" data-n="2" data-icon="⛓️" role="listitem" tabindex="0" aria-expanded="false">
+          <p class="pillar-num">Second Mark</p>
+          <span class="pillar-ico" aria-hidden="true">⛓️</span>
+          <p class="pillar-title">The Chain</p>
+          <p class="pillar-sub">Guard the Lineage</p>
+          <p class="pillar-body">Permanently tethers the Canonical ID to every legacy system ID — preserving the full chain of custody, so no auditor or regulator can claim the gold was stolen.</p>
+          <div class="pillar-expand" aria-hidden="true">
+            <div class="pillar-expand-inner">
+              <strong>The Plunder</strong>
+              Pirates who erase history lose their alibi. The Chain keeps every record's provenance intact — bulletproof for audits, unbreakable for compliance.
+            </div>
+          </div>
+        </article>
+
+        <article class="pillar" data-n="3" data-icon="🧭" role="listitem" tabindex="0" aria-expanded="false">
+          <p class="pillar-num">Third Mark</p>
+          <span class="pillar-ico" aria-hidden="true">🧭</span>
+          <p class="pillar-title">The Chart</p>
+          <p class="pillar-sub">Map the Fleet</p>
+          <p class="pillar-body">Reveals the hidden armada — corporate hierarchies, supplier dependencies, buyer-seller overlaps. See who controls whom before the enemy fleet surprises you.</p>
+          <div class="pillar-expand" aria-hidden="true">
+            <div class="pillar-expand-inner">
+              <strong>The Plunder</strong>
+              Sales discovers treasure up the account hierarchy. Procurement spots when three "different" suppliers are all flying the same flag — one vulnerability, one risk, one target.
+            </div>
+          </div>
+        </article>
+
+        <article class="pillar" data-n="4" data-icon="🌐" role="listitem" tabindex="0" aria-expanded="false">
+          <p class="pillar-num">Fourth Mark</p>
+          <span class="pillar-ico" aria-hidden="true">🌐</span>
+          <p class="pillar-title">The Net</p>
+          <p class="pillar-sub">Cast for Live Signals</p>
+          <p class="pillar-body">Dead data in a warehouse is buried treasure no one can spend. The Net bridges master identity into live transactions and behavioral signals — gold you can actually use.</p>
+          <div class="pillar-expand" aria-hidden="true">
+            <div class="pillar-expand-inner">
+              <strong>The Plunder</strong>
+              Real-time signals turn historical records into active intelligence. React to customer shifts and supply chain storms before the competition even sees the weather changing.
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Voyage Arrow -->
+      <div class="voyage-arrow" aria-hidden="true">
+        <div class="arrow-shaft"></div>
+        <div class="arrow-text">Follow the map</div>
+      </div>
+
+      <!-- Destination: Treasure Chest -->
+      <div class="destination" role="complementary" aria-label="The destination: the treasure">
+
+        <svg class="treasure-graphic chest-glow" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <radialGradient id="goldGlow" cx="50%" cy="60%" r="50%">
+              <stop offset="0%" stop-color="#F0AE1A" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="coinGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#F0AE1A" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#8C6010" stop-opacity="1"/>
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Ground glow -->
+          <ellipse cx="80" cy="138" rx="55" ry="10" fill="url(#goldGlow)"/>
+
+          <!-- Scattered coins -->
+          <ellipse cx="40" cy="140" rx="9" ry="4" fill="#C9880A"/>
+          <ellipse cx="40" cy="140" rx="7" ry="2.5" fill="#F0AE1A"/>
+          <ellipse cx="60" cy="145" rx="8" ry="3.5" fill="#C9880A"/>
+          <ellipse cx="60" cy="145" rx="6" ry="2" fill="#F0AE1A"/>
+          <ellipse cx="110" cy="143" rx="9" ry="4" fill="#C9880A"/>
+          <ellipse cx="110" cy="143" rx="7" ry="2.5" fill="#F0AE1A"/>
+          <ellipse cx="125" cy="138" rx="7" ry="3" fill="#C9880A"/>
+          <ellipse cx="125" cy="138" rx="5" ry="2" fill="#F0AE1A"/>
+          <ellipse cx="30" cy="133" rx="6" ry="2.5" fill="#C9880A"/>
+
+          <!-- Coin stack rising from chest -->
+          <ellipse cx="80" cy="80" rx="18" ry="7" fill="#8C6010"/>
+          <rect x="62" y="55" width="36" height="25" fill="#8C6010"/>
+          <ellipse cx="80" cy="55" rx="18" ry="7" fill="#C9880A"/>
+          <rect x="62" y="42" width="36" height="13" fill="#A07818"/>
+          <ellipse cx="80" cy="42" rx="18" ry="7" fill="#D4940E"/>
+          <rect x="62" y="30" width="36" height="12" fill="#B88010"/>
+          <ellipse cx="80" cy="30" rx="18" ry="7" fill="#F0AE1A"/>
+          <!-- Top coin shine -->
+          <ellipse cx="76" cy="29" rx="5" ry="2" fill="rgba(255,240,180,0.5)"/>
+
+          <!-- Treasure chest body -->
+          <rect x="22" y="105" width="116" height="50" rx="4" fill="#4A2A08"/>
+          <!-- Wood grain -->
+          <line x1="22" y1="120" x2="138" y2="120" stroke="#3A1E04" stroke-width="1.5"/>
+          <line x1="22" y1="132" x2="138" y2="132" stroke="#3A1E04" stroke-width="1.5"/>
+          <line x1="22" y1="144" x2="138" y2="144" stroke="#3A1E04" stroke-width="1.5"/>
+          <!-- Iron bands -->
+          <rect x="22" y="103" width="116" height="7" rx="1" fill="#2A1A04"/>
+          <rect x="22" y="149" width="116" height="7" rx="1" fill="#2A1A04"/>
+          <rect x="55" y="103" width="12" height="53" rx="1" fill="#1E1404"/>
+          <rect x="93" y="103" width="12" height="53" rx="1" fill="#1E1404"/>
+
+          <!-- Chest lid (open, leaning back) -->
+          <path d="M22,108 Q80,80 138,108 L138,103 Q80,70 22,103 Z" fill="#5A3210"/>
+          <path d="M22,103 Q80,70 138,103" stroke="#3A2008" stroke-width="2" fill="none"/>
+          <!-- Lid iron rim -->
+          <path d="M22,103 Q80,70 138,103 L138,108 Q80,75 22,108 Z" fill="#2A1A04" opacity="0.7"/>
+          <!-- Lid hinge -->
+          <rect x="74" y="98" width="12" height="8" rx="2" fill="#C9880A"/>
+          <circle cx="80" cy="102" r="3" fill="#F0AE1A"/>
+
+          <!-- Lock / latch on front -->
+          <rect x="72" y="115" width="16" height="14" rx="3" fill="#C9880A"/>
+          <rect x="74" y="117" width="12" height="10" rx="2" fill="#8C6010"/>
+          <circle cx="80" cy="122" r="3" fill="#F0AE1A" filter="url(#glow)"/>
+
+          <!-- Gold overflow glow -->
+          <ellipse cx="80" cy="82" rx="22" ry="8" fill="rgba(240,174,26,0.12)"/>
+
+          <!-- Stars of gold sparkle -->
+          <circle cx="55" cy="60" r="2" fill="#F0AE1A" opacity="0.9"/>
+          <circle cx="108" cy="55" r="1.5" fill="#F0AE1A" opacity="0.8"/>
+          <circle cx="65" cy="45" r="1" fill="#F0AE1A" opacity="0.7"/>
+          <circle cx="100" cy="48" r="1.5" fill="#F0AE1A" opacity="0.6"/>
+
+          <!-- X marks the spot on chest side -->
+          <line x1="30" y1="112" x2="44" y2="126" stroke="#C9880A" stroke-width="2" opacity="0.5"/>
+          <line x1="44" y1="112" x2="30" y2="126" stroke="#C9880A" stroke-width="2" opacity="0.5"/>
+        </svg>
+
+        <p class="dest-label">Dead Data's Chest</p>
+        <p class="dest-sub">The real prize</p>
+        <p class="dest-tagline">"The data ye plundered from your silos — now worth its weight in gold."</p>
+      </div>
+
+    </div><!-- /voyage -->
+
+    <!-- X marks the spot row -->
+    <div class="xrow" aria-hidden="true">
+      <span class="xmark">✕</span>
+      <div class="xseg"></div>
+      <span class="xlabel">Anchor · Chain · Chart · Net</span>
+      <div class="xseg"></div>
+      <span class="xmark">✕</span>
+      <div class="xseg"></div>
+      <span class="xlabel">One Canonical Anchor</span>
+      <div class="xseg"></div>
+      <span class="xmark">✕</span>
+      <div class="xseg"></div>
+      <span class="xlabel">X marks the truth</span>
+      <div class="xseg"></div>
+      <span class="xmark">✕</span>
+    </div>
+
+    <p class="footnote">Informatica · Intelligent Master Data Management · Click any pillar to claim the knowledge</p>
+
+  </div><!-- /content -->
+</div><!-- /stage -->
+
+<script>
+// Stars — dim, stormy
+(function(){
+  const c = document.getElementById('stars');
+  for(let i=0;i<50;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random()*1.5+0.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*40}%;--d:${(Math.random()*6+4).toFixed(1)}s;--delay:${(Math.random()*8).toFixed(1)}s;--op:${(Math.random()*0.3+0.1).toFixed(2)}`;
+    c.appendChild(s);
+  }
+})();
+
+// Pillar toggle
+(function(){
+  const cards = document.querySelectorAll('.pillar');
+  cards.forEach(card => {
+    function toggle(){
+      const was = card.classList.contains('active');
+      cards.forEach(c => { c.classList.remove('active'); c.setAttribute('aria-expanded','false'); });
+      if(!was){ card.classList.add('active'); card.setAttribute('aria-expanded','true'); }
+    }
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  });
+})();
+</script>
+</body>
+</html>

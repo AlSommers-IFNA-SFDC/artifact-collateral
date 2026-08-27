@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Navigating the Chaotic Waters of Enterprise Data — Informatica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    color-scheme: light;
+    --navy:    #0A1628;
+    --deep:    #061020;
+    --teal:    #1E6B72;
+    --teal-lt: #2A8F98;
+    --brass:   #B8860B;
+    --brass-lt:#D4A017;
+    --mist:    #8BA3B0;
+    --salt:    #F0F4F5;
+    --white:   #FFFFFF;
+    --fog:     #D0DDE3;
+
+    --pillar1: #1E6B72;
+    --pillar2: #5C4A1E;
+    --pillar3: #1A3A5C;
+    --pillar4: #2C5F2E;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--salt);
+    color: var(--navy);
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ─────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    background: var(--deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem 8rem;
+    overflow: hidden;
+  }
+
+  /* Star field */
+  .stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    animation: twinkle var(--d, 4s) var(--delay, 0s) infinite ease-in-out;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; }
+    50%       { opacity: var(--max-op, 0.7); }
+  }
+
+  /* Animated ocean at hero bottom */
+  .hero-waves {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 160px;
+    overflow: hidden;
+  }
+
+  .wave-svg {
+    position: absolute;
+    bottom: 0;
+    width: 200%;
+    height: 100%;
+  }
+
+  .wave-svg path {
+    fill: var(--teal);
+    opacity: 0.18;
+  }
+
+  .wave-1 { animation: wave-scroll 9s linear infinite; }
+  .wave-2 { animation: wave-scroll 13s linear infinite reverse; opacity: 0.6; }
+  .wave-3 {
+    bottom: 0;
+    animation: wave-scroll 7s linear infinite;
+  }
+  .wave-3 path { fill: var(--navy); opacity: 1; }
+
+  @keyframes wave-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Hero typography */
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--brass-lt);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    line-height: 1.05;
+    color: var(--white);
+    max-width: 820px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--teal-lt);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--mist);
+    max-width: 580px;
+    margin-bottom: 2.8rem;
+    font-weight: 300;
+  }
+
+  .scroll-cue {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--mist);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  .scroll-cue:hover { color: var(--brass-lt); }
+
+  .scroll-arrow {
+    width: 24px;
+    height: 24px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    animation: bob 1.8s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50%       { transform: rotate(45deg) translateY(5px); }
+  }
+
+  /* Lost ship illustration in hero */
+  .ship-illustration {
+    position: absolute;
+    right: 8%;
+    bottom: 140px;
+    opacity: 0.12;
+    font-size: 8rem;
+    animation: drift 6s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50%       { transform: translateY(-12px) rotate(3deg); }
+  }
+
+  /* ─── SECTION WAVE DIVIDER ─────────────────────────── */
+  .wave-divider {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    background: var(--navy);
+  }
+  .wave-divider.flip { transform: rotate(180deg); }
+  .wave-divider svg { display: block; }
+
+  /* ─── INTRO / PROBLEM SECTION ──────────────────────── */
+  .section-intro {
+    background: var(--navy);
+    padding: 6rem 2rem;
+    text-align: center;
+    color: var(--white);
+  }
+
+  .section-intro .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--brass-lt);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    max-width: 680px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.2;
+  }
+
+  .section-intro p {
+    color: var(--mist);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* ─── CANONICAL ANCHOR INTRO ────────────────────────── */
+  .ca-section {
+    background: var(--navy);
+    padding: 4rem 2rem 6rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ca-card {
+    background: linear-gradient(135deg, #0d2137 0%, #0A1628 100%);
+    border: 1px solid var(--teal);
+    border-left: 4px solid var(--brass);
+    border-radius: 4px;
+    padding: 2.5rem 3rem;
+    max-width: 760px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ca-card::before {
+    content: '⚓';
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 7rem;
+    opacity: 0.06;
+    pointer-events: none;
+  }
+
+  .ca-card .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--brass-lt);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .ca-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--white);
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .ca-card p {
+    color: var(--mist);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* ─── PILLARS SECTION ───────────────────────────────── */
+  .pillars-section {
+    background: var(--salt);
+    padding: 5rem 2rem 7rem;
+  }
+
+  .pillars-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .pillars-header .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .pillars-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 0.8rem;
+  }
+
+  .pillars-header p {
+    color: var(--mist);
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* Pillar grid */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 900px) {
+    .pillars-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .pillars-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pillar-card {
+    background: var(--white);
+    border-radius: 6px;
+    border: 1px solid var(--fog);
+    padding: 2.2rem 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    outline: none;
+  }
+
+  .pillar-card:focus-visible {
+    outline: 3px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  .pillar-card:hover,
+  .pillar-card.active {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(10, 22, 40, 0.15);
+  }
+
+  /* Per-pillar accent color via data attribute */
+  .pillar-card[data-pillar="1"] { border-top: 4px solid var(--pillar1); }
+  .pillar-card[data-pillar="2"] { border-top: 4px solid var(--brass); }
+  .pillar-card[data-pillar="3"] { border-top: 4px solid var(--pillar3); }
+  .pillar-card[data-pillar="4"] { border-top: 4px solid var(--pillar4); }
+
+  .pillar-card[data-pillar="1"]:hover,
+  .pillar-card[data-pillar="1"].active { border-color: var(--pillar1); }
+  .pillar-card[data-pillar="2"]:hover,
+  .pillar-card[data-pillar="2"].active { border-color: var(--brass); }
+  .pillar-card[data-pillar="3"]:hover,
+  .pillar-card[data-pillar="3"].active { border-color: var(--pillar3); }
+  .pillar-card[data-pillar="4"]:hover,
+  .pillar-card[data-pillar="4"].active { border-color: var(--pillar4); }
+
+  /* Watermark emoji */
+  .pillar-card::before {
+    content: attr(data-icon);
+    position: absolute;
+    bottom: -0.5rem;
+    right: 0.5rem;
+    font-size: 6rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    line-height: 1;
+    filter: grayscale(0.3);
+  }
+
+  .pillar-card:hover::before,
+  .pillar-card.active::before {
+    opacity: 0.07;
+  }
+
+  .pillar-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--mist);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .pillar-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+  }
+
+  .pillar-tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--mist);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .pillar-summary {
+    font-size: 0.9rem;
+    color: #4A5568;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* Expandable detail panel */
+  .pillar-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  .pillar-card.active .pillar-detail {
+    max-height: 600px;
+    opacity: 1;
+  }
+
+  .pillar-detail-inner {
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--fog);
+  }
+
+  .pillar-hook {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .pillar-hook-text {
+    font-size: 0.88rem;
+    color: var(--teal);
+    font-style: italic;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .pillar-body {
+    font-size: 0.88rem;
+    color: #4A5568;
+    line-height: 1.75;
+  }
+
+  .expand-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mist);
+    transition: color 0.2s;
+  }
+
+  .pillar-card:hover .expand-hint {
+    color: var(--teal);
+  }
+
+  .pillar-card.active .expand-hint { display: none; }
+
+  .expand-hint svg {
+    transition: transform 0.3s;
+  }
+
+  /* ─── HOW THEY CONNECT ──────────────────────────────── */
+  .connect-section {
+    background: var(--navy);
+    padding: 6rem 2rem;
+    text-align: center;
+    color: var(--white);
+  }
+
+  .connect-section .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--brass-lt);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .connect-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    max-width: 620px;
+    margin: 0 auto 3rem;
+    line-height: 1.2;
+  }
+
+  /* Ship diagram */
+  .ship-diagram {
+    max-width: 760px;
+    margin: 0 auto 3rem;
+    position: relative;
+  }
+
+  .diagram-svg-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .connect-desc {
+    color: var(--mist);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* ─── FOOTER CTA ────────────────────────────────────── */
+  .footer-cta {
+    background: var(--deep);
+    padding: 5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer-cta::before {
+    content: '⚓';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20rem;
+    opacity: 0.03;
+    pointer-events: none;
+  }
+
+  .footer-cta .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--brass-lt);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .footer-cta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--white);
+    font-weight: 900;
+    margin-bottom: 1rem;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-cta p {
+    color: var(--mist);
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--teal);
+    color: var(--white);
+    padding: 0.9rem 2.5rem;
+    border-radius: 3px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+  }
+
+  .cta-btn:hover {
+    background: var(--teal-lt);
+    transform: translateY(-2px);
+  }
+
+  .footer-credits {
+    margin-top: 4rem;
+    color: #3A4A58;
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ─── NAVIGATION ────────────────────────────────────── */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+
+  .nav.scrolled {
+    background: rgba(6, 16, 32, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--brass-lt);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mist);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+  }
+
+  /* ─── PILLAR RELATIONSHIP DIAGRAM ───────────────────── */
+  .rel-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .rel-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .rel-node {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    text-align: center;
+    cursor: default;
+    transition: background 0.25s, border-color 0.25s;
+    min-width: 120px;
+  }
+
+  .rel-node:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: var(--teal-lt);
+  }
+
+  .rel-node .node-icon { font-size: 1.6rem; display: block; margin-bottom: 0.3rem; }
+  .rel-node .node-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    color: var(--white);
+    font-weight: 700;
+  }
+  .rel-node .node-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--mist);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  .rel-arrow-v {
+    display: flex;
+    justify-content: center;
+    padding: 0.4rem 0;
+    color: var(--teal-lt);
+    font-size: 1.2rem;
+  }
+
+  .rel-arrow-h {
+    color: var(--teal-lt);
+    font-size: 1.2rem;
+    padding: 0 0.4rem;
+  }
+
+  .rel-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--mist);
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+
+  /* ─── REDUCED MOTION ────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .wave-1, .wave-2, .wave-3,
+    .ship-illustration, .scroll-arrow {
+      animation: none;
+    }
+  }
+
+  /* ─── REVEAL ON SCROLL ──────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav" role="navigation" aria-label="Primary">
+  <span class="nav-logo">Informatica · Intelligent MDM</span>
+  <ul class="nav-links">
+    <li><a href="#pillars">The 4 Pillars</a></li>
+    <li><a href="#how-they-connect">How They Connect</a></li>
+    <li><a href="#cta">Chart Your Course</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+
+  <!-- Starfield (built by JS) -->
+  <div class="stars" id="stars" aria-hidden="true"></div>
+
+  <div class="ship-illustration" aria-hidden="true">⛵</div>
+
+  <p class="hero-eyebrow">Informatica · Intelligent Master Data</p>
+  <h1 class="hero-title" id="hero-title">
+    Stop Drifting.<br><em>Drop Anchor.</em>
+  </h1>
+  <p class="hero-sub">
+    Your enterprise data is scattered across siloed seas — conflicting records, broken lineage, invisible relationships, and no connection to live signals. It's time to navigate with a single, authoritative source of truth.
+  </p>
+
+  <a href="#intro" class="scroll-cue" aria-label="Scroll down to explore">
+    <div class="scroll-arrow" aria-hidden="true"></div>
+    Set Sail
+  </a>
+
+  <!-- Animated waves -->
+  <div class="hero-waves" aria-hidden="true">
+    <svg class="wave-svg wave-1" viewBox="0 0 1440 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,80 C240,120 480,40 720,80 C960,120 1200,40 1440,80 L1440,160 L0,160 Z" />
+      <path d="M1440,80 C1200,120 960,40 720,80 C480,120 240,40 0,80 L0,160 L1440,160 Z" />
+    </svg>
+    <svg class="wave-svg wave-2" viewBox="0 0 1440 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,60 C360,100 720,20 1080,60 C1260,80 1380,40 1440,60 L1440,160 L0,160 Z" />
+      <path d="M1440,60 C1080,100 720,20 360,60 C180,80 60,40 0,60 L0,160 L1440,160 Z" />
+    </svg>
+    <svg class="wave-svg wave-3" viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,40 C180,60 360,20 540,40 C720,60 900,20 1080,40 C1260,60 1380,20 1440,40 L1440,80 L0,80 Z" />
+      <path d="M1440,40 C1260,60 1080,20 900,40 C720,60 540,20 360,40 C180,60 60,20 0,40 L0,80 L1440,80 Z" />
+    </svg>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="section-intro" id="intro" aria-labelledby="intro-heading">
+  <div class="reveal">
+    <p class="label">The Problem at Sea</p>
+    <h2 id="intro-heading">Every silos island thinks it's the mainland.</h2>
+    <p>
+      Your ERP says one thing. Your CRM says another. Your billing system has a third answer entirely. When your data doesn't agree on who a customer or supplier is, every report becomes a negotiation and every decision becomes a gamble. Intelligent Master Data Management gives you a single chart to sail by — the <strong>Canonical Anchor</strong>.
+    </p>
+  </div>
+</section>
+
+<!-- CANONICAL ANCHOR -->
+<section class="ca-section" aria-labelledby="ca-heading">
+  <div class="ca-card reveal">
+    <p class="label">The Foundation</p>
+    <h3 id="ca-heading">The Canonical Anchor</h3>
+    <p>
+      Unlike a static "golden record" or a passive profile, the Canonical Anchor is an <em>active, authoritative baseline</em>. It locks down the single, absolute truth for every core data field — while remaining permanently tethered to all legacy source IDs, live transactions, and behavioral signals across your enterprise. Best of both worlds: iron-clad governance with an unbroken connection to the living data beneath it.
+    </p>
+  </div>
+</section>
+
+<!-- WAVE DIVIDER -->
+<div class="wave-divider" aria-hidden="true">
+  <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="60">
+    <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,15 1440,30 L1440,60 L0,60 Z" fill="#F0F4F5"/>
+  </svg>
+</div>
+
+<!-- THE 4 PILLARS -->
+<section class="pillars-section" id="pillars" aria-labelledby="pillars-heading">
+  <div class="pillars-header reveal">
+    <p class="label">Your Navigation System</p>
+    <h2 id="pillars-heading">The 4 Pillars of Intelligent Master Data</h2>
+    <p>Four interconnected disciplines — each one a leg of the voyage. Click any pillar to dive deeper.</p>
+  </div>
+
+  <div class="pillars-grid" role="list">
+
+    <!-- PILLAR 1 -->
+    <article class="pillar-card reveal" data-pillar="1" data-icon="⚓" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pillar-number">Pillar One</p>
+      <span class="pillar-icon" aria-hidden="true">⚓</span>
+      <h3 class="pillar-name">The Anchor</h3>
+      <p class="pillar-tagline">Definitive Truth</p>
+      <p class="pillar-summary">
+        One enterprise ID. One authoritative answer. Automatically resolves field-level conflicts across your ERP, CRM, and billing systems — locking in the best version of every record.
+      </p>
+      <div class="pillar-detail" aria-hidden="true">
+        <div class="pillar-detail-inner">
+          <p class="pillar-hook">Executive Hook</p>
+          <p class="pillar-hook-text">"Eliminates operational friction and establishes a single version of truth."</p>
+          <p class="pillar-body">
+            Right now, customer and supplier data is scattered across multiple disconnected silos — creating friction, bad analytics, and operational waste. The Anchor establishes a single, unshakeable enterprise ID. It resolves every conflict, picks the best field value per source, and locks it in. Leadership gets a trusted, undisputed baseline for reporting, financial planning, and every strategic decision that follows.
+          </p>
+        </div>
+      </div>
+      <span class="expand-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 4l3 3 3-3"/>
+        </svg>
+        Read more
+      </span>
+    </article>
+
+    <!-- PILLAR 2 -->
+    <article class="pillar-card reveal" data-pillar="2" data-icon="⛓️" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pillar-number">Pillar Two</p>
+      <span class="pillar-icon" aria-hidden="true">⛓️</span>
+      <h3 class="pillar-name">The Chain</h3>
+      <p class="pillar-tagline">Traceable Lineage</p>
+      <p class="pillar-summary">
+        Never lose context when you clean up the past. The Chain permanently tethers your Canonical ID to every legacy system ID, guaranteeing unbroken audit trails and zero data loss.
+      </p>
+      <div class="pillar-detail" aria-hidden="true">
+        <div class="pillar-detail-inner">
+          <p class="pillar-hook">Executive Hook</p>
+          <p class="pillar-hook-text">"Protects data lineage, guarantees audit compliance, and mitigates operational risk."</p>
+          <p class="pillar-body">
+            Most data cleanup projects make the fatal mistake of erasing the past — which breaks downstream operational systems and triggers compliance nightmares. The Chain ensures we never lose context. It permanently tethers the new Canonical ID to every upstream legacy system ID. Clean audit trails. Seamless financial reviews. Operational platforms that keep running without interruption. Your history is preserved, not discarded.
+          </p>
+        </div>
+      </div>
+      <span class="expand-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 4l3 3 3-3"/>
+        </svg>
+        Read more
+      </span>
+    </article>
+
+    <!-- PILLAR 3 -->
+    <article class="pillar-card reveal" data-pillar="3" data-icon="🧭" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pillar-number">Pillar Three</p>
+      <span class="pillar-icon" aria-hidden="true">🧭</span>
+      <h3 class="pillar-name">The Chart</h3>
+      <p class="pillar-tagline">Network Context</p>
+      <p class="pillar-summary">
+        An anchor tells you who an entity is. The Chart reveals how they're connected — mapping corporate hierarchies, supply chain dependencies, and hidden buyer-seller relationships.
+      </p>
+      <div class="pillar-detail" aria-hidden="true">
+        <div class="pillar-detail-inner">
+          <p class="pillar-hook">Executive Hook</p>
+          <p class="pillar-hook-text">"Drives revenue through whitespace analysis and exposes hidden supply chain vulnerabilities."</p>
+          <p class="pillar-body">
+            This is your relational intelligence network. It maps complex B2B hierarchies: corporate parent-child structures, supplier dependencies across tiers, and partners who are simultaneously customers and vendors. Sales discovers massive cross-sell opportunities by seeing total account value up the hierarchy. Procurement spots when three "different" suppliers all trace back to the same vulnerable parent. Same map — completely different strategic insights.
+          </p>
+        </div>
+      </div>
+      <span class="expand-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 4l3 3 3-3"/>
+        </svg>
+        Read more
+      </span>
+    </article>
+
+    <!-- PILLAR 4 -->
+    <article class="pillar-card reveal" data-pillar="4" data-icon="🌐" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pillar-number">Pillar Four</p>
+      <span class="pillar-icon" aria-hidden="true">🌐</span>
+      <h3 class="pillar-name">The Net</h3>
+      <p class="pillar-tagline">Behavioral Integration</p>
+      <p class="pillar-summary">
+        Master data sitting still in a warehouse is cargo at the bottom of the ocean. The Net bridges core identities directly into live operational streams, transactions, and behavioral signals.
+      </p>
+      <div class="pillar-detail" aria-hidden="true">
+        <div class="pillar-detail-inner">
+          <p class="pillar-hook">Executive Hook</p>
+          <p class="pillar-hook-text">"Turns static data into a real-time operational asset to drive proactive execution."</p>
+          <p class="pillar-body">
+            Master data is useless if it sits isolated in a static warehouse. The Net turns your data into a live commercial asset — an active layer beneath the enterprise that instantly bridges core customer and supplier identities straight into real-time operational streams, transactional data, and behavioral logs. Move from historical reporting to predictive execution. Respond to customer behavior and supply chain shifts as they happen.
+          </p>
+        </div>
+      </div>
+      <span class="expand-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 4l3 3 3-3"/>
+        </svg>
+        Read more
+      </span>
+    </article>
+
+  </div>
+</section>
+
+<!-- WAVE DIVIDER FLIP -->
+<div aria-hidden="true" style="background: var(--salt); line-height:0;">
+  <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="60">
+    <path d="M0,30 C360,0 720,60 1080,30 C1260,15 1380,45 1440,30 L1440,0 L0,0 Z" fill="#0A1628"/>
+  </svg>
+</div>
+
+<!-- HOW THEY CONNECT -->
+<section class="connect-section" id="how-they-connect" aria-labelledby="connect-heading">
+  <p class="label">Reading the Full Map</p>
+  <h2 id="connect-heading" class="reveal">Four Pillars. One Voyage.</h2>
+
+  <div class="rel-diagram reveal" role="img" aria-label="Diagram showing the 4 pillars and how they relate to each other">
+    <div class="rel-row">
+      <div class="rel-node">
+        <span class="node-icon" aria-hidden="true">⚓</span>
+        <div class="node-name">The Anchor</div>
+        <div class="node-sub">Definitive Truth</div>
+      </div>
+    </div>
+
+    <div class="rel-arrow-v" aria-hidden="true">
+      <span style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+        <span style="font-size:0.6rem; letter-spacing:0.1em; color:var(--mist); font-family:'Space Mono',monospace; text-transform:uppercase;">locks in identity</span>
+        <span>↓</span>
+      </span>
+    </div>
+
+    <div class="rel-row">
+      <div class="rel-node">
+        <span class="node-icon" aria-hidden="true">⛓️</span>
+        <div class="node-name">The Chain</div>
+        <div class="node-sub">Traceable Lineage</div>
+      </div>
+    </div>
+
+    <div class="rel-arrow-v" aria-hidden="true">
+      <span style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+        <span style="font-size:0.6rem; letter-spacing:0.1em; color:var(--mist); font-family:'Space Mono',monospace; text-transform:uppercase;">connects the dots</span>
+        <span>↓</span>
+      </span>
+    </div>
+
+    <div class="rel-row">
+      <div class="rel-node">
+        <span class="node-icon" aria-hidden="true">🧭</span>
+        <div class="node-name">The Chart</div>
+        <div class="node-sub">Network Context</div>
+      </div>
+    </div>
+
+    <div class="rel-arrow-v" aria-hidden="true">
+      <span style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+        <span style="font-size:0.6rem; letter-spacing:0.1em; color:var(--mist); font-family:'Space Mono',monospace; text-transform:uppercase;">powers action</span>
+        <span>↓</span>
+      </span>
+    </div>
+
+    <div class="rel-row">
+      <div class="rel-node">
+        <span class="node-icon" aria-hidden="true">🌐</span>
+        <div class="node-name">The Net</div>
+        <div class="node-sub">Behavioral Integration</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="connect-desc reveal">
+    The Anchor establishes who. The Chain proves where they came from. The Chart shows who they're connected to. The Net puts it all in motion — live, in every system, at the moment it matters. Together, they transform scattered data into a navigable enterprise ocean.
+  </p>
+</section>
+
+<!-- FOOTER WAVE -->
+<div aria-hidden="true" style="background:var(--deep); line-height:0;">
+  <svg viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="50">
+    <path d="M0,25 C360,50 720,0 1080,25 C1260,37 1380,12 1440,25 L1440,50 L0,50 Z" fill="#061020"/>
+  </svg>
+</div>
+
+<!-- CTA -->
+<section class="footer-cta" id="cta" aria-labelledby="cta-heading">
+  <p class="label">Chart Your Course</p>
+  <h2 id="cta-heading">Your data deserves a port, not a storm.</h2>
+  <p>
+    Whether you're a data producer cleaning up the source, or a business consumer who needs answers you can trust — Intelligent MDM gives every record a home port and every decision a reliable chart.
+  </p>
+  <a href="#pillars" class="cta-btn">Explore the 4 Pillars</a>
+  <div class="footer-credits">Informatica · Intelligent Master Data Management</div>
+</section>
+
+
+<script>
+  // ── Starfield ──────────────────────────────────────
+  (function() {
+    const container = document.getElementById('stars');
+    const count = 120;
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() * 2.5 + 0.5;
+      const maxOp = (Math.random() * 0.5 + 0.2).toFixed(2);
+      const delay = (Math.random() * 6).toFixed(2);
+      const duration = (Math.random() * 5 + 3).toFixed(2);
+      star.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${(Math.random()*100).toFixed(2)}%;
+        top:${(Math.random()*85).toFixed(2)}%;
+        --d:${duration}s; --delay:${delay}s; --max-op:${maxOp};
+      `;
+      container.appendChild(star);
+    }
+  })();
+
+  // ── Nav scroll class ───────────────────────────────
+  (function() {
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+  })();
+
+  // ── Pillar card expand / collapse ─────────────────
+  (function() {
+    const cards = document.querySelectorAll('.pillar-card');
+    cards.forEach(card => {
+      function toggle() {
+        const isActive = card.classList.contains('active');
+        // Collapse all
+        cards.forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-expanded', 'false');
+          const detail = c.querySelector('.pillar-detail');
+          if (detail) detail.setAttribute('aria-hidden', 'true');
+        });
+        if (!isActive) {
+          card.classList.add('active');
+          card.setAttribute('aria-expanded', 'true');
+          const detail = card.querySelector('.pillar-detail');
+          if (detail) detail.setAttribute('aria-hidden', 'false');
+        }
+      }
+      card.addEventListener('click', toggle);
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
+  })();
+
+  // ── Scroll reveal ─────────────────────────────────
+  (function() {
+    const elements = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      elements.forEach(el => obs.observe(el));
+    } else {
+      elements.forEach(el => el.classList.add('visible'));
+    }
+  })();
+</script>
+
+</body>
+</html>
