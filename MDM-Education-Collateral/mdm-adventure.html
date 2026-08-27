@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The MDM Adventure — Informatica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  color-scheme: light;
+  --ink:       #07060A;
+  --darkwood:  #110B02;
+  --wood:      #2C1A06;
+  --wood-lt:   #4A2E10;
+  --rust:      #6A1A0E;
+  --blood:     #8C2010;
+  --gold:      #C4880A;
+  --gold-lt:   #E8A818;
+  --gold-pale: #F5D878;
+  --aged:      #8C7B5C;
+  --parchment: #C8A878;
+  --fog:       #4A5860;
+  --ocean-dk:  #030810;
+  --ocean:     #071828;
+  --ocean-mid: #0C2840;
+  --ocean-lt:  #143858;
+  --teal:      #1A6470;
+  --green-dk:  #0A1808;
+  --white:     #F0E8D0;
+  --mist:      #788A98;
+  --kraken-red:#8C1A1A;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--ocean-dk);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0.9rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.4s;
+}
+.nav.scrolled {
+  background: rgba(7,6,10,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(196,136,10,0.2);
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-lt);
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 1.8rem; list-style: none; }
+.nav-links a {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aged);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold-lt); }
+@media(max-width:600px){ .nav-links { display:none; } }
+
+/* ══════════════════════════════════════════
+   HERO — THE OPEN SEA
+══════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5rem 2rem 9rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, #030608 0%, #070E18 35%, #0A1E30 65%, #0C2840 100%);
+}
+
+/* Stars */
+.hero-stars { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.hstar {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: htwinkle var(--d,4s) var(--dl,0s) infinite ease-in-out;
+}
+@keyframes htwinkle { 0%,100%{opacity:0} 50%{opacity:var(--op,0.6)} }
+
+/* Moon */
+.moon {
+  position: absolute;
+  top: 8%; right: 12%;
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #F5E8A0, #D4B840 60%, #8C7820);
+  box-shadow: 0 0 40px rgba(245,232,160,0.25), 0 0 80px rgba(245,232,160,0.1);
+  z-index: 2;
+  animation: moonbob 8s ease-in-out infinite;
+}
+@keyframes moonbob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+/* Jolly Roger watermark */
+.jolly-watermark {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  transform: translateX(-50%);
+  font-size: 18rem;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+}
+
+/* Hero text */
+.hero-content { position: relative; z-index: 5; }
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  color: var(--gold-lt);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  line-height: 1.0;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+.hero-title em { font-style: italic; color: var(--gold-lt); }
+.hero-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--parchment);
+  margin-bottom: 2rem;
+}
+.hero-desc {
+  font-size: 1rem;
+  color: var(--aged);
+  max-width: 560px;
+  margin: 0 auto 3rem;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* Animated ship on waves in hero */
+.hero-ship-wrap {
+  position: absolute;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  animation: shipdrift 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes shipdrift {
+  0%,100%{ transform: translateX(-50%) translateY(0) rotate(-1deg); }
+  50%    { transform: translateX(-50%) translateY(-12px) rotate(1.5deg); }
+}
+
+/* Hero waves */
+.hero-waves { position: absolute; bottom: 0; left: 0; right: 0; height: 170px; z-index: 3; overflow: hidden; }
+.wave-svg { position: absolute; width: 200%; bottom: 0; }
+.w1 { animation: ws 10s linear infinite; }
+.w2 { animation: ws 14s linear infinite reverse; bottom: 10px; }
+.w3 { animation: ws 7s linear infinite; bottom: 0; }
+@keyframes ws { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+.scroll-cue {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  color: var(--aged); font-family: 'Space Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;
+  transition: color 0.2s; position: relative; z-index: 5;
+}
+.scroll-cue:hover { color: var(--gold-lt); }
+.scroll-arr {
+  width: 22px; height: 22px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  animation: sarr 1.8s ease-in-out infinite;
+}
+@keyframes sarr { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(6px)} }
+
+/* ══════════════════════════════════════════
+   SHARED SECTION STYLES
+══════════════════════════════════════════ */
+.section-dark {
+  background: var(--ocean);
+  padding: 5rem 2rem;
+}
+.section-darker {
+  background: var(--ocean-dk);
+  padding: 5rem 2rem;
+}
+.section-wood {
+  background: linear-gradient(180deg, var(--darkwood) 0%, var(--wood) 100%);
+  padding: 5rem 2rem;
+}
+
+.label-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  color: var(--gold-lt);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: block;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+}
+.section-title em { font-style: italic; color: var(--gold-lt); }
+.section-body {
+  font-size: 0.95rem;
+  color: var(--aged);
+  line-height: 1.78;
+  font-weight: 300;
+  max-width: 640px;
+}
+
+.wave-sep { width:100%; overflow:hidden; line-height:0; }
+.wave-sep svg { display:block; }
+
+/* Reveal */
+.reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ══════════════════════════════════════════
+   SECTION 1 — THE PROBLEM (IDENTITY CHAOS)
+══════════════════════════════════════════ */
+.chaos-section {
+  background: var(--ocean);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+.chaos-inner { max-width: 900px; margin: 0 auto; }
+.chaos-crew {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin: 3rem auto;
+  flex-wrap: wrap;
+}
+.crew-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(196,136,10,0.15);
+  border-radius: 4px;
+  padding: 1.2rem 1rem;
+  width: 145px;
+  text-align: center;
+  position: relative;
+}
+.crew-card.conflict {
+  border-color: rgba(140,32,16,0.5);
+  background: rgba(140,32,16,0.08);
+}
+.crew-card.canonical {
+  border: 2px solid var(--gold);
+  background: rgba(196,136,10,0.1);
+  transform: scale(1.06);
+  box-shadow: 0 0 30px rgba(196,136,10,0.2);
+}
+.crew-icon { font-size: 2.2rem; margin-bottom: 0.5rem; display: block; }
+.crew-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.crew-source {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aged);
+  margin-bottom: 0.5rem;
+}
+.crew-field { font-size: 0.7rem; color: var(--parchment); line-height: 1.4; }
+.crew-field .bad { color: #D05050; text-decoration: line-through; }
+.crew-field .good { color: #60C878; }
+.conflict-badge {
+  position: absolute;
+  top: -10px; right: -10px;
+  background: var(--blood);
+  color: #fff;
+  font-size: 0.55rem;
+  font-family: 'Space Mono', monospace;
+  padding: 0.2rem 0.4rem;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.canonical-badge {
+  position: absolute;
+  top: -10px; left: 50%; transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 0.5rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.chaos-arrow {
+  font-size: 1.8rem;
+  color: var(--gold);
+  align-self: center;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════
+   SECTION 2 — THE CANNON (CANONICAL ANCHOR)
+══════════════════════════════════════════ */
+.cannon-section {
+  background: linear-gradient(180deg, var(--darkwood) 0%, #1A0E04 100%);
+  padding: 6rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.cannon-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+@media(max-width:700px){ .cannon-inner { grid-template-columns: 1fr; gap: 2rem; } }
+
+.cannon-graphic {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.cannon-blast {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  animation: blastpulse 4s ease-in-out infinite;
+}
+@keyframes blastpulse { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
+
+.cannon-wood-floor {
+  position: absolute;
+  bottom: -20px; left: -20px; right: -20px;
+  height: 30px;
+  background: linear-gradient(0deg, #1A0A02, #2C1A08);
+  border-radius: 2px;
+}
+
+/* ══════════════════════════════════════════
+   SECTION 3 — THE KRAKEN
+══════════════════════════════════════════ */
+.kraken-section {
+  background: linear-gradient(180deg, #030810 0%, #060C18 50%, #030810 100%);
+  padding: 6rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.kraken-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 2; }
+.kraken-graphic {
+  position: relative;
+  margin: 3rem auto;
+  width: min(500px, 100%);
+  height: 300px;
+}
+.kraken-tentacles {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.kraken-eye-glow {
+  position: absolute;
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: eyeglow 3s ease-in-out infinite;
+}
+@keyframes eyeglow {
+  0%,100%{ filter: drop-shadow(0 0 8px rgba(180,30,30,0.5)); }
+  50%     { filter: drop-shadow(0 0 24px rgba(220,50,50,0.9)); }
+}
+
+.kraken-threats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 2rem auto 0;
+}
+.kraken-threat {
+  background: rgba(140,26,26,0.12);
+  border: 1px solid rgba(140,26,26,0.3);
+  border-radius: 4px;
+  padding: 1rem;
+}
+.kt-icon { font-size: 1.4rem; margin-bottom: 0.4rem; display: block; }
+.kt-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #D05050;
+  margin-bottom: 0.3rem;
+}
+.kt-body { font-size: 0.78rem; color: var(--aged); line-height: 1.6; }
+
+/* ══════════════════════════════════════════
+   SECTION 4 — THE 4 PILLARS
+══════════════════════════════════════════ */
+.pillars-section {
+  background: var(--ocean-mid);
+  padding: 5rem 2rem 6rem;
+}
+.pillars-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media(max-width:900px){ .pillars-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:500px){ .pillars-grid { grid-template-columns: 1fr; } }
+
+.pillar-card {
+  background: rgba(10,25,40,0.7);
+  border: 1px solid rgba(196,136,10,0.15);
+  border-radius: 5px;
+  padding: 1.6rem 1.4rem;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s, background 0.25s, border-color 0.25s;
+  outline: none;
+}
+.pillar-card:focus-visible { outline: 2px solid var(--gold-lt); outline-offset: 3px; }
+.pillar-card:hover, .pillar-card.active {
+  transform: translateY(-4px);
+  background: rgba(16,36,55,0.85);
+}
+.pillar-card[data-p="1"] { border-top: 3px solid var(--teal); }
+.pillar-card[data-p="2"] { border-top: 3px solid var(--gold); }
+.pillar-card[data-p="3"] { border-top: 3px solid #2A5080; }
+.pillar-card[data-p="4"] { border-top: 3px solid #2A6040; }
+
+.pillar-card[data-p="1"]:hover, .pillar-card[data-p="1"].active { border-color: #25909C; }
+.pillar-card[data-p="2"]:hover, .pillar-card[data-p="2"].active { border-color: var(--gold-lt); }
+.pillar-card[data-p="3"]:hover, .pillar-card[data-p="3"].active { border-color: #4A80C0; }
+.pillar-card[data-p="4"]:hover, .pillar-card[data-p="4"].active { border-color: #4AAA70; }
+
+.pillar-card::after {
+  content: attr(data-icon);
+  position: absolute;
+  bottom: -0.5rem; right: 0.3rem;
+  font-size: 5rem;
+  opacity: 0.04;
+  pointer-events: none;
+  line-height: 1;
+  transition: opacity 0.3s;
+}
+.pillar-card:hover::after, .pillar-card.active::after { opacity: 0.1; }
+
+.pc-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  color: var(--mist);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.pc-icon { font-size: 1.8rem; margin-bottom: 0.5rem; display: block; }
+.pc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.pc-pirate-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-lt);
+  margin-bottom: 0.6rem;
+}
+.pc-body {
+  font-size: 0.8rem;
+  color: rgba(240,232,208,0.65);
+  line-height: 1.65;
+}
+
+.pc-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s;
+  opacity: 0;
+}
+.pillar-card.active .pc-detail {
+  max-height: 300px;
+  opacity: 1;
+}
+.pc-detail-inner {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(196,136,10,0.15);
+}
+.pc-hook {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-lt);
+  margin-bottom: 0.3rem;
+}
+.pc-hook-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--teal);
+  margin-bottom: 0.7rem;
+  line-height: 1.55;
+}
+.pc-detail-body {
+  font-size: 0.8rem;
+  color: rgba(240,232,208,0.55);
+  line-height: 1.7;
+}
+.pc-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.8rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mist);
+  transition: color 0.2s;
+}
+.pillar-card:hover .pc-hint { color: var(--gold-lt); }
+.pillar-card.active .pc-hint { display: none; }
+
+/* ══════════════════════════════════════════
+   SECTION 5 — THE VOYAGE DIAGRAM
+══════════════════════════════════════════ */
+.voyage-section {
+  background: linear-gradient(180deg, var(--ocean-mid) 0%, var(--ocean-dk) 100%);
+  padding: 5rem 2rem 7rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.voyage-scene {
+  max-width: 900px;
+  margin: 3rem auto 0;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+.footer {
+  background: var(--ink);
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.footer::before {
+  content: '☠️';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 16rem;
+  opacity: 0.025;
+  pointer-events: none;
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--gold-lt);
+  margin-bottom: 0.5rem;
+}
+.footer-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--aged);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.footer-desc {
+  font-size: 0.9rem;
+  color: var(--mist);
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  line-height: 1.7;
+  font-weight: 300;
+}
+.footer-cta {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 0.85rem 2.2rem;
+  border-radius: 3px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.2s;
+}
+.footer-cta:hover { background: var(--gold-lt); transform: translateY(-2px); }
+.footer-credit {
+  margin-top: 3rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+  color: rgba(240,232,208,0.15);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════
+   ROPE / DIVIDER
+══════════════════════════════════════════ */
+.rope-divider {
+  display: flex;
+  align-items: center;
+  max-width: 500px;
+  margin: 2.5rem auto 0;
+  gap: 0.8rem;
+}
+.rope-line {
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg, var(--gold) 0, var(--gold) 4px,
+    transparent 4px, transparent 10px
+  );
+  opacity: 0.35;
+}
+.rope-anchor { font-size: 1rem; color: var(--gold); opacity: 0.6; }
+
+@media(prefers-reduced-motion:reduce){
+  .w1,.w2,.w3,.hero-ship-wrap,.moon,.cannon-blast,.kraken-eye-glow,.scroll-arr { animation:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+  <span class="nav-logo">☠️ The MDM Adventure · Informatica</span>
+  <ul class="nav-links">
+    <li><a href="#chaos">The Problem</a></li>
+    <li><a href="#cannon">The Cannon</a></li>
+    <li><a href="#kraken">The Kraken</a></li>
+    <li><a href="#pillars">The 4 Pillars</a></li>
+    <li><a href="#voyage">The Voyage</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-stars" id="hero-stars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <div class="jolly-watermark" aria-hidden="true">☠️</div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Informatica · Intelligent Master Data Management</p>
+    <h1 class="hero-title" id="hero-title">The <em>MDM</em><br>Adventure</h1>
+    <p class="hero-subtitle">A Pirate's Guide to Mastering Your Enterprise Data</p>
+    <p class="hero-desc">
+      Your data sails under a hundred different flags — no captain, no chart, no single truth. ERP Blackbeard, CRM Long John, and Billing Mary have each claimed the same customer as their own. It's time to hoist one flag, drop one anchor, and chart a course for gold.
+    </p>
+    <a href="#chaos" class="scroll-cue" aria-label="Begin the adventure">
+      <div class="scroll-arr" aria-hidden="true"></div>
+      Begin the Adventure
+    </a>
+  </div>
+
+  <!-- Animated hero ship -->
+  <div class="hero-ship-wrap" aria-hidden="true">
+    <svg width="280" height="120" viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hull -->
+      <path d="M20,80 Q140,110 260,80 L245,95 Q140,118 35,95 Z" fill="#2C1A06"/>
+      <path d="M35,95 Q140,118 245,95 L240,100 Q140,122 40,100 Z" fill="#1A0E04"/>
+      <!-- Hull planks -->
+      <line x1="35" y1="95" x2="245" y2="95" stroke="#1A0E04" stroke-width="1.5"/>
+      <line x1="40" y1="100" x2="240" y2="100" stroke="#1A0E04" stroke-width="1"/>
+      <!-- Cabin -->
+      <rect x="175" y="60" width="55" height="30" rx="2" fill="#3A2010"/>
+      <rect x="180" y="64" width="12" height="12" rx="1" fill="rgba(245,232,160,0.25)"/>
+      <rect x="196" y="64" width="12" height="12" rx="1" fill="rgba(245,232,160,0.2)"/>
+      <rect x="212" y="64" width="12" height="12" rx="1" fill="rgba(245,232,160,0.15)"/>
+      <!-- Main mast -->
+      <line x1="120" y1="80" x2="120" y2="5" stroke="#2C1A06" stroke-width="4"/>
+      <!-- Fore mast -->
+      <line x1="70" y1="80" x2="70" y2="20" stroke="#2C1A06" stroke-width="3"/>
+      <!-- Boom -->
+      <line x1="120" y1="18" x2="170" y2="25" stroke="#2C1A06" stroke-width="2"/>
+      <!-- Main sail -->
+      <path d="M121,8 Q152,35 162,65 L120,65 Z" fill="rgba(200,168,120,0.55)" stroke="#8C7050" stroke-width="0.5"/>
+      <!-- Fore sail -->
+      <path d="M71,22 Q92,40 98,72 L70,72 Z" fill="rgba(200,168,120,0.45)" stroke="#8C7050" stroke-width="0.5"/>
+      <!-- Jolly Roger flag -->
+      <rect x="120" y="5" width="18" height="12" fill="#0A0A0A"/>
+      <text x="121" y="15" font-size="9" fill="white">☠</text>
+      <!-- Cannon on side -->
+      <ellipse cx="50" cy="82" rx="6" ry="4" fill="#3A3A3A"/>
+      <rect x="30" y="79" width="22" height="6" rx="3" fill="#4A4A4A"/>
+      <!-- Water line reflection -->
+      <ellipse cx="140" cy="108" rx="100" ry="6" fill="rgba(26,100,120,0.2)"/>
+      <!-- Rope detail -->
+      <line x1="120" y1="8" x2="70" y2="22" stroke="#4A3020" stroke-width="1.5"/>
+      <line x1="120" y1="30" x2="70" y2="38" stroke="#4A3020" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <div class="hero-waves" aria-hidden="true">
+    <svg class="wave-svg w1" viewBox="0 0 1440 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,85 C240,130 480,40 720,85 C960,130 1200,40 1440,85 L1440,170 L0,170 Z" fill="#0A1828" opacity="0.7"/>
+      <path d="M1440,85 C1200,130 960,40 720,85 C480,130 240,40 0,85 L0,170 L1440,170 Z" fill="#0A1828" opacity="0.5"/>
+    </svg>
+    <svg class="wave-svg w2" viewBox="0 0 1440 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,60 C360,100 720,20 1080,60 C1260,78 1380,38 1440,60 L1440,140 L0,140 Z" fill="#0C2040" opacity="0.6"/>
+    </svg>
+    <svg class="wave-svg w3" viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,40 C180,60 360,20 540,40 C720,60 900,20 1080,40 C1260,60 1380,20 1440,40 L1440,80 L0,80 Z" fill="#030810"/>
+      <path d="M1440,40 C1260,60 1080,20 900,40 C720,60 540,20 360,40 C180,60 60,20 0,40 L0,80 L1440,80 Z" fill="#030810" opacity="0.8"/>
+    </svg>
+  </div>
+</section>
+
+<!-- WAVE SEP -->
+<div class="wave-sep" aria-hidden="true" style="background:#030810;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="#071828"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 1: THE CHAOS (Identity Problem) ══ -->
+<section class="chaos-section" id="chaos" aria-labelledby="chaos-heading">
+  <div class="chaos-inner">
+    <div class="reveal">
+      <span class="label-tag">⚡ The Problem at Sea</span>
+      <h2 class="section-title" id="chaos-heading">Every Silo Thinks<br>It's <em>Captain</em></h2>
+      <p class="section-body" style="margin:0 auto 1rem; text-align:center;">
+        Three of your systems have a record for the same pirate — one calls him "Capt. J. Sparrow," another "Jack Sparow," and the third swears he's a different customer entirely. Which one do you trust? Who gets the gold?
+      </p>
+    </div>
+
+    <!-- Identity chaos crew cards -->
+    <div class="chaos-crew reveal" role="img" aria-label="Three conflicting records for the same pirate, resolved by the Canonical Anchor">
+
+      <!-- Conflicting record 1 -->
+      <div class="crew-card conflict">
+        <div class="conflict-badge">ERP says…</div>
+        <span class="crew-icon" aria-hidden="true">🏴‍☠️</span>
+        <p class="crew-name">Capt. J. Sparrow</p>
+        <p class="crew-source">ERP · Customer #4471</p>
+        <p class="crew-field">
+          Ship: <span class="bad">Black Perl</span><br>
+          Port: <span class="bad">Tortugga</span><br>
+          Revenue: <span class="bad">$2.1M</span>
+        </p>
+      </div>
+
+      <div class="chaos-arrow" aria-hidden="true">⚔️</div>
+
+      <!-- Conflicting record 2 -->
+      <div class="crew-card conflict">
+        <div class="conflict-badge">CRM says…</div>
+        <span class="crew-icon" aria-hidden="true">🧭</span>
+        <p class="crew-name">Jack Sparow</p>
+        <p class="crew-source">CRM · Account #8821-B</p>
+        <p class="crew-field">
+          Ship: <span class="bad">Black Pearl</span><br>
+          Port: <span class="bad">Port Royal</span><br>
+          Revenue: <span class="bad">$890K</span>
+        </p>
+      </div>
+
+      <div class="chaos-arrow" aria-hidden="true">⚔️</div>
+
+      <!-- Conflicting record 3 -->
+      <div class="crew-card conflict">
+        <div class="conflict-badge">Billing says…</div>
+        <span class="crew-icon" aria-hidden="true">💰</span>
+        <p class="crew-name">J. Sparrow (Capt)</p>
+        <p class="crew-source">Billing · ID C-00-9923</p>
+        <p class="crew-field">
+          Ship: <span class="bad">Blck Pearl</span><br>
+          Port: <span class="bad">Tortuga</span><br>
+          Revenue: <span class="bad">$3.4M</span>
+        </p>
+      </div>
+
+      <div class="chaos-arrow" aria-hidden="true">→</div>
+
+      <!-- Canonical truth -->
+      <div class="crew-card canonical">
+        <div class="canonical-badge">⚓ Canonical Anchor</div>
+        <span class="crew-icon" aria-hidden="true">⭐</span>
+        <p class="crew-name">Captain Jack Sparrow</p>
+        <p class="crew-source">MDM · CA-00-0001</p>
+        <p class="crew-field">
+          Ship: <span class="good">Black Pearl</span><br>
+          Port: <span class="good">Tortuga</span><br>
+          Revenue: <span class="good">$3.4M (verified)</span>
+        </p>
+      </div>
+
+    </div>
+
+    <div class="rope-divider reveal" aria-hidden="true">
+      <div class="rope-line"></div>
+      <span class="rope-anchor">⚓</span>
+      <div class="rope-line"></div>
+    </div>
+
+    <p class="section-body reveal" style="text-align:center; margin: 1.5rem auto 0;">
+      The Canonical Anchor doesn't erase the other records — it rules over them. Every conflicting source ID stays tethered, every legacy system still functions, and the whole fleet finally sails under one agreed name.
+    </p>
+  </div>
+</section>
+
+<!-- WAVE SEP -->
+<div class="wave-sep" aria-hidden="true" style="background:#071828;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,0 720,40 1080,20 C1260,10 1380,30 1440,20 L1440,40 L0,40 Z" fill="#110B02"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 2: THE CANNON ══════════════════ -->
+<section class="cannon-section" id="cannon" aria-labelledby="cannon-heading">
+  <div class="cannon-inner">
+    <!-- Cannon SVG -->
+    <div class="cannon-graphic reveal" aria-hidden="true">
+      <div class="cannon-wood-floor"></div>
+      <!-- Blast effect -->
+      <svg class="cannon-blast" width="100" height="60" viewBox="0 0 100 60">
+        <ellipse cx="15" cy="30" rx="12" ry="8" fill="rgba(245,216,120,0.6)"/>
+        <ellipse cx="35" cy="30" rx="20" ry="12" fill="rgba(232,168,24,0.35)"/>
+        <ellipse cx="60" cy="30" rx="30" ry="16" fill="rgba(200,136,10,0.15)"/>
+        <circle cx="8" cy="20" r="4" fill="rgba(245,216,120,0.5)"/>
+        <circle cx="10" cy="38" r="5" fill="rgba(232,168,24,0.4)"/>
+        <circle cx="22" cy="16" r="3" fill="rgba(255,240,180,0.6)"/>
+      </svg>
+      <svg width="280" height="160" viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cannon wheels -->
+        <circle cx="70" cy="130" r="25" fill="#1A0E04" stroke="#4A3010" stroke-width="3"/>
+        <circle cx="70" cy="130" r="18" fill="none" stroke="#3A2808" stroke-width="2"/>
+        <line x1="70" y1="107" x2="70" y2="153" stroke="#3A2808" stroke-width="2"/>
+        <line x1="47" y1="130" x2="93" y2="130" stroke="#3A2808" stroke-width="2"/>
+        <line x1="54" y1="112" x2="86" y2="148" stroke="#3A2808" stroke-width="1.5"/>
+        <line x1="54" y1="148" x2="86" y2="112" stroke="#3A2808" stroke-width="1.5"/>
+        <circle cx="70" cy="130" r="5" fill="#4A3010"/>
+
+        <circle cx="200" cy="130" r="25" fill="#1A0E04" stroke="#4A3010" stroke-width="3"/>
+        <circle cx="200" cy="130" r="18" fill="none" stroke="#3A2808" stroke-width="2"/>
+        <line x1="200" y1="107" x2="200" y2="153" stroke="#3A2808" stroke-width="2"/>
+        <line x1="177" y1="130" x2="223" y2="130" stroke="#3A2808" stroke-width="2"/>
+        <line x1="184" y1="112" x2="216" y2="148" stroke="#3A2808" stroke-width="1.5"/>
+        <line x1="184" y1="148" x2="216" y2="112" stroke="#3A2808" stroke-width="1.5"/>
+        <circle cx="200" cy="130" r="5" fill="#4A3010"/>
+
+        <!-- Cannon carriage -->
+        <rect x="55" y="105" width="160" height="28" rx="4" fill="#2C1A08"/>
+        <rect x="60" y="108" width="150" height="8" rx="2" fill="#3A2410"/>
+        <rect x="60" y="118" width="150" height="6" rx="2" fill="#241608"/>
+
+        <!-- Cannon barrel -->
+        <path d="M80,65 L245,78 L248,102 L77,102 Z" fill="#3A3A3A"/>
+        <path d="M80,65 L245,78 L245,82 L80,69 Z" fill="#4A4A4A"/>
+        <!-- Barrel rings -->
+        <ellipse cx="90" cy="83" rx="6" ry="18" fill="none" stroke="#555" stroke-width="3"/>
+        <ellipse cx="130" cy="86" rx="6" ry="16" fill="none" stroke="#555" stroke-width="3"/>
+        <ellipse cx="175" cy="88" rx="5" ry="14" fill="none" stroke="#555" stroke-width="2.5"/>
+        <ellipse cx="215" cy="90" rx="4" ry="12" fill="none" stroke="#555" stroke-width="2.5"/>
+        <!-- Muzzle -->
+        <ellipse cx="247" cy="90" rx="8" ry="14" fill="#282828"/>
+        <ellipse cx="247" cy="90" rx="5" ry="10" fill="#1A1A1A"/>
+        <!-- Touch hole / fuse -->
+        <circle cx="105" cy="68" r="4" fill="#1A1A1A"/>
+        <path d="M105,64 Q115,50 125,40 Q130,35 135,30" stroke="#C9880A" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+        <!-- Fuse glow -->
+        <circle cx="135" cy="30" r="5" fill="rgba(232,168,24,0.7)"/>
+        <!-- Cannonball -->
+        <circle cx="247" cy="90" r="10" fill="#1A1A1A"/>
+        <circle cx="244" cy="87" r="3" fill="rgba(255,255,255,0.08)"/>
+
+        <!-- "CA" stamped on barrel -->
+        <text x="155" y="94" font-family="Space Mono" font-size="11" fill="rgba(196,136,10,0.5)" font-weight="bold" text-anchor="middle">C·A</text>
+
+        <!-- Wood floor planks -->
+        <rect x="40" y="128" width="200" height="30" rx="2" fill="#1A0A02"/>
+        <line x1="40" y1="138" x2="240" y2="138" stroke="#0A0602" stroke-width="1.5"/>
+        <line x1="40" y1="148" x2="240" y2="148" stroke="#0A0602" stroke-width="1.5"/>
+        <line x1="80" y1="128" x2="80" y2="158" stroke="#0A0602" stroke-width="1"/>
+        <line x1="120" y1="128" x2="120" y2="158" stroke="#0A0602" stroke-width="1"/>
+        <line x1="160" y1="128" x2="160" y2="158" stroke="#0A0602" stroke-width="1"/>
+        <line x1="200" y1="128" x2="200" y2="158" stroke="#0A0602" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Text -->
+    <div class="reveal">
+      <span class="label-tag">💥 The Canonical Anchor</span>
+      <h2 class="section-title" id="cannon-heading">Fire the <em>Cannon.</em><br>Claim the Truth.</h2>
+      <p class="section-body" style="margin-bottom:1.2rem;">
+        Every great pirate ship has a cannon — and in this adventure, ours fires <strong>Canonical records</strong>. The <em>C·A</em> stamped on the barrel stands for Canonical Anchor: the single, authoritative shot that ends the debate between conflicting silos.
+      </p>
+      <p class="section-body" style="margin-bottom:1.2rem;">
+        Unlike a simple "golden record" (a dusty treasure map copy left in a drawer), the Canonical Anchor is loaded and live. It fires the best-verified truth for every field — name, address, revenue, hierarchy — across every system simultaneously.
+      </p>
+      <p class="section-body">
+        One shot. One truth. All silos stand down.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- WAVE SEP -->
+<div class="wave-sep" aria-hidden="true" style="background:#110B02;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="#030810"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 3: THE KRAKEN ══════════════════ -->
+<section class="kraken-section" id="kraken" aria-labelledby="kraken-heading">
+  <div class="kraken-inner">
+    <div class="reveal">
+      <span class="label-tag">🦑 Danger in the Deep</span>
+      <h2 class="section-title" id="kraken-heading">Release the <em>Kraken</em>—<br>or Conquer It</h2>
+      <p class="section-body" style="margin: 0 auto; text-align:center;">
+        Lurking beneath every enterprise data voyage is the Kraken — the real threats that sink MDM projects before they reach port. Identify the beast before it drags your ship to the bottom.
+      </p>
+    </div>
+
+    <!-- Kraken SVG illustration -->
+    <div class="kraken-graphic reveal" aria-hidden="true">
+      <svg width="100%" height="300" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="krakenGlow" cx="50%" cy="80%" r="40%">
+            <stop offset="0%" stop-color="#8C1A1A" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Deep water bg -->
+        <rect width="500" height="300" fill="url(#krakenGlow)" rx="8"/>
+
+        <!-- Water surface ripple -->
+        <ellipse cx="250" cy="160" rx="220" ry="18" fill="rgba(12,40,64,0.6)"/>
+
+        <!-- Tentacle 1 (left, reaching up) -->
+        <path d="M250,200 C200,180 150,160 100,100 C90,88 95,70 110,75 C125,80 130,95 140,105 C160,125 190,155 220,165" fill="none" stroke="#4A1A1A" stroke-width="18" stroke-linecap="round"/>
+        <path d="M250,200 C200,180 150,160 100,100 C90,88 95,70 110,75 C125,80 130,95 140,105 C160,125 190,155 220,165" fill="none" stroke="#6A2020" stroke-width="12" stroke-linecap="round"/>
+        <!-- Suction cups -->
+        <circle cx="110" cy="100" r="5" fill="rgba(180,40,40,0.5)"/>
+        <circle cx="130" cy="110" r="4" fill="rgba(180,40,40,0.4)"/>
+        <circle cx="155" cy="128" r="4" fill="rgba(180,40,40,0.4)"/>
+        <circle cx="180" cy="148" r="5" fill="rgba(180,40,40,0.35)"/>
+
+        <!-- Tentacle 2 (right, curled) -->
+        <path d="M250,200 C300,180 350,160 400,100 C410,88 405,70 390,75 C375,80 370,95 360,105 C340,125 310,155 280,165" fill="none" stroke="#4A1A1A" stroke-width="18" stroke-linecap="round"/>
+        <path d="M250,200 C300,180 350,160 400,100 C410,88 405,70 390,75 C375,80 370,95 360,105 C340,125 310,155 280,165" fill="none" stroke="#6A2020" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="390" cy="100" r="5" fill="rgba(180,40,40,0.5)"/>
+        <circle cx="370" cy="110" r="4" fill="rgba(180,40,40,0.4)"/>
+        <circle cx="345" cy="128" r="4" fill="rgba(180,40,40,0.4)"/>
+        <circle cx="320" cy="148" r="5" fill="rgba(180,40,40,0.35)"/>
+
+        <!-- Tentacle 3 (far left, lower) -->
+        <path d="M230,220 C180,215 120,220 70,200 C50,193 45,178 60,172 C72,167 85,175 100,178 C130,186 175,205 215,210" fill="none" stroke="#3A1515" stroke-width="14" stroke-linecap="round"/>
+        <path d="M230,220 C180,215 120,220 70,200 C50,193 45,178 60,172 C72,167 85,175 100,178 C130,186 175,205 215,210" fill="none" stroke="#5A1E1E" stroke-width="9" stroke-linecap="round"/>
+
+        <!-- Tentacle 4 (far right, lower) -->
+        <path d="M270,220 C320,215 380,220 430,200 C450,193 455,178 440,172 C428,167 415,175 400,178 C370,186 325,205 285,210" fill="none" stroke="#3A1515" stroke-width="14" stroke-linecap="round"/>
+        <path d="M270,220 C320,215 380,220 430,200 C450,193 455,178 440,172 C428,167 415,175 400,178 C370,186 325,205 285,210" fill="none" stroke="#5A1E1E" stroke-width="9" stroke-linecap="round"/>
+
+        <!-- Tentacle 5 (straight down center-left) -->
+        <path d="M235,215 C225,230 215,250 210,275 C208,282 214,288 220,285 C226,282 228,270 232,255 C237,238 238,225 238,218" fill="none" stroke="#4A1A1A" stroke-width="12" stroke-linecap="round"/>
+        <path d="M235,215 C225,230 215,250 210,275 C208,282 214,288 220,285 C226,282 228,270 232,255 C237,238 238,225 238,218" fill="none" stroke="#6A2020" stroke-width="7" stroke-linecap="round"/>
+
+        <!-- Tentacle 6 (straight down center-right) -->
+        <path d="M265,215 C275,230 285,250 290,275 C292,282 286,288 280,285 C274,282 272,270 268,255 C263,238 262,225 262,218" fill="none" stroke="#4A1A1A" stroke-width="12" stroke-linecap="round"/>
+        <path d="M265,215 C275,230 285,250 290,275 C292,282 286,288 280,285 C274,282 272,270 268,255 C263,238 262,225 262,218" fill="none" stroke="#6A2020" stroke-width="7" stroke-linecap="round"/>
+
+        <!-- Kraken body (bulbous head) -->
+        <ellipse cx="250" cy="205" rx="55" ry="45" fill="#2A0E0E"/>
+        <ellipse cx="250" cy="205" rx="48" ry="38" fill="#3A1212"/>
+
+        <!-- Eyes -->
+        <circle cx="232" cy="195" r="12" fill="#1A0808"/>
+        <circle cx="268" cy="195" r="12" fill="#1A0808"/>
+        <!-- Iris -->
+        <circle cx="232" cy="195" r="8" fill="#8C1A1A"/>
+        <circle cx="268" cy="195" r="8" fill="#8C1A1A"/>
+        <!-- Pupil -->
+        <ellipse cx="232" cy="195" rx="4" ry="6" fill="#0A0404"/>
+        <ellipse cx="268" cy="195" rx="4" ry="6" fill="#0A0404"/>
+        <!-- Eye shine -->
+        <circle cx="235" cy="191" r="2" fill="rgba(255,100,100,0.6)"/>
+        <circle cx="271" cy="191" r="2" fill="rgba(255,100,100,0.6)"/>
+
+        <g class="kraken-eye-glow">
+          <circle cx="232" cy="195" r="15" fill="none" stroke="rgba(220,50,50,0.3)" stroke-width="2"/>
+          <circle cx="268" cy="195" r="15" fill="none" stroke="rgba(220,50,50,0.3)" stroke-width="2"/>
+        </g>
+
+        <!-- Beak / mouth -->
+        <path d="M238,218 Q250,228 262,218 Q256,210 250,212 Q244,210 238,218 Z" fill="#1A0808"/>
+
+        <!-- Texture marks on body -->
+        <path d="M225,185 Q235,180 245,185" stroke="#4A1818" stroke-width="1.5" fill="none"/>
+        <path d="M255,185 Q265,180 275,185" stroke="#4A1818" stroke-width="1.5" fill="none"/>
+        <circle cx="250" cy="175" r="4" fill="#2A1010"/>
+
+        <!-- Water splash around body -->
+        <path d="M190,165 Q210,155 230,162" stroke="rgba(12,40,64,0.8)" stroke-width="4" fill="none"/>
+        <path d="M270,162 Q290,155 310,165" stroke="rgba(12,40,64,0.8)" stroke-width="4" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- Kraken threat cards -->
+    <div class="kraken-threats reveal" role="list" aria-label="The four Kraken threats to your MDM voyage">
+      <div class="kraken-threat" role="listitem">
+        <span class="kt-icon" aria-hidden="true">🦑</span>
+        <p class="kt-title">The Silo Kraken</p>
+        <p class="kt-body">Eight arms, each clutching a different version of your customer. ERP, CRM, Billing, and five more all refuse to let go — strangling any attempt at a single truth.</p>
+      </div>
+      <div class="kraken-threat" role="listitem">
+        <span class="kt-icon" aria-hidden="true">🌊</span>
+        <p class="kt-title">The Lineage Whirlpool</p>
+        <p class="kt-body">Cleaning data without preserving lineage creates a swirling vortex that swallows audit trails, snaps downstream integrations, and drags compliance to the depths.</p>
+      </div>
+      <div class="kraken-threat" role="listitem">
+        <span class="kt-icon" aria-hidden="true">🌫️</span>
+        <p class="kt-title">The Hierarchy Fog</p>
+        <p class="kt-body">Without a chart of who owns whom, your fleet sails blind. The fog hides corporate parent structures, shared supplier risks, and the whitespace gold your competitors already see.</p>
+      </div>
+      <div class="kraken-threat" role="listitem">
+        <span class="kt-icon" aria-hidden="true">⚓</span>
+        <p class="kt-title">The Static Anchor</p>
+        <p class="kt-body">A golden record that doesn't connect to live data is just a barnacle-covered anchor at the bottom of the ocean. Dead weight. Real treasure requires real-time signals.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE SEP -->
+<div class="wave-sep" aria-hidden="true" style="background:#030810;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="40">
+    <path d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,10 1440,20 L1440,40 L0,40 Z" fill="#0C2840"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 4: THE 4 PILLARS ══════════════ -->
+<section class="pillars-section" id="pillars" aria-labelledby="pillars-heading">
+  <div class="pillars-header reveal">
+    <span class="label-tag">🗺️ Your Crew's Orders</span>
+    <h2 class="section-title" id="pillars-heading">Four Pillars.<br><em>One Voyage.</em></h2>
+    <p style="color:var(--aged); font-size:0.9rem; max-width:520px; margin:0 auto; line-height:1.7; font-weight:300;">
+      Every ship needs a crew who knows their post. These four pillars are your crew's standing orders — click any to read the full brief.
+    </p>
+  </div>
+
+  <div class="pillars-grid" role="list">
+
+    <article class="pillar-card reveal" data-p="1" data-icon="⚓" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pc-num">First Order</p>
+      <span class="pc-icon" aria-hidden="true">⚓</span>
+      <p class="pc-title">The Anchor</p>
+      <p class="pc-pirate-name">🏴‍☠️ "Drop one flag. Mean it."</p>
+      <p class="pc-body">One canonical ID resolves every conflict across every silo — locking in the undisputed best version of every record across your enterprise.</p>
+      <div class="pc-detail" aria-hidden="true">
+        <div class="pc-detail-inner">
+          <p class="pc-hook">Executive Hook</p>
+          <p class="pc-hook-text">"Eliminates operational friction. Establishes the single version of truth."</p>
+          <p class="pc-detail-body">The Anchor fires the canonical record that ends the mutiny between your systems. Every conflicting source is resolved — the best field value per domain wins, and the whole fleet finally agrees on who a customer is. Leadership reports from one map, not five.</p>
+        </div>
+      </div>
+      <span class="pc-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+        Read the orders
+      </span>
+    </article>
+
+    <article class="pillar-card reveal" data-p="2" data-icon="⛓️" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pc-num">Second Order</p>
+      <span class="pc-icon" aria-hidden="true">⛓️</span>
+      <p class="pc-title">The Chain</p>
+      <p class="pc-pirate-name">🏴‍☠️ "Know where every coin was minted."</p>
+      <p class="pc-body">Permanently tethers the Canonical ID to every legacy system ID — complete chain of custody, unbroken lineage, and zero downstream disruption.</p>
+      <div class="pc-detail" aria-hidden="true">
+        <div class="pc-detail-inner">
+          <p class="pc-hook">Executive Hook</p>
+          <p class="pc-hook-text">"Protects data lineage. Guarantees audit compliance. Mitigates operational risk."</p>
+          <p class="pc-detail-body">Pirates who erase history lose their alibi — and their crew. The Chain keeps every record's provenance intact. Compliance audits can trace every piece of gold back to its source. And your operational systems keep running without a single interruption.</p>
+        </div>
+      </div>
+      <span class="pc-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+        Read the orders
+      </span>
+    </article>
+
+    <article class="pillar-card reveal" data-p="3" data-icon="🧭" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pc-num">Third Order</p>
+      <span class="pc-icon" aria-hidden="true">🧭</span>
+      <p class="pc-title">The Chart</p>
+      <p class="pc-pirate-name">🏴‍☠️ "Know who sails under whose flag."</p>
+      <p class="pc-body">Maps corporate hierarchies, supplier dependencies, and buyer-seller overlaps — the full fleet chart of who commands whom.</p>
+      <div class="pc-detail" aria-hidden="true">
+        <div class="pc-detail-inner">
+          <p class="pc-hook">Executive Hook</p>
+          <p class="pc-hook-text">"Drives revenue through whitespace. Exposes hidden supply chain vulnerabilities."</p>
+          <p class="pc-detail-body">The Chart reveals that three "different" suppliers are actually the same fleet under one parent company — a single storm sinks all three. For sales, it shows the full account value up the hierarchy so you can claim the treasure that was always yours.</p>
+        </div>
+      </div>
+      <span class="pc-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+        Read the orders
+      </span>
+    </article>
+
+    <article class="pillar-card reveal" data-p="4" data-icon="🌐" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="pc-num">Fourth Order</p>
+      <span class="pc-icon" aria-hidden="true">🌐</span>
+      <p class="pc-title">The Net</p>
+      <p class="pc-pirate-name">🏴‍☠️ "Cast wide. Catch what moves."</p>
+      <p class="pc-body">Bridges master identity into live operational streams, transactions, and behavioral signals — turning static records into real-time commercial intelligence.</p>
+      <div class="pc-detail" aria-hidden="true">
+        <div class="pc-detail-inner">
+          <p class="pc-hook">Executive Hook</p>
+          <p class="pc-hook-text">"Turns static data into a real-time operational asset for proactive execution."</p>
+          <p class="pc-detail-body">Gold buried in a warehouse is gold you can't spend. The Net keeps master data connected to everything happening right now — customer behavior, supply chain signals, transactional streams. You stop chasing history and start sailing ahead of it.</p>
+        </div>
+      </div>
+      <span class="pc-hint" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 3 3-3"/></svg>
+        Read the orders
+      </span>
+    </article>
+
+  </div>
+</section>
+
+<!-- ══ SECTION 5: THE VOYAGE DIAGRAM ═════════ -->
+<section class="voyage-section" id="voyage" aria-labelledby="voyage-heading">
+  <div class="reveal">
+    <span class="label-tag">🗺️ The Full Map</span>
+    <h2 class="section-title" id="voyage-heading">From Chaos to <em>Gold</em></h2>
+    <p style="color:var(--aged); font-size:0.9rem; max-width:520px; margin:0 auto 1rem; line-height:1.7; font-weight:300;">
+      Four pillars. One crew. One cannon. One voyage. Here's what the full journey looks like.
+    </p>
+  </div>
+
+  <div class="voyage-scene reveal" aria-label="Diagram: four pillars form the ship's foundation, battle past the kraken, arrive at the treasure" role="img">
+    <svg width="100%" viewBox="0 0 860 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#E8A818"/>
+        </marker>
+        <radialGradient id="treasureHalo" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#F0AE1A" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Ocean background -->
+      <rect width="860" height="260" rx="8" fill="#071828"/>
+      <!-- Subtle wave lines -->
+      <path d="M0,200 C100,190 200,210 300,200 C400,190 500,210 600,200 C700,190 800,210 860,200" stroke="rgba(20,56,88,0.5)" stroke-width="2" fill="none"/>
+      <path d="M0,215 C110,205 210,225 320,215 C430,205 530,225 640,215 C750,205 810,220 860,215" stroke="rgba(20,56,88,0.4)" stroke-width="1.5" fill="none"/>
+
+      <!-- ── PILLAR BOXES ── -->
+      <!-- P1: Anchor -->
+      <rect x="10" y="60" width="140" height="130" rx="5" fill="rgba(26,100,112,0.2)" stroke="rgba(26,100,112,0.5)" stroke-width="1.5"/>
+      <text x="80" y="92" font-family="serif" font-size="22" text-anchor="middle" fill="#F0E8D0">⚓</text>
+      <text x="80" y="112" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Anchor</text>
+      <text x="80" y="126" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#7A9BAD" letter-spacing="1">DEFINITIVE TRUTH</text>
+      <line x1="30" y1="135" x2="130" y2="135" stroke="rgba(26,100,112,0.3)" stroke-width="1"/>
+      <text x="80" y="150" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)" dominant-baseline="hanging" xml:space="preserve">One canonical ID.</text>
+      <text x="80" y="163" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">No more mutiny.</text>
+
+      <!-- P2: Chain -->
+      <rect x="165" y="60" width="140" height="130" rx="5" fill="rgba(196,136,10,0.12)" stroke="rgba(196,136,10,0.35)" stroke-width="1.5"/>
+      <text x="235" y="92" font-family="serif" font-size="22" text-anchor="middle" fill="#F0E8D0">⛓️</text>
+      <text x="235" y="112" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Chain</text>
+      <text x="235" y="126" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#7A9BAD" letter-spacing="1">TRACEABLE LINEAGE</text>
+      <line x1="185" y1="135" x2="285" y2="135" stroke="rgba(196,136,10,0.25)" stroke-width="1"/>
+      <text x="235" y="150" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">Every coin tracked.</text>
+      <text x="235" y="163" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">No history lost.</text>
+
+      <!-- P3: Chart -->
+      <rect x="320" y="60" width="140" height="130" rx="5" fill="rgba(42,80,128,0.18)" stroke="rgba(42,80,128,0.45)" stroke-width="1.5"/>
+      <text x="390" y="92" font-family="serif" font-size="22" text-anchor="middle" fill="#F0E8D0">🧭</text>
+      <text x="390" y="112" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Chart</text>
+      <text x="390" y="126" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#7A9BAD" letter-spacing="1">NETWORK CONTEXT</text>
+      <line x1="340" y1="135" x2="440" y2="135" stroke="rgba(42,80,128,0.3)" stroke-width="1"/>
+      <text x="390" y="150" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">See the whole fleet.</text>
+      <text x="390" y="163" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">Know every flag.</text>
+
+      <!-- P4: Net -->
+      <rect x="475" y="60" width="140" height="130" rx="5" fill="rgba(42,96,64,0.18)" stroke="rgba(42,96,64,0.45)" stroke-width="1.5"/>
+      <text x="545" y="92" font-family="serif" font-size="22" text-anchor="middle" fill="#F0E8D0">🌐</text>
+      <text x="545" y="112" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#F0E8D0">The Net</text>
+      <text x="545" y="126" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#7A9BAD" letter-spacing="1">LIVE SIGNALS</text>
+      <line x1="495" y1="135" x2="595" y2="135" stroke="rgba(42,96,64,0.3)" stroke-width="1"/>
+      <text x="545" y="150" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">Live data. Not</text>
+      <text x="545" y="163" font-family="sans-serif" font-size="8.5" text-anchor="middle" fill="rgba(240,232,208,0.55)">buried treasure.</text>
+
+      <!-- ── CONNECTING ARROWS between pillars ── -->
+      <line x1="152" y1="125" x2="163" y2="125" stroke="#E8A818" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+      <line x1="307" y1="125" x2="318" y2="125" stroke="#E8A818" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+      <line x1="462" y1="125" x2="473" y2="125" stroke="#E8A818" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+
+      <!-- ── MAIN VOYAGE ARROW ── -->
+      <line x1="620" y1="125" x2="660" y2="125" stroke="#E8A818" stroke-width="2.5" marker-end="url(#arrow)"/>
+      <text x="640" y="115" font-family="monospace" font-size="7" text-anchor="middle" fill="#E8A818" letter-spacing="1">VOYAGE</text>
+
+      <!-- ── KRAKEN OBSTACLE ── -->
+      <!-- Small kraken in path -->
+      <ellipse cx="660" cy="200" rx="30" ry="12" fill="rgba(140,26,26,0.15)"/>
+      <ellipse cx="660" cy="196" rx="16" ry="12" fill="#2A0E0E"/>
+      <circle cx="654" cy="192" r="4" fill="#6A1818"/>
+      <circle cx="666" cy="192" r="4" fill="#6A1818"/>
+      <ellipse cx="654" cy="192" rx="2" ry="3" fill="#0A0404"/>
+      <ellipse cx="666" cy="192" rx="2" ry="3" fill="#0A0404"/>
+      <path d="M660,210 C650,215 635,210 625,216" stroke="#4A1818" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M660,210 C670,215 685,210 695,216" stroke="#4A1818" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M655,210 C650,222 648,230 646,238" stroke="#3A1515" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M665,210 C670,222 672,230 674,238" stroke="#3A1515" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <text x="660" y="250" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(200,80,80,0.6)" letter-spacing="0.5">KRAKEN</text>
+
+      <!-- Cannon shot defeating kraken -->
+      <!-- Cannonball trajectory -->
+      <path d="M400,155 Q530,140 630,188" stroke="rgba(196,136,10,0.5)" stroke-width="2" stroke-dasharray="4,4" fill="none"/>
+      <circle cx="630" cy="188" r="6" fill="#C4880A" opacity="0.7"/>
+      <!-- Impact burst -->
+      <circle cx="648" cy="190" r="12" fill="rgba(232,168,24,0.15)" stroke="rgba(232,168,24,0.3)" stroke-width="1"/>
+
+      <!-- ── TREASURE DESTINATION ── -->
+      <!-- Glow -->
+      <circle cx="780" cy="125" r="65" fill="url(#treasureHalo)"/>
+      <!-- Chest body -->
+      <rect x="740" y="105" width="80" height="46" rx="3" fill="#3A2008"/>
+      <rect x="740" y="103" width="80" height="9" rx="2" fill="#2A1604"/>
+      <rect x="740" y="142" width="80" height="9" rx="2" fill="#2A1604"/>
+      <rect x="770" y="103" width="20" height="48" rx="1" fill="#1E1004"/>
+      <!-- Lid (open) -->
+      <path d="M740,108 Q780,85 820,108 L820,103 Q780,80 740,103 Z" fill="#4A2A10"/>
+      <!-- Lock -->
+      <rect x="772" y="117" width="16" height="12" rx="2" fill="#C4880A"/>
+      <circle cx="780" cy="123" r="4" fill="#E8A818"/>
+      <!-- Coin overflow -->
+      <ellipse cx="780" cy="107" rx="22" ry="8" fill="#8C6010"/>
+      <ellipse cx="780" cy="104" rx="18" ry="6" fill="#C4880A"/>
+      <ellipse cx="780" cy="102" rx="14" ry="5" fill="#E8A818"/>
+      <ellipse cx="777" cy="101" rx="4" ry="1.5" fill="rgba(255,240,180,0.5)"/>
+      <!-- Sparkles -->
+      <circle cx="758" cy="88" r="2.5" fill="#F0D060" opacity="0.9"/>
+      <circle cx="800" cy="85" r="2" fill="#F0D060" opacity="0.8"/>
+      <circle cx="815" cy="95" r="1.5" fill="#F0D060" opacity="0.7"/>
+      <circle cx="750" cy="95" r="1.5" fill="#F0D060" opacity="0.7"/>
+      <!-- Floor coins -->
+      <ellipse cx="756" cy="154" rx="7" ry="3" fill="#C4880A"/>
+      <ellipse cx="804" cy="152" rx="6" ry="2.5" fill="#C4880A"/>
+      <!-- Label -->
+      <text x="780" y="178" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#E8A818">Dead Data's</text>
+      <text x="780" y="192" font-family="Georgia,serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#E8A818">Chest</text>
+      <text x="780" y="207" font-family="monospace" font-size="7" text-anchor="middle" fill="#7A9BAD" letter-spacing="1">YOUR DESTINATION</text>
+
+      <!-- Jolly Roger above chest -->
+      <line x1="780" y1="70" x2="780" y2="40" stroke="#2C1A06" stroke-width="2"/>
+      <rect x="780" y="40" width="20" height="14" fill="#0A0808"/>
+      <text x="781" y="51" font-size="10" fill="white">☠</text>
+
+      <!-- X marks the spot on ground -->
+      <line x1="758" y1="218" x2="772" y2="232" stroke="#C4880A" stroke-width="1.5" opacity="0.5"/>
+      <line x1="772" y1="218" x2="758" y2="232" stroke="#C4880A" stroke-width="1.5" opacity="0.5"/>
+
+    </svg>
+  </div>
+
+  <!-- Legend -->
+  <div style="display:flex; justify-content:center; gap:2rem; margin-top:2rem; flex-wrap:wrap;" class="reveal" aria-hidden="true">
+    <span style="font-family:'Space Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--aged);">⚓ Anchor — Definitive Truth</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--aged);">⛓️ Chain — Lineage</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--aged);">🧭 Chart — Network</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--aged);">🌐 Net — Live Signals</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(200,80,80,0.7);">🦑 Kraken — The Threats</span>
+    <span style="font-family:'Space Mono',monospace; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-lt);">💰 Treasure — Your Reward</span>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════ -->
+<footer class="footer" aria-labelledby="footer-heading">
+  <p class="footer-logo">The MDM Adventure</p>
+  <p class="footer-tag">Informatica · Intelligent Master Data Management</p>
+  <p class="footer-desc">
+    Your data has always been treasure. The four pillars are the crew, the cannon, and the chart that gets it safely to port — past every kraken, past every silo, under one true flag.
+  </p>
+  <a href="#pillars" class="footer-cta">Read the Orders</a>
+  <p class="footer-credit">Click any pillar card to read the full brief · Informatica MDM · Built for brave data crews everywhere</p>
+</footer>
+
+<script>
+// Stars
+(function(){
+  const c = document.getElementById('hero-stars');
+  for(let i=0;i<100;i++){
+    const s = document.createElement('div');
+    s.className = 'hstar';
+    const sz = Math.random()*2+0.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*70}%;--d:${(Math.random()*5+3).toFixed(1)}s;--dl:${(Math.random()*7).toFixed(1)}s;--op:${(Math.random()*0.5+0.25).toFixed(2)}`;
+    c.appendChild(s);
+  }
+})();
+
+// Nav scroll
+(function(){
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60), {passive:true});
+})();
+
+// Pillar toggle
+(function(){
+  const cards = document.querySelectorAll('.pillar-card');
+  cards.forEach(card => {
+    function toggle(){
+      const was = card.classList.contains('active');
+      cards.forEach(c => { c.classList.remove('active'); c.setAttribute('aria-expanded','false'); const d=c.querySelector('.pc-detail'); if(d) d.setAttribute('aria-hidden','true'); });
+      if(!was){ card.classList.add('active'); card.setAttribute('aria-expanded','true'); const d=card.querySelector('.pc-detail'); if(d) d.setAttribute('aria-hidden','false'); }
+    }
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  });
+})();
+
+// Scroll reveal
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el => obs.observe(el));
+  } else {
+    els.forEach(el => el.classList.add('visible'));
+  }
+})();
+</script>
+</body>
+</html>
