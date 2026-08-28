@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FSMA Rule 204 · MDM & PIM for Grocery Compliance — Informatica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  color-scheme: light;
+  --black:      #08090C;
+  --charcoal:   #0E1018;
+  --dark:       #141820;
+  --panel:      #1A1E28;
+  --panel-lt:   #222838;
+  --blue-dk:    #0E1E3A;
+  --blue:       #1A3A6A;
+  --blue-lt:    #2A5298;
+  --blue-pale:  #E8EEF8;
+  --teal:       #1A5A68;
+  --teal-lt:    #2A7A8A;
+  --green:      #1E6A2E;
+  --green-lt:   #2A8A3E;
+  --green-pale: #E8F4EA;
+  --amber:      #C8880A;
+  --amber-lt:   #E8A818;
+  --amber-pale: #FDF3E0;
+  --danger:     #B42020;
+  --danger-lt:  #D43030;
+  --danger-pale:#FAEAEA;
+  --cream:      #F4F6FA;
+  --white:      #FAFBFD;
+  --fog:        #7A8898;
+  --fog-lt:     #A8B4C0;
+  --mist:       #4A5568;
+  --rule-gold:  #D4920A;
+  --gs1-blue:   #004C97;
+  --gs1-red:    #CC0000;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--charcoal);
+  color: var(--cream);
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+.nav {
+  position: fixed; top:0; left:0; right:0; z-index:200;
+  padding: 0.85rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: background 0.4s;
+}
+.nav.scrolled {
+  background: rgba(8,9,12,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(26,58,106,0.4);
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace; font-size:0.58rem;
+  letter-spacing:0.2em; color:var(--amber-lt); text-transform:uppercase;
+}
+.nav-links { display:flex; gap:1.6rem; list-style:none; }
+.nav-links a {
+  font-family:'Space Mono',monospace; font-size:0.52rem;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--fog); text-decoration:none; transition:color 0.2s;
+}
+.nav-links a:hover { color:var(--amber-lt); }
+@media(max-width:700px){ .nav-links { display:none; } }
+
+/* ══════════════════════════════════════
+   HERO — THE 24-HOUR CLOCK
+══════════════════════════════════════ */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding:5rem 2rem 8rem;
+  overflow:hidden;
+  background: linear-gradient(160deg, #060810 0%, #0A0E1A 40%, #0E1828 70%, #101E30 100%);
+}
+
+/* Grid overlay — data room feel */
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(26,58,106,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,58,106,0.12) 1px, transparent 1px);
+  background-size: 48px 48px;
+  z-index:1; pointer-events:none;
+}
+
+/* Scanning line animation */
+.scan-line {
+  position:absolute; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, rgba(42,82,152,0.4), transparent);
+  animation: scan 6s linear infinite; z-index:2; pointer-events:none;
+}
+@keyframes scan {
+  0%  { top:-2px; opacity:0; }
+  5%  { opacity:1; }
+  95% { opacity:1; }
+  100%{ top:100%; opacity:0; }
+}
+
+/* The hero clock */
+.hero-clock {
+  position:relative; z-index:5;
+  margin: 0 auto 2.5rem;
+  width: 180px; height: 180px;
+}
+.clock-svg { width:100%; height:100%; }
+
+/* Clock countdown animation for the hand */
+@keyframes countdown {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
+}
+.clock-hand {
+  transform-origin: 90px 90px;
+  animation: countdown 60s linear infinite;
+}
+.clock-hand-fast {
+  transform-origin: 90px 90px;
+  animation: countdown 8s linear infinite;
+}
+
+.hero-content { position:relative; z-index:5; }
+.hero-eyebrow {
+  font-family:'Space Mono',monospace; font-size:0.6rem;
+  letter-spacing:0.28em; color:var(--amber-lt); text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.hero-title {
+  font-family:'Playfair Display',serif; font-weight:900;
+  font-size:clamp(2.5rem,7vw,5.5rem); line-height:1.05;
+  color:var(--white); margin-bottom:0.6rem;
+}
+.hero-title em { font-style:italic; color:var(--amber-lt); }
+.hero-subtitle {
+  font-family:'Space Mono',monospace;
+  font-size:clamp(0.7rem,1.5vw,0.9rem);
+  letter-spacing:0.15em; color:var(--blue-lt);
+  text-transform:uppercase; margin-bottom:1.8rem;
+}
+.hero-desc {
+  font-size:1rem; color:var(--fog-lt); max-width:560px;
+  margin:0 auto 2.5rem; line-height:1.78; font-weight:300;
+}
+
+/* Regulation badge */
+.reg-badges {
+  display:flex; gap:0.8rem; justify-content:center;
+  flex-wrap:wrap; margin-bottom:2.5rem; position:relative; z-index:5;
+}
+.reg-badge {
+  background:rgba(26,58,106,0.3); border:1px solid rgba(42,82,152,0.4);
+  border-radius:2px; padding:0.35rem 0.8rem;
+  font-family:'Space Mono',monospace; font-size:0.55rem;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--blue-lt);
+}
+.reg-badge.active {
+  background:rgba(212,146,10,0.15); border-color:rgba(212,146,10,0.5); color:var(--amber-lt);
+}
+
+.scroll-cue {
+  display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+  color:var(--fog); font-family:'Space Mono',monospace; font-size:0.55rem;
+  letter-spacing:0.15em; text-transform:uppercase; cursor:pointer;
+  transition:color 0.2s; position:relative; z-index:5;
+}
+.scroll-cue:hover { color:var(--amber-lt); }
+.scroll-arr {
+  width:20px; height:20px;
+  border-right:2px solid currentColor; border-bottom:2px solid currentColor;
+  transform:rotate(45deg); animation:sarr 1.8s ease-in-out infinite;
+}
+@keyframes sarr { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(5px)} }
+
+/* ══════════════════════════════════════
+   SHARED
+══════════════════════════════════════ */
+.label-tag {
+  font-family:'Space Mono',monospace; font-size:0.55rem;
+  letter-spacing:0.25em; color:var(--amber-lt); text-transform:uppercase;
+  margin-bottom:0.9rem; display:block;
+}
+.label-tag.blue { color:var(--blue-lt); }
+.label-tag.green { color:var(--green-lt); }
+.section-title {
+  font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,3rem);
+  font-weight:900; line-height:1.12; margin-bottom:1.2rem;
+}
+.section-title em { font-style:italic; color:var(--amber-lt); }
+.section-title em.blue { color:#6A9ADA; }
+.section-title em.green { color:#5AC06A; }
+.body-text { font-size:0.92rem; color:var(--fog-lt); line-height:1.8; font-weight:300; }
+
+.sep { width:100%; overflow:hidden; line-height:0; }
+.sep svg { display:block; }
+
+.reveal { opacity:0; transform:translateY(20px); transition:opacity 0.6s ease,transform 0.6s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ══════════════════════════════════════
+   SECTION 1 — THE 24-HOUR AUDIT CLOCK
+   (The Stakes)
+══════════════════════════════════════ */
+.stakes-section {
+  background:var(--dark); padding:5rem 2rem;
+}
+.stakes-inner { max-width:1000px; margin:0 auto; }
+
+.stakes-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:3rem;
+}
+@media(max-width:700px){ .stakes-grid { grid-template-columns:1fr; } }
+
+.stake-card {
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:4px; padding:1.4rem;
+  position:relative; overflow:hidden;
+}
+.stake-card.danger { border-left:3px solid var(--danger); }
+.stake-card.warn   { border-left:3px solid var(--amber); }
+.stake-card.ok     { border-left:3px solid var(--green); }
+
+.stake-card::after {
+  content:attr(data-num);
+  position:absolute; top:-0.5rem; right:0.8rem;
+  font-family:'Playfair Display',serif; font-size:5rem;
+  font-weight:900; color:rgba(255,255,255,0.03);
+  pointer-events:none; line-height:1;
+}
+.sk-icon { font-size:1.6rem; margin-bottom:0.6rem; display:block; }
+.sk-stat {
+  font-family:'Playfair Display',serif; font-size:2rem; font-weight:900;
+  line-height:1; margin-bottom:0.3rem;
+}
+.sk-stat.danger { color:var(--danger-lt); }
+.sk-stat.warn   { color:var(--amber-lt); }
+.sk-stat.ok     { color:var(--green-lt); }
+.sk-label {
+  font-family:'Space Mono',monospace; font-size:0.52rem;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--fog);
+  margin-bottom:0.6rem;
+}
+.sk-body { font-size:0.78rem; color:var(--fog-lt); line-height:1.65; }
+
+/* ══════════════════════════════════════
+   SECTION 2 — GS1 FOUNDATION
+══════════════════════════════════════ */
+.gs1-section {
+  background:var(--charcoal); padding:5rem 2rem;
+}
+.gs1-inner { max-width:1100px; margin:0 auto; }
+
+.gs1-header { text-align:center; margin-bottom:3rem; }
+
+/* GS1 standard cards */
+.gs1-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1rem; margin-bottom:3rem;
+}
+.gs1-card {
+  background:var(--panel); border:1px solid rgba(255,255,255,0.07);
+  border-radius:4px; padding:1.3rem;
+  border-top:3px solid var(--gs1-blue);
+  transition:transform 0.2s, border-color 0.2s;
+}
+.gs1-card:hover { transform:translateY(-3px); border-top-color:var(--amber); }
+.gs1-code {
+  font-family:'Space Mono',monospace; font-size:0.75rem; font-weight:700;
+  color:var(--amber-lt); letter-spacing:0.08em; margin-bottom:0.4rem;
+}
+.gs1-name {
+  font-family:'Playfair Display',serif; font-size:1rem; font-weight:700;
+  margin-bottom:0.4rem; color:var(--white);
+}
+.gs1-body { font-size:0.75rem; color:var(--fog-lt); line-height:1.65; }
+.gs1-example {
+  margin-top:0.6rem; padding:0.4rem 0.6rem;
+  background:rgba(0,76,151,0.15); border-radius:2px;
+  font-family:'Space Mono',monospace; font-size:0.58rem;
+  color:var(--blue-lt); letter-spacing:0.06em;
+}
+
+/* EPCIS / 2D barcode callout */
+.gs1-tech-row {
+  display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:0;
+}
+@media(max-width:640px){ .gs1-tech-row { grid-template-columns:1fr; } }
+.gs1-tech-card {
+  background:var(--panel-lt); border:1px solid rgba(42,82,152,0.25);
+  border-radius:4px; padding:1.2rem;
+  display:flex; gap:1rem; align-items:flex-start;
+}
+.gs1-tech-icon { font-size:2rem; flex-shrink:0; }
+.gs1-tech-name {
+  font-family:'Space Mono',monospace; font-size:0.6rem;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--blue-lt);
+  margin-bottom:0.3rem;
+}
+.gs1-tech-title {
+  font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:700;
+  margin-bottom:0.3rem; color:var(--white);
+}
+.gs1-tech-body { font-size:0.75rem; color:var(--fog-lt); line-height:1.6; }
+
+/* ══════════════════════════════════════
+   SECTION 3 — CTE / KDE TIMELINE
+   (The supply chain journey)
+══════════════════════════════════════ */
+.cte-section {
+  background:var(--dark); padding:5rem 2rem;
+}
+.cte-inner { max-width:1100px; margin:0 auto; }
+.cte-header { text-align:center; margin-bottom:3rem; }
+
+/* Interactive CTE timeline */
+.cte-timeline {
+  position:relative; margin:0 auto;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+
+.cte-scroll {
+  display:flex; align-items:flex-start; gap:0;
+  min-width:800px; padding:1.5rem 0 2rem;
+  position:relative;
+}
+
+/* Horizontal track line */
+.cte-scroll::before {
+  content:'';
+  position:absolute; top:60px; left:60px; right:60px; height:3px;
+  background:linear-gradient(90deg, var(--green), var(--amber), var(--blue-lt));
+  border-radius:2px; z-index:0;
+}
+
+.cte-node {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  position:relative; z-index:1; cursor:pointer; min-width:130px;
+}
+
+.cte-dot {
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; border:3px solid var(--charcoal);
+  background:var(--panel); transition:transform 0.2s, box-shadow 0.25s;
+  margin-bottom:0.8rem;
+}
+.cte-node:hover .cte-dot, .cte-node.active .cte-dot {
+  transform:scale(1.15);
+  box-shadow:0 0 20px rgba(212,146,10,0.4);
+}
+.cte-node[data-c="0"] .cte-dot { background:var(--green);  border-color:var(--green-lt); }
+.cte-node[data-c="1"] .cte-dot { background:#2A5020;       border-color:var(--green); }
+.cte-node[data-c="2"] .cte-dot { background:var(--teal);   border-color:var(--teal-lt); }
+.cte-node[data-c="3"] .cte-dot { background:var(--blue);   border-color:var(--blue-lt); }
+.cte-node[data-c="4"] .cte-dot { background:#5A4010;       border-color:var(--amber); }
+.cte-node[data-c="5"] .cte-dot { background:#1A4A2A;       border-color:var(--green-lt); }
+
+.cte-label {
+  font-family:'Space Mono',monospace; font-size:0.52rem;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--fog); text-align:center; margin-bottom:0.2rem;
+}
+.cte-name {
+  font-family:'Playfair Display',serif; font-size:0.82rem; font-weight:700;
+  text-align:center; color:var(--white); margin-bottom:0.4rem;
+}
+.cte-rule {
+  background:rgba(212,146,10,0.12); border:1px solid rgba(212,146,10,0.25);
+  border-radius:2px; padding:0.15rem 0.4rem;
+  font-family:'Space Mono',monospace; font-size:0.48rem;
+  letter-spacing:0.08em; color:var(--amber-lt); text-transform:uppercase;
+  white-space:nowrap;
+}
+
+/* KDE detail panel under clicked node */
+.cte-detail-panel {
+  background:var(--panel); border:1px solid rgba(42,82,152,0.25);
+  border-radius:4px; padding:1.4rem 1.8rem; margin-top:1.5rem;
+  display:none; max-width:700px; margin-left:auto; margin-right:auto;
+}
+.cte-detail-panel.show { display:block; }
+
+.kde-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:0.6rem; margin-top:0.9rem;
+}
+.kde-item {
+  background:rgba(26,58,106,0.2); border:1px solid rgba(42,82,152,0.2);
+  border-radius:3px; padding:0.5rem 0.7rem;
+}
+.kde-code {
+  font-family:'Space Mono',monospace; font-size:0.48rem;
+  letter-spacing:0.1em; color:var(--amber-lt); text-transform:uppercase;
+  margin-bottom:0.15rem;
+}
+.kde-name { font-size:0.75rem; color:var(--white); font-weight:500; }
+.kde-desc { font-size:0.68rem; color:var(--fog-lt); margin-top:0.1rem; line-height:1.4; }
+
+/* ══════════════════════════════════════
+   SECTION 4 — MDM + PIM ENGINE
+   (The canonical anchor for products)
+══════════════════════════════════════ */
+.mdm-section {
+  background:var(--charcoal); padding:5rem 2rem;
+}
+.mdm-inner { max-width:1050px; margin:0 auto; }
+
+/* The MDM/PIM architecture diagram */
+.arch-diagram {
+  background:var(--panel); border:1px solid rgba(255,255,255,0.07);
+  border-radius:6px; padding:2rem; margin:2.5rem 0;
+  position:relative; overflow:hidden;
+}
+.arch-diagram::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(26,58,106,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(30,106,46,0.08) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+/* ══════════════════════════════════════
+   SECTION 5 — THE 6 SPEC PILLARS
+══════════════════════════════════════ */
+.spec-section {
+  background:var(--dark); padding:5rem 2rem 6rem;
+}
+.spec-header { text-align:center; margin-bottom:3rem; }
+.spec-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem;
+  max-width:1100px; margin:0 auto;
+}
+@media(max-width:900px){ .spec-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:560px){ .spec-grid { grid-template-columns:1fr; } }
+
+.spec-card {
+  background:var(--panel); border:1px solid rgba(255,255,255,0.07);
+  border-radius:4px; padding:1.5rem; cursor:pointer;
+  transition:transform 0.22s, border-color 0.22s, background 0.22s;
+  outline:none; position:relative; overflow:hidden;
+}
+.spec-card:focus-visible { outline:2px solid var(--amber-lt); outline-offset:3px; }
+.spec-card:hover, .spec-card.active {
+  transform:translateY(-3px); background:var(--panel-lt);
+  border-color:rgba(212,146,10,0.3);
+}
+.spec-card::before {
+  content:attr(data-num);
+  position:absolute; bottom:-0.5rem; right:0.6rem;
+  font-family:'Playfair Display',serif; font-size:5.5rem; font-weight:900;
+  color:rgba(255,255,255,0.025); pointer-events:none; line-height:1;
+}
+.sc-num {
+  font-family:'Space Mono',monospace; font-size:0.5rem;
+  letter-spacing:0.18em; color:var(--fog); text-transform:uppercase;
+  margin-bottom:0.4rem;
+}
+.sc-icon { font-size:1.8rem; margin-bottom:0.6rem; display:block; }
+.sc-title {
+  font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700;
+  margin-bottom:0.2rem; color:var(--white);
+}
+.sc-regulation {
+  font-family:'Space Mono',monospace; font-size:0.48rem;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--amber-lt); margin-bottom:0.7rem;
+}
+.sc-body { font-size:0.78rem; color:var(--fog-lt); line-height:1.65; }
+
+.sc-detail {
+  max-height:0; overflow:hidden;
+  transition:max-height 0.4s ease, opacity 0.3s; opacity:0;
+}
+.spec-card.active .sc-detail { max-height:400px; opacity:1; }
+.sc-detail-inner {
+  margin-top:0.9rem; padding-top:0.9rem;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.sc-hook {
+  font-family:'Space Mono',monospace; font-size:0.48rem;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--amber-lt); margin-bottom:0.3rem;
+}
+.sc-hook-text {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:0.82rem; color:var(--teal-lt); margin-bottom:0.6rem; line-height:1.5;
+}
+.sc-detail-body { font-size:0.78rem; color:var(--fog-lt); line-height:1.7; }
+.sc-hint {
+  display:inline-flex; align-items:center; gap:0.3rem; margin-top:0.8rem;
+  font-family:'Space Mono',monospace; font-size:0.48rem;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--fog); transition:color 0.2s;
+}
+.spec-card:hover .sc-hint { color:var(--amber-lt); }
+.spec-card.active .sc-hint { display:none; }
+
+/* ══════════════════════════════════════
+   SECTION 6 — VISIBILITY PAYOFF
+══════════════════════════════════════ */
+.payoff-section {
+  background:var(--charcoal); padding:5rem 2rem;
+}
+.payoff-inner { max-width:1050px; margin:0 auto; }
+.payoff-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1rem; margin-top:2.5rem;
+}
+.payoff-card {
+  background:var(--panel); border:1px solid rgba(255,255,255,0.06);
+  border-radius:4px; padding:1.4rem;
+  border-bottom:3px solid transparent;
+  transition:border-color 0.2s;
+}
+.payoff-card:hover { border-bottom-color:var(--green-lt); }
+.pf-icon { font-size:1.8rem; margin-bottom:0.6rem; display:block; }
+.pf-title {
+  font-family:'Playfair Display',serif; font-size:1rem; font-weight:700;
+  margin-bottom:0.4rem; color:var(--white);
+}
+.pf-body { font-size:0.78rem; color:var(--fog-lt); line-height:1.65; }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+.footer {
+  background:var(--black); padding:4rem 2rem;
+  text-align:center; position:relative; overflow:hidden;
+  border-top:1px solid rgba(26,58,106,0.3);
+}
+.footer::before {
+  content:'§';
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Playfair Display',serif;
+  font-size:22rem; color:rgba(255,255,255,0.015);
+  pointer-events:none;
+}
+.footer-logo {
+  font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:900;
+  color:var(--amber-lt); margin-bottom:0.4rem;
+}
+.footer-tag {
+  font-family:'Space Mono',monospace; font-size:0.52rem;
+  letter-spacing:0.2em; color:var(--fog); text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+.footer-desc {
+  font-size:0.88rem; color:var(--fog-lt); max-width:520px;
+  margin:0 auto 2rem; line-height:1.75; font-weight:300;
+}
+.footer-cta {
+  display:inline-block; background:var(--blue);
+  color:var(--white); padding:0.85rem 2.2rem; border-radius:3px;
+  font-family:'Space Mono',monospace; font-size:0.62rem;
+  letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;
+  font-weight:700; transition:background 0.2s, transform 0.2s;
+  border:1px solid var(--blue-lt);
+}
+.footer-cta:hover { background:var(--blue-lt); transform:translateY(-2px); }
+.footer-credit {
+  margin-top:2.5rem; font-family:'Space Mono',monospace; font-size:0.44rem;
+  letter-spacing:0.15em; color:rgba(244,246,250,0.12); text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <span class="nav-logo">Informatica · FSMA Rule 204 Compliance</span>
+  <ul class="nav-links">
+    <li><a href="#stakes">The Stakes</a></li>
+    <li><a href="#gs1">GS1 Standards</a></li>
+    <li><a href="#cte">CTEs & KDEs</a></li>
+    <li><a href="#mdm">MDM + PIM</a></li>
+    <li><a href="#spec">6 Pillars</a></li>
+    <li><a href="#payoff">The Value</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="scan-line" aria-hidden="true"></div>
+
+  <!-- Animated 24-hour compliance clock -->
+  <div class="hero-clock" aria-hidden="true">
+    <svg class="clock-svg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="clockGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#D4920A" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+      <!-- Glow -->
+      <circle cx="90" cy="90" r="85" fill="url(#clockGlow)"/>
+      <!-- Outer ring -->
+      <circle cx="90" cy="90" r="82" fill="none" stroke="rgba(26,58,106,0.5)" stroke-width="2"/>
+      <!-- Alert ring — sector fill for urgency -->
+      <path d="M90,90 L90,10 A80,80 0 1,1 10,90 Z" fill="rgba(180,32,32,0.06)"/>
+      <!-- Hour marks -->
+      <line x1="90" y1="14" x2="90" y2="22" stroke="rgba(212,146,10,0.7)" stroke-width="2.5"/>
+      <line x1="90" y1="158" x2="90" y2="166" stroke="rgba(42,82,152,0.5)" stroke-width="2"/>
+      <line x1="14" y1="90" x2="22" y2="90" stroke="rgba(42,82,152,0.5)" stroke-width="2"/>
+      <line x1="158" y1="90" x2="166" y2="90" stroke="rgba(42,82,152,0.5)" stroke-width="2"/>
+      <!-- Minute marks -->
+      <line x1="90" y1="14" x2="90" y2="18" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="134" y1="24" x2="131" y2="28" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="156" y1="56" x2="152" y2="58" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="156" y1="124" x2="152" y2="122" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="134" y1="156" x2="131" y2="152" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="46" y1="24" x2="49" y2="28" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="24" y1="56" x2="28" y2="58" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="24" y1="124" x2="28" y2="122" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <line x1="46" y1="156" x2="49" y2="152" stroke="rgba(122,136,152,0.35)" stroke-width="1"/>
+      <!-- Face -->
+      <circle cx="90" cy="90" r="68" fill="rgba(14,24,40,0.8)"/>
+      <!-- Inner text -->
+      <text x="90" y="68" font-family="monospace" font-size="8" text-anchor="middle" fill="rgba(212,146,10,0.8)" letter-spacing="1">FDA AUDIT</text>
+      <text x="90" y="84" font-family="Georgia,serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#F4F6FA">24</text>
+      <text x="90" y="97" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(180,32,32,0.9)" letter-spacing="1">HOURS</text>
+      <text x="90" y="110" font-family="monospace" font-size="6.5" text-anchor="middle" fill="rgba(122,136,152,0.7)" letter-spacing="0.5">TO COMPLY</text>
+      <!-- Minute hand (fast) -->
+      <g class="clock-hand-fast">
+        <line x1="90" y1="90" x2="90" y2="28" stroke="var(--danger-lt)" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <!-- Hour hand -->
+      <g class="clock-hand">
+        <line x1="90" y1="90" x2="90" y2="42" stroke="var(--amber-lt)" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+      <!-- Center pip -->
+      <circle cx="90" cy="90" r="5" fill="var(--amber)"/>
+      <circle cx="90" cy="90" r="2.5" fill="var(--amber-lt)"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Informatica · MDM & PIM for Grocery & Retail</p>
+    <h1 class="hero-title" id="hero-title">24 Hours.<br><em>No Excuses.</em></h1>
+    <p class="hero-subtitle">FSMA Rule 204 · Food Traceability Compliance</p>
+    <p class="hero-desc">
+      When the FDA issues an audit notice, you have 24 hours to produce full traceability records for any food on the Food Traceability List. If your supplier, product, and location data lives in disconnected silos — that clock is already running against you.
+    </p>
+    <div class="reg-badges">
+      <span class="reg-badge active">FSMA Rule 204</span>
+      <span class="reg-badge">21 CFR Part 1.1300</span>
+      <span class="reg-badge">GS1 GTIN · GLN</span>
+      <span class="reg-badge">EPCIS 2.0</span>
+      <span class="reg-badge">FSVP</span>
+      <span class="reg-badge active">MDM + PIM</span>
+    </div>
+    <a href="#stakes" class="scroll-cue" aria-label="Read the compliance case">
+      <div class="scroll-arr" aria-hidden="true"></div>
+      Start the Clock
+    </a>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#060810;">
+  <svg viewBox="0 0 1440 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="36">
+    <path d="M0,18 C360,36 720,0 1080,18 C1260,27 1380,9 1440,18 L1440,36 L0,36 Z" fill="#141820"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 1: THE STAKES ════════════════ -->
+<section class="stakes-section" id="stakes" aria-labelledby="stakes-heading">
+  <div class="stakes-inner">
+    <div class="reveal" style="max-width:700px; margin:0 auto; text-align:center; margin-bottom:3rem;">
+      <span class="label-tag">⚖️ What Non-Compliance Costs</span>
+      <h2 class="section-title" id="stakes-heading">The Numbers Are<br>Not <em>Hypothetical.</em></h2>
+      <p class="body-text" style="max-width:580px; margin:0 auto;">
+        FSMA Rule 204 is not a best-practice guideline. It is a federal mandate with civil and criminal penalties. For grocery retailers and food producers, bad master data is no longer just an operational inconvenience — it's a liability that ends up in headlines.
+      </p>
+    </div>
+
+    <div class="stakes-grid reveal">
+      <div class="stake-card danger" data-num="1">
+        <span class="sk-icon" aria-hidden="true">⏱️</span>
+        <div class="sk-stat danger">24 hrs</div>
+        <div class="sk-label">FDA Documentation Deadline</div>
+        <p class="sk-body">FSMA Rule 204 requires full traceability records — lot codes, KDEs, CTEs, supplier documentation — to be available within 24 hours of an FDA request. Without unified MDM, companies routinely take 3–5 days. That gap is a federal violation.</p>
+      </div>
+      <div class="stake-card warn" data-num="2">
+        <span class="sk-icon" aria-hidden="true">🏷️</span>
+        <div class="sk-stat warn">~48%</div>
+        <div class="sk-label">FDA Recalls from Labeling Failures</div>
+        <p class="sk-body">The FDA reports that nearly half of all food recalls are triggered by incorrect or incomplete allergen and ingredient labeling. Specification management in PIM — governing every label, allergen declaration, and packaging composition — directly cuts this exposure.</p>
+      </div>
+      <div class="stake-card ok" data-num="3">
+        <span class="sk-icon" aria-hidden="true">⚡</span>
+        <div class="sk-stat ok">8 min</div>
+        <div class="sk-label">Recall Response with Unified MDM</div>
+        <p class="sk-body">Organizations with a Canonical Anchor — a single, authoritative supplier and product record with tethered legacy IDs — can pull every affected SKU, store, and lot code in minutes, not hours. From 11 hours to under 8 minutes is not an estimate. It's a documented outcome.</p>
+      </div>
+    </div>
+
+    <!-- The romaine recall specifics -->
+    <div class="reveal" style="margin-top:2.5rem; background:var(--panel); border:1px solid rgba(180,32,32,0.2); border-left:4px solid var(--danger); border-radius:4px; padding:1.8rem 2rem; max-width:900px; margin-left:auto; margin-right:auto;">
+      <div style="display:flex; gap:1.2rem; align-items:flex-start; flex-wrap:wrap;">
+        <div style="flex:1; min-width:260px;">
+          <span style="font-family:'Space Mono',monospace; font-size:0.5rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--danger-lt); display:block; margin-bottom:0.4rem;">⚠ Case Study · Romaine E. coli O157:H7</span>
+          <p style="font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--white); margin-bottom:0.6rem;">Why the Romaine Recalls Took Days, Not Hours</p>
+          <p style="font-size:0.78rem; color:var(--fog-lt); line-height:1.7;">Multi-state E. coli outbreaks linked to romaine repeatedly exposed the same root failure: growers, distributors, and retailers each maintained independent, disconnected supplier records. "Yuma, AZ" growing regions couldn't be rapidly linked across systems to specific lot codes and store distributions. The FDA's own post-outbreak analysis cited traceability gaps as the primary obstacle to rapid containment.</p>
+        </div>
+        <div style="flex:0 0 auto; min-width:220px;">
+          <div style="background:rgba(0,0,0,0.3); border-radius:3px; padding:1rem; font-family:'Space Mono',monospace; font-size:0.62rem; line-height:2;">
+            <div style="color:var(--danger-lt);">OUTBREAK STATS</div>
+            <div style="color:var(--fog);">States affected: <span style="color:var(--white);">36</span></div>
+            <div style="color:var(--fog);">Illnesses: <span style="color:var(--white);">210+</span></div>
+            <div style="color:var(--fog);">Hospitalizations: <span style="color:var(--white);">96</span></div>
+            <div style="color:var(--fog);">Days to contain: <span style="color:var(--danger-lt);">21+</span></div>
+            <div style="color:var(--fog);">Root cause data: <span style="color:var(--danger-lt);">Siloed, unlinked</span></div>
+            <div style="margin-top:0.4rem; padding-top:0.4rem; border-top:1px solid rgba(255,255,255,0.08); color:var(--amber-lt);">With unified MDM: <span style="color:var(--green-lt);">Hours, not weeks</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#141820;">
+  <svg viewBox="0 0 1440 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="36">
+    <path d="M0,18 C360,0 720,36 1080,18 C1260,9 1380,27 1440,18 L1440,36 L0,36 Z" fill="#0E1018"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 2: GS1 FOUNDATION ════════════ -->
+<section class="gs1-section" id="gs1" aria-labelledby="gs1-heading">
+  <div class="gs1-inner">
+    <div class="gs1-header reveal">
+      <span class="label-tag blue">📦 The Common Language of Food Safety</span>
+      <h2 class="section-title" id="gs1-heading">GS1 Standards:<br>The <em class="blue">Vocabulary</em> FSMA Speaks</h2>
+      <p class="body-text" style="max-width:600px; margin:0 auto;">
+        FSMA Rule 204 doesn't mandate GS1, but it functionally requires the same thing: a universal, unambiguous identifier for every product, every location, and every movement event. GS1 is how compliant trading partners speak the same language — and how MDM gives every identifier a single authoritative home.
+      </p>
+    </div>
+
+    <div class="gs1-grid reveal">
+      <div class="gs1-card">
+        <div class="gs1-code">GTIN</div>
+        <div class="gs1-name">Global Trade Item Number</div>
+        <p class="gs1-body">The universal product identifier — 14 digits that uniquely identify any food item regardless of which retailer, distributor, or system is looking at it. The Canonical Anchor in MDM is built on the GTIN as its primary key.</p>
+        <div class="gs1-example">GTIN-14: 00012345678905<br>→ Organic Romaine 6oz bag, Brand X</div>
+      </div>
+      <div class="gs1-card">
+        <div class="gs1-code">GLN</div>
+        <div class="gs1-name">Global Location Number</div>
+        <p class="gs1-body">A 13-digit identifier for any physical location or legal entity — farm, distribution center, store, or digital endpoint. Critical for FSMA CTEs: you cannot record a "receiving" event without knowing exactly where receiving happened.</p>
+        <div class="gs1-example">GLN: 0614141000005<br>→ DC 7, Fresno CA, Receiving Dock 3</div>
+      </div>
+      <div class="gs1-card">
+        <div class="gs1-code">SSCC</div>
+        <div class="gs1-name">Serial Shipping Container Code</div>
+        <p class="gs1-body">An 18-digit identifier for a logistics unit — a pallet, case, or shipping container. Links physical shipments to the GTIN and GLN records in your MDM, enabling lot-level traceability across the supply chain.</p>
+        <div class="gs1-example">SSCC: 006141410000050000<br>→ Pallet 5000, Shipment 2024-10-14</div>
+      </div>
+      <div class="gs1-card">
+        <div class="gs1-code">GS1-128 / 2D</div>
+        <div class="gs1-name">Data Carriers & 2D Barcodes</div>
+        <p class="gs1-body">2D barcodes (QR, DataMatrix) encode GTIN, lot number, expiry date, and serial number in a single scan. The FDA's "New Era" blueprint calls for industry-wide adoption by 2027 — enabling real-time, item-level recall traceability at the shelf.</p>
+        <div class="gs1-example">Encodes: GTIN + Lot + Expiry<br>→ Full KDE set in one scan</div>
+      </div>
+      <div class="gs1-card">
+        <div class="gs1-code">GLN · PARTY</div>
+        <div class="gs1-name">Supplier & Party Identification</div>
+        <p class="gs1-body">Under FSMA's Foreign Supplier Verification Program (FSVP), you must verify every supplier meets U.S. safety standards. GLN-based party identification in MDM ties certifications, audit records, and compliance documentation directly to a single supplier record.</p>
+        <div class="gs1-example">Supplier CA-00-4471 → GLN 0614141...<br>→ GAP cert · Organic · FSMA verified</div>
+      </div>
+      <div class="gs1-card">
+        <div class="gs1-code">RFID · EPC</div>
+        <div class="gs1-name">Electronic Product Code</div>
+        <p class="gs1-body">RFID tags carrying EPCs enable carton-level inventory visibility without line-of-sight scanning. Combined with EPCIS event sharing, EPCs let every trading partner see the same movement history — essential for multi-party traceability under Rule 204.</p>
+        <div class="gs1-example">EPC → RFID tag on case<br>→ Auto-captured at every CTE</div>
+      </div>
+    </div>
+
+    <!-- EPCIS + Tech row -->
+    <div class="gs1-tech-row reveal">
+      <div class="gs1-tech-card">
+        <span class="gs1-tech-icon" aria-hidden="true">🔗</span>
+        <div>
+          <div class="gs1-tech-name">EPCIS 2.0</div>
+          <div class="gs1-tech-title">Electronic Product Code Information Services</div>
+          <p class="gs1-tech-body">The standard that enables trading partners to automatically capture and <em>share</em> supply chain event data across different systems. EPCIS events are the language of CTEs — a "shipping" EPCIS event at the grower becomes a "receiving" event at your DC, automatically reconciled against your MDM's GTIN and GLN records. Without accurate master data as the backbone, EPCIS events are uninterpretable.</p>
+        </div>
+      </div>
+      <div class="gs1-tech-card">
+        <span class="gs1-tech-icon" aria-hidden="true">🔄</span>
+        <div>
+          <div class="gs1-tech-name">MDM as the GS1 Backbone</div>
+          <div class="gs1-tech-title">Why Transactional Data Needs Master Data</div>
+          <p class="gs1-tech-body">Every EPCIS event, every ASN, every lot code record is meaningless without accurate master data to interpret it. Your MDM system is the canonical registry that maps GTIN → product specification, GLN → location record, and Supplier ID → FSVP compliance status. Without it, GS1 standards generate data that no system can consistently read.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#0E1018;">
+  <svg viewBox="0 0 1440 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="36">
+    <path d="M0,18 C360,36 720,0 1080,18 C1260,27 1380,9 1440,18 L1440,36 L0,36 Z" fill="#141820"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 3: CTE / KDE TIMELINE ════════ -->
+<section class="cte-section" id="cte" aria-labelledby="cte-heading">
+  <div class="cte-inner">
+    <div class="cte-header reveal">
+      <span class="label-tag">🗺️ FSMA Rule 204 · The Traceability Roadmap</span>
+      <h2 class="section-title" id="cte-heading">Critical Tracking Events:<br>Every <em>Stop</em> on the Journey</h2>
+      <p class="body-text" style="max-width:600px; margin:0 auto;">
+        FSMA Rule 204 requires specific Key Data Elements (KDEs) to be captured and retained at each Critical Tracking Event (CTE) for foods on the Food Traceability List — which includes leafy greens, fresh tomatoes, shell eggs, and 16 other high-risk categories. Click any event to see which KDEs your MDM must own.
+      </p>
+    </div>
+
+    <div class="cte-timeline reveal" role="navigation" aria-label="Critical Tracking Events — click each to see required Key Data Elements">
+      <div class="cte-scroll">
+
+        <div class="cte-node" data-c="0" tabindex="0" role="button" aria-expanded="false" aria-controls="kde-panel" data-event="0">
+          <div class="cte-dot" aria-hidden="true">🌱</div>
+          <div class="cte-label">CTE 1</div>
+          <div class="cte-name">Growing / Harvesting</div>
+          <div class="cte-rule">Rule 204 §1.1320</div>
+        </div>
+
+        <div class="cte-node" data-c="1" tabindex="0" role="button" aria-expanded="false" aria-controls="kde-panel" data-event="1">
+          <div class="cte-dot" aria-hidden="true">🏭</div>
+          <div class="cte-label">CTE 2</div>
+          <div class="cte-name">Cooling / Initial Packing</div>
+          <div class="cte-rule">Rule 204 §1.1325</div>
+        </div>
+
+        <div class="cte-node" data-c="2" tabindex="0" role="button" aria-expanded="false" aria-controls="kde-panel" data-event="2">
+          <div class="cte-dot" aria-hidden="true">🚚</div>
+          <div class="cte-label">CTE 3</div>
+          <div class="cte-name">Shipping</div>
+          <div class="cte-rule">Rule 204 §1.1330</div>
+        </div>
+
+        <div class="cte-node" data-c="3" tabindex="0" role="button" aria-expanded="false" aria-controls="kde-panel" data-event="3">
+          <div class="cte-dot" aria-hidden="true">📦</div>
+          <div class="cte-label">CTE 4</div>
+          <div class="cte-name">Receiving</div>
+          <div class="cte-rule">Rule 204 §1.1335</div>
+        </div>
+
+        <div class="cte-node" data-c="4" tabindex="0" role="button" aria-expanded="false" aria-controls="kde-panel" data-event="4">
+          <div class="cte-dot" aria-hidden="true">🏗️</div>
+          <div class="cte-label">CTE 5</div>
+          <div class="cte-name">Transformation</div>
+          <div class="cte-rule">Rule 204 §1.1340</div>
+        </div>
+
+        <div class="cte-node" data-c="5" tabindex="0" role="button" aria-expanded="false" aria-controls="kde-panel" data-event="5">
+          <div class="cte-dot" aria-hidden="true">🏪</div>
+          <div class="cte-label">CTE 6</div>
+          <div class="cte-name">Point of Sale</div>
+          <div class="cte-rule">Rule 204 §1.1345</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- KDE detail panel -->
+    <div class="cte-detail-panel" id="kde-panel" role="region" aria-label="Key Data Elements for selected Critical Tracking Event">
+      <div id="kde-content"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#141820;">
+  <svg viewBox="0 0 1440 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="36">
+    <path d="M0,18 C360,0 720,36 1080,18 C1260,9 1380,27 1440,18 L1440,36 L0,36 Z" fill="#0E1018"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 4: MDM + PIM ENGINE ══════════ -->
+<section class="mdm-section" id="mdm" aria-labelledby="mdm-heading">
+  <div class="mdm-inner">
+    <div class="reveal" style="max-width:720px; margin:0 auto 2.5rem; text-align:center;">
+      <span class="label-tag green">⚙️ The Compliance Engine</span>
+      <h2 class="section-title" id="mdm-heading">MDM + PIM:<br>Your <em class="green">Single Source</em> of Regulatory Truth</h2>
+      <p class="body-text" style="max-width:600px; margin:0 auto;">
+        Transactional data — EPCIS events, ASNs, lot codes — is meaningless without accurate master data to anchor it. MDM owns the authoritative supplier and location records. PIM owns the product specification, formulation, allergen, and packaging data. Together, they are the compliance backbone that makes every KDE legible and every CTE traceable.
+      </p>
+    </div>
+
+    <!-- Architecture diagram -->
+    <div class="arch-diagram reveal" role="img" aria-label="MDM and PIM architecture diagram showing how they feed FSMA compliance">
+      <svg width="100%" viewBox="0 0 860 290" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="archArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#E8A818"/>
+          </marker>
+          <marker id="blueArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#6A9ADA"/>
+          </marker>
+          <radialGradient id="mdmGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1A3A6A" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+          <radialGradient id="pimGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1E6A2E" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+        </defs>
+
+        <!-- ── SOURCE SYSTEMS (left) ── -->
+        <text x="10" y="20" font-family="monospace" font-size="8" fill="rgba(122,136,152,0.7)" letter-spacing="1">SOURCE SYSTEMS</text>
+        <rect x="10" y="30" width="110" height="34" rx="3" fill="rgba(26,58,106,0.2)" stroke="rgba(42,82,152,0.3)" stroke-width="1"/>
+        <text x="65" y="50" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#A8B4C0">ERP</text>
+        <text x="65" y="62" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.6)">Supplier IDs</text>
+
+        <rect x="10" y="76" width="110" height="34" rx="3" fill="rgba(26,58,106,0.2)" stroke="rgba(42,82,152,0.3)" stroke-width="1"/>
+        <text x="65" y="96" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#A8B4C0">POS / WMS</text>
+        <text x="65" y="108" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.6)">Location Data</text>
+
+        <rect x="10" y="122" width="110" height="34" rx="3" fill="rgba(26,58,106,0.2)" stroke="rgba(42,82,152,0.3)" stroke-width="1"/>
+        <text x="65" y="142" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#A8B4C0">Lab / QA</text>
+        <text x="65" y="154" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.6)">Spec Data</text>
+
+        <rect x="10" y="168" width="110" height="34" rx="3" fill="rgba(26,58,106,0.2)" stroke="rgba(42,82,152,0.3)" stroke-width="1"/>
+        <text x="65" y="188" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#A8B4C0">Supplier Portal</text>
+        <text x="65" y="200" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.6)">Certs / FSVP</text>
+
+        <!-- Source arrows to MDM/PIM -->
+        <line x1="122" y1="47" x2="188" y2="100" stroke="#6A9ADA" stroke-width="1" marker-end="url(#blueArrow)" stroke-dasharray="3,3" opacity="0.5"/>
+        <line x1="122" y1="93" x2="188" y2="115" stroke="#6A9ADA" stroke-width="1" marker-end="url(#blueArrow)" stroke-dasharray="3,3" opacity="0.5"/>
+        <line x1="122" y1="139" x2="380" y2="155" stroke="#5AA86A" stroke-width="1" marker-end="url(#blueArrow)" stroke-dasharray="3,3" opacity="0.4"/>
+        <line x1="122" y1="185" x2="188" y2="155" stroke="#6A9ADA" stroke-width="1" marker-end="url(#blueArrow)" stroke-dasharray="3,3" opacity="0.4"/>
+
+        <!-- ── MDM BOX ── -->
+        <circle cx="280" cy="120" r="55" fill="url(#mdmGlow)"/>
+        <rect x="192" y="60" width="176" height="120" rx="6" fill="rgba(14,24,40,0.8)" stroke="rgba(42,82,152,0.6)" stroke-width="2"/>
+        <rect x="192" y="60" width="176" height="28" rx="6" fill="rgba(26,58,106,0.6)"/>
+        <rect x="192" y="76" width="176" height="12" rx="0" fill="rgba(26,58,106,0.6)"/>
+        <text x="280" y="78" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#6A9ADA" letter-spacing="1">MASTER DATA MGMT</text>
+        <text x="280" y="107" font-family="Georgia,serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#F4F6FA">MDM</text>
+        <text x="280" y="123" font-family="monospace" font-size="7" text-anchor="middle" fill="#7A8898" letter-spacing="0.5">Canonical Anchor</text>
+        <line x1="210" y1="132" x2="350" y2="132" stroke="rgba(42,82,152,0.3)" stroke-width="1"/>
+        <text x="280" y="146" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(168,180,192,0.7)">Supplier · Location · Party</text>
+        <text x="280" y="159" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(168,180,192,0.7)">GTIN · GLN · FSVP Status</text>
+        <!-- MDM badge -->
+        <text x="280" y="35" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(212,146,10,0.7)" letter-spacing="0.5">⚓ CANONICAL ANCHOR</text>
+
+        <!-- ── PIM BOX ── -->
+        <circle cx="490" cy="180" r="55" fill="url(#pimGlow)"/>
+        <rect x="400" y="120" width="176" height="120" rx="6" fill="rgba(8,18,8,0.8)" stroke="rgba(30,106,46,0.5)" stroke-width="2"/>
+        <rect x="400" y="120" width="176" height="28" rx="6" fill="rgba(30,74,46,0.6)"/>
+        <rect x="400" y="136" width="176" height="12" rx="0" fill="rgba(30,74,46,0.6)"/>
+        <text x="488" y="138" font-family="monospace" font-size="7.5" text-anchor="middle" fill="#5AC06A" letter-spacing="1">PRODUCT INFO MGMT</text>
+        <text x="488" y="167" font-family="Georgia,serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#F4F6FA">PIM</text>
+        <text x="488" y="183" font-family="monospace" font-size="7" text-anchor="middle" fill="#7A8898" letter-spacing="0.5">Specification Management</text>
+        <line x1="418" y1="192" x2="558" y2="192" stroke="rgba(30,106,46,0.3)" stroke-width="1"/>
+        <text x="488" y="206" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(168,180,192,0.7)">Formula · Allergen · Label</text>
+        <text x="488" y="219" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(168,180,192,0.7)">Packaging · Certs · Recipe</text>
+        <!-- PIM badge -->
+        <text x="488" y="100" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(90,192,106,0.7)" letter-spacing="0.5">📋 SPEC RECORD</text>
+
+        <!-- MDM ↔ PIM bridge -->
+        <line x1="368" y1="145" x2="400" y2="160" stroke="#E8A818" stroke-width="2" marker-end="url(#archArrow)"/>
+        <line x1="400" y1="148" x2="368" y2="133" stroke="#E8A818" stroke-width="2" marker-end="url(#archArrow)"/>
+        <rect x="366" y="136" width="46" height="14" rx="2" fill="rgba(8,8,8,0.8)"/>
+        <text x="389" y="146" font-family="monospace" font-size="6" text-anchor="middle" fill="#E8A818">LINKED</text>
+
+        <!-- ── FSMA OUTPUT (right) ── -->
+        <text x="624" y="20" font-family="monospace" font-size="8" fill="rgba(122,136,152,0.7)" letter-spacing="1">FSMA COMPLIANCE</text>
+
+        <!-- Arrow MDM → outputs -->
+        <line x1="370" y1="110" x2="620" y2="52" stroke="#E8A818" stroke-width="1.5" marker-end="url(#archArrow)" opacity="0.6"/>
+        <!-- Arrow PIM → outputs -->
+        <line x1="576" y1="170" x2="620" y2="140" stroke="#5AA86A" stroke-width="1.5" marker-end="url(#archArrow)" opacity="0.6"/>
+        <line x1="576" y1="200" x2="620" y2="200" stroke="#5AA86A" stroke-width="1.5" marker-end="url(#archArrow)" opacity="0.6"/>
+        <line x1="576" y1="220" x2="620" y2="245" stroke="#5AA86A" stroke-width="1.5" marker-end="url(#archArrow)" opacity="0.6"/>
+
+        <!-- Output boxes -->
+        <rect x="620" y="30" width="220" height="40" rx="3" fill="rgba(30,106,46,0.15)" stroke="rgba(30,106,46,0.3)" stroke-width="1"/>
+        <text x="730" y="46" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#5AC06A" font-weight="600">24-hr FDA Response</text>
+        <text x="730" y="60" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.7)">Lot codes · KDEs · CTEs — instant pull</text>
+
+        <rect x="620" y="118" width="220" height="40" rx="3" fill="rgba(30,106,46,0.12)" stroke="rgba(30,106,46,0.25)" stroke-width="1"/>
+        <text x="730" y="134" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#5AC06A" font-weight="600">Label & Allergen Compliance</text>
+        <text x="730" y="148" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.7)">PIM spec → label → FDA audit-ready</text>
+
+        <rect x="620" y="176" width="220" height="40" rx="3" fill="rgba(30,106,46,0.12)" stroke="rgba(30,106,46,0.25)" stroke-width="1"/>
+        <text x="730" y="192" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#5AC06A" font-weight="600">FSVP Supplier Verification</text>
+        <text x="730" y="206" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.7)">Certs tethered · GLN verified · Auditable</text>
+
+        <rect x="620" y="234" width="220" height="40" rx="3" fill="rgba(30,106,46,0.12)" stroke="rgba(30,106,46,0.25)" stroke-width="1"/>
+        <text x="730" y="250" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#5AC06A" font-weight="600">Rapid Recall Execution</text>
+        <text x="730" y="264" font-family="monospace" font-size="7" text-anchor="middle" fill="rgba(122,136,152,0.7)">All SKUs · all stores · 8 minutes</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#0E1018;">
+  <svg viewBox="0 0 1440 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="36">
+    <path d="M0,18 C360,36 720,0 1080,18 C1260,27 1380,9 1440,18 L1440,36 L0,36 Z" fill="#141820"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 5: THE 6 SPEC PILLARS ════════ -->
+<section class="spec-section" id="spec" aria-labelledby="spec-heading">
+  <div class="spec-header reveal">
+    <span class="label-tag">📋 Specification Management</span>
+    <h2 class="section-title" id="spec-heading">Six Ways MDM + PIM<br><em>Accelerate</em> FSMA Compliance</h2>
+    <p class="body-text" style="max-width:580px; margin:0 auto;">
+      Specification management — tying all supply chain data to a single product at the specification level — is the heart of FSMA compliance. Click any pillar to see the full compliance case.
+    </p>
+  </div>
+
+  <div class="spec-grid" role="list">
+
+    <article class="spec-card reveal" data-num="01" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="sc-num">Pillar 01</p>
+      <span class="sc-icon" aria-hidden="true">🗺️</span>
+      <p class="sc-title">End-to-End Traceability</p>
+      <p class="sc-regulation">FSMA Rule 204 · §1.1300 · KDE / CTE</p>
+      <p class="sc-body">Specification management enables complete supply chain visibility by linking KDEs across every CTE — from harvest to shelf — tied directly to the product's specification record in PIM.</p>
+      <div class="sc-detail" aria-hidden="true">
+        <div class="sc-detail-inner">
+          <p class="sc-hook">Compliance Outcome</p>
+          <p class="sc-hook-text">"A comprehensive digital roadmap of every product's journey — every lot code, every location, every movement event."</p>
+          <p class="sc-detail-body">By managing data at the specification level, producers link regulatory actions and quality data directly to the finished good. A single product spec in PIM anchors the GTIN in MDM, which anchors every CTE event from growing through point of sale. When the FDA asks for a product's full history, it surfaces in one pull — not a multi-system excavation.</p>
+        </div>
+      </div>
+      <span class="sc-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Compliance detail
+      </span>
+    </article>
+
+    <article class="spec-card reveal" data-num="02" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="sc-num">Pillar 02</p>
+      <span class="sc-icon" aria-hidden="true">🏷️</span>
+      <p class="sc-title">Label & Allergen Compliance</p>
+      <p class="sc-regulation">FSMA · FDA FALCPA · ~48% of Recalls</p>
+      <p class="sc-body">PIM strictly governs material compositions, allergens, additives, and packaging properties — ensuring coating layers and inks don't migrate into food, and every label is auditable back to an approved spec.</p>
+      <div class="sc-detail" aria-hidden="true">
+        <div class="sc-detail-inner">
+          <p class="sc-hook">Compliance Outcome</p>
+          <p class="sc-hook-text">"Nearly half of FDA recalls trace to labeling failures. A spec-governed label in PIM is the last line of defense."</p>
+          <p class="sc-detail-body">Every allergen declaration, ingredient list, net weight, and nutritional panel is governed by an approved specification in PIM. Changes to a formula or packaging material trigger an approval workflow before any label update is permitted. This eliminates ad hoc edits — the single most common source of allergen labeling errors and the FDA recall trigger most preventable by data governance.</p>
+        </div>
+      </div>
+      <span class="sc-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Compliance detail
+      </span>
+    </article>
+
+    <article class="spec-card reveal" data-num="03" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="sc-num">Pillar 03</p>
+      <span class="sc-icon" aria-hidden="true">⚡</span>
+      <p class="sc-title">Rapid 24-Hour Documentation</p>
+      <p class="sc-regulation">FSMA Rule 204 · §1.1455 · 24-hr Requirement</p>
+      <p class="sc-body">Cloud-based MDM and PIM provide a 24/7 centralized repository. Any FDA audit or inspection request for lot codes, product descriptions, shipment dates, or supplier certs is satisfied in minutes, not days.</p>
+      <div class="sc-detail" aria-hidden="true">
+        <div class="sc-detail-inner">
+          <p class="sc-hook">Compliance Outcome</p>
+          <p class="sc-hook-text">"FSMA requires documentation within 24 hours. Without centralized spec management, companies routinely take 3–5 business days."</p>
+          <p class="sc-detail-body">MDM holds the authoritative supplier record with all certification documents attached. PIM holds the product specification with every formula version, allergen declaration, and label revision in an auditable history. A cloud-based deployment means this is accessible from any site, any device, at any hour — including when the FDA calls at 11pm on a Friday before a holiday weekend.</p>
+        </div>
+      </div>
+      <span class="sc-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Compliance detail
+      </span>
+    </article>
+
+    <article class="spec-card reveal" data-num="04" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="sc-num">Pillar 04</p>
+      <span class="sc-icon" aria-hidden="true">🌐</span>
+      <p class="sc-title">FSVP Supplier Verification</p>
+      <p class="sc-regulation">FSMA · Foreign Supplier Verification Program</p>
+      <p class="sc-body">MDM enables organizations to require, store, and audit supplier certifications — GAP, Organic, FSMA compliance — directly against the Canonical Anchor record, with automated expiry alerts and FSVP audit trails.</p>
+      <div class="sc-detail" aria-hidden="true">
+        <div class="sc-detail-inner">
+          <p class="sc-hook">Compliance Outcome</p>
+          <p class="sc-hook-text">"FSVP requires documented verification that every foreign supplier meets U.S. safety standards. MDM is the register that proves it."</p>
+          <p class="sc-detail-body">The Canonical Anchor in MDM holds every supplier certification, inspection record, and FSVP verification status — tethered to the supplier's GLN and cross-referenced against every product spec in PIM that uses their ingredients. When a supplier's GAP certification expires, MDM flags every product and every active purchase order that depends on it before a non-compliant shipment clears customs.</p>
+        </div>
+      </div>
+      <span class="sc-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Compliance detail
+      </span>
+    </article>
+
+    <article class="spec-card reveal" data-num="05" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="sc-num">Pillar 05</p>
+      <span class="sc-icon" aria-hidden="true">🔏</span>
+      <p class="sc-title">Workflow & Change Accountability</p>
+      <p class="sc-regulation">FSMA · 21 CFR Part 117 · Audit Logs</p>
+      <p class="sc-body">Specification management enforces approval workflows for every recipe update, artwork revision, and formula change — with a strict audit log of who changed what, when, and why. No unapproved modifications reach production.</p>
+      <div class="sc-detail" aria-hidden="true">
+        <div class="sc-detail-inner">
+          <p class="sc-hook">Compliance Outcome</p>
+          <p class="sc-hook-text">"If a mislabeling recall occurs, the FDA will ask who approved the label change and when. MDM/PIM gives you a timestamped answer."</p>
+          <p class="sc-detail-body">Every specification change — a new allergen substituted, a different packaging film approved, a formula reformulation — goes through a governed workflow before it becomes active. The audit log is immutable and timestamps every approval. In an FDA inspection, this is the difference between demonstrating a controlled process and being unable to explain how an unapproved change reached a shipped product.</p>
+        </div>
+      </div>
+      <span class="sc-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Compliance detail
+      </span>
+    </article>
+
+    <article class="spec-card reveal" data-num="06" role="listitem" tabindex="0" aria-expanded="false">
+      <p class="sc-num">Pillar 06</p>
+      <span class="sc-icon" aria-hidden="true">🔭</span>
+      <p class="sc-title">Future-Proofing for New Rules</p>
+      <p class="sc-regulation">FDA "New Era of Smarter Food Safety"</p>
+      <p class="sc-body">The FDA is actively expanding its digital traceability blueprint — 2D barcodes by 2027, Digital Product Passports emerging, EPCIS adoption accelerating. Spec-level MDM/PIM is designed to absorb new data requirements without rebuilding from scratch.</p>
+      <div class="sc-detail" aria-hidden="true">
+        <div class="sc-detail-inner">
+          <p class="sc-hook">Compliance Outcome</p>
+          <p class="sc-hook-text">"Regulatory change is the only constant in food safety. MDM/PIM turns regulatory adaptability from a project into a configuration."</p>
+          <p class="sc-detail-body">When the FDA mandates 2D barcodes encoding GTIN + lot + expiry by 2027, organizations with a clean MDM/PIM backbone add a data carrier — they don't rebuild their data model. When Digital Product Passports require full lifecycle records for food products, the spec management layer already holds that history. Future compliance becomes a schema update, not a transformation program.</p>
+        </div>
+      </div>
+      <span class="sc-hint" aria-hidden="true">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3.5l2.5 2.5 2.5-2.5"/></svg>
+        Compliance detail
+      </span>
+    </article>
+
+  </div>
+</section>
+
+<!-- SEP -->
+<div class="sep" aria-hidden="true" style="background:#141820;">
+  <svg viewBox="0 0 1440 36" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" height="36">
+    <path d="M0,18 C360,0 720,36 1080,18 C1260,9 1380,27 1440,18 L1440,36 L0,36 Z" fill="#0E1018"/>
+  </svg>
+</div>
+
+<!-- ══ SECTION 6: THE PAYOFF ═════════════════ -->
+<section class="payoff-section" id="payoff" aria-labelledby="payoff-heading">
+  <div class="payoff-inner">
+    <div class="reveal" style="text-align:center; max-width:680px; margin:0 auto 1rem;">
+      <span class="label-tag green">🏆 Beyond Compliance</span>
+      <h2 class="section-title" id="payoff-heading">Compliance is the Floor.<br><em class="green">Visibility</em> is the Ceiling.</h2>
+      <p class="body-text" style="max-width:580px; margin:0 auto;">
+        A fully unified MDM + PIM foundation doesn't just keep the FDA satisfied. It unlocks supply chain capabilities that directly drive revenue, reduce waste, and protect against the next disruption.
+      </p>
+    </div>
+    <div class="payoff-grid reveal">
+      <div class="payoff-card">
+        <span class="pf-icon" aria-hidden="true">📊</span>
+        <p class="pf-title">Reduced Out-of-Stocks</p>
+        <p class="pf-body">Real-time inventory visibility, powered by accurate item master data, reduces on-shelf out-of-stocks and the margin erosion that comes with them. Same data foundation as your compliance backbone.</p>
+      </div>
+      <div class="payoff-card">
+        <span class="pf-icon" aria-hidden="true">🌡️</span>
+        <p class="pf-title">Cold Chain Monitoring</p>
+        <p class="pf-body">Spec-level product data defines acceptable temperature ranges. MDM links those specs to IoT cold chain sensors and GLN-identified locations — automatically flagging deviations before product is compromised.</p>
+      </div>
+      <div class="payoff-card">
+        <span class="pf-icon" aria-hidden="true">🏗️</span>
+        <p class="pf-title">Digital Twin Readiness</p>
+        <p class="pf-body">A deeply integrated, visible data foundation — spec records in PIM, canonical IDs in MDM, EPCIS events flowing — is the prerequisite for Digital Twin deployments that model your supply chain in real time.</p>
+      </div>
+      <div class="payoff-card">
+        <span class="pf-icon" aria-hidden="true">📜</span>
+        <p class="pf-title">Digital Product Passports</p>
+        <p class="pf-body">The EU and FDA are converging on Digital Product Passports — comprehensive lifecycle records for regulated products. Your spec management layer already holds this history. Compliance becomes a data export, not a new project.</p>
+      </div>
+      <div class="payoff-card">
+        <span class="pf-icon" aria-hidden="true">🔍</span>
+        <p class="pf-title">Anti-Counterfeiting</p>
+        <p class="pf-body">GTIN + SSCC + EPCIS event verification against your MDM canonical record flags any product whose serialized history doesn't match the expected supply chain path — a growing threat in premium and organic segments.</p>
+      </div>
+      <div class="payoff-card">
+        <span class="pf-icon" aria-hidden="true">🤝</span>
+        <p class="pf-title">Supplier Collaboration</p>
+        <p class="pf-body">MDM with GLN-based supplier records and governed FSVP documentation creates a foundation for supplier portals where partners can self-serve certifications, view spec requirements, and submit compliance evidence directly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════ -->
+<footer class="footer" aria-labelledby="footer-heading">
+  <p class="footer-logo">The 24-Hour Standard</p>
+  <p class="footer-tag">Informatica · MDM & PIM for FSMA Rule 204 · Grocery & Retail</p>
+  <p class="footer-desc">
+    FSMA compliance is not a data quality initiative — it is a legal obligation with a 24-hour clock. MDM and PIM are the systems that let you answer that clock with confidence, speed, and an audit trail that holds up in court.
+  </p>
+  <a href="#spec" class="footer-cta">Explore the 6 Compliance Pillars</a>
+  <p class="footer-credit">Informatica Intelligent MDM · PIM · Built for grocery, retail, and food producers operating under FDA jurisdiction · FSMA Rule 204 effective January 2026</p>
+</footer>
+
+<script>
+// Nav scroll
+(function(){
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60), {passive:true});
+})();
+
+// CTE KDE data
+const kdeData = [
+  {
+    cte: 'CTE 1 — Growing & Harvesting',
+    rule: 'FSMA Rule 204 § 1.1320',
+    intro: 'The origin point. Every traceable unit begins here. MDM must own the authoritative grower/farm record (GLN-linked) and PIM must hold the crop specification including approved growing methods, pesticide restrictions, and GAP certification status.',
+    kdes: [
+      { code: 'KDE-H-01', name: 'Traceability Lot Code', desc: 'Unique identifier assigned at harvest — the thread that connects every downstream record.' },
+      { code: 'KDE-H-02', name: 'Quantity & UOM', desc: 'Quantity harvested and unit of measure at point of harvest.' },
+      { code: 'KDE-H-03', name: 'Harvest Date', desc: 'Date of harvest — required for shelf-life calculation and recall scope.' },
+      { code: 'KDE-H-04', name: 'Harvest Location (GLN)', desc: 'The physical growing location, identified by GLN — links to MDM location master.' },
+      { code: 'KDE-H-05', name: 'Grower / Business Name', desc: 'The entity responsible for growing — links to MDM Canonical Anchor (Supplier record).' },
+      { code: 'KDE-H-06', name: 'Food Description (GTIN)', desc: 'What was harvested — links to PIM product specification via GTIN.' },
+    ]
+  },
+  {
+    cte: 'CTE 2 — Cooling & Initial Packing',
+    rule: 'FSMA Rule 204 § 1.1325',
+    intro: 'The first transformation point. Harvested product is cooled, washed, and packed. PIM must hold the spec for every packaging material, including food-contact ink and coating migration risks. MDM links the packing facility (GLN) to its certification records.',
+    kdes: [
+      { code: 'KDE-P-01', name: 'New Traceability Lot Code', desc: 'A new TLC is assigned at packing — linked back to the harvest TLC.' },
+      { code: 'KDE-P-02', name: 'Harvest Lot Code (reference)', desc: 'The prior harvest TLC — maintains the chain of traceability.' },
+      { code: 'KDE-P-03', name: 'Packing Facility (GLN)', desc: 'Where packing occurred — GLN-identified location in MDM.' },
+      { code: 'KDE-P-04', name: 'Packing Date', desc: 'Date product was packed.' },
+      { code: 'KDE-P-05', name: 'Packed GTIN', desc: 'The retail-ready product GTIN — links to PIM packaging specification.' },
+      { code: 'KDE-P-06', name: 'Packaging Spec Reference', desc: 'PIM spec governing materials, coatings, allergen barriers, and label content.' },
+    ]
+  },
+  {
+    cte: 'CTE 3 — Shipping',
+    rule: 'FSMA Rule 204 § 1.1330',
+    intro: 'Product leaves the origin entity. The SSCC on the pallet, the ASN, and the EPCIS shipping event all reference the same GTIN and lot code — but only if MDM holds a clean, GLN-identified record of origin and destination.',
+    kdes: [
+      { code: 'KDE-S-01', name: 'Traceability Lot Code', desc: 'The TLC being shipped — must match packing records.' },
+      { code: 'KDE-S-02', name: 'Quantity Shipped', desc: 'Quantity and UOM at point of shipping.' },
+      { code: 'KDE-S-03', name: 'Ship Date', desc: 'Date product left the shipper.' },
+      { code: 'KDE-S-04', name: 'Shipper GLN', desc: 'The GLN of the shipping entity — linked to MDM location/party master.' },
+      { code: 'KDE-S-05', name: 'Receiver GLN', desc: 'The GLN of the receiving entity — must exist in MDM before shipment can be validated.' },
+      { code: 'KDE-S-06', name: 'SSCC / Pallet ID', desc: 'The logistics unit identifier — enables carton-level traceability via RFID/EPCIS.' },
+    ]
+  },
+  {
+    cte: 'CTE 4 — Receiving',
+    rule: 'FSMA Rule 204 § 1.1335',
+    intro: 'Product arrives at the DC or store. The EPCIS receiving event is automatically reconciled against the MDM GLN for this location and the incoming GTIN/lot code — flagging discrepancies before product moves to shelves.',
+    kdes: [
+      { code: 'KDE-R-01', name: 'Traceability Lot Code', desc: 'Confirms the TLC received matches what was shipped.' },
+      { code: 'KDE-R-02', name: 'Quantity Received', desc: 'Must be reconciled against quantity shipped.' },
+      { code: 'KDE-R-03', name: 'Receive Date', desc: 'Date product was received — triggers cold chain compliance check.' },
+      { code: 'KDE-R-04', name: 'Receiver GLN', desc: 'The receiving location — must be a recognized GLN in MDM.' },
+      { code: 'KDE-R-05', name: 'Supplier Reference', desc: 'Links back to the MDM Canonical Anchor for the supplying entity.' },
+      { code: 'KDE-R-06', name: 'ASN / EPCIS Reference', desc: 'The electronic advance ship notice — enables automated KDE capture at receiving.' },
+    ]
+  },
+  {
+    cte: 'CTE 5 — Transformation',
+    rule: 'FSMA Rule 204 § 1.1340',
+    intro: 'The most complex CTE: raw ingredients become finished goods. PIM holds the formula/recipe that defines exactly which input TLCs went into each output GTIN. This is where allergen management, specification management, and traceability converge.',
+    kdes: [
+      { code: 'KDE-T-01', name: 'Input TLC(s)', desc: 'Every ingredient\'s TLC that went into the batch — PIM formula resolves which inputs are required.' },
+      { code: 'KDE-T-02', name: 'Output TLC', desc: 'The new TLC assigned to the finished product lot.' },
+      { code: 'KDE-T-03', name: 'Output GTIN', desc: 'The finished good — links to PIM product spec, label, and allergen declaration.' },
+      { code: 'KDE-T-04', name: 'Transformation Date', desc: 'Date of manufacturing/transformation.' },
+      { code: 'KDE-T-05', name: 'Facility GLN', desc: 'Where transformation occurred — licensed and certified in MDM.' },
+      { code: 'KDE-T-06', name: 'Recipe / Formula Reference', desc: 'The PIM specification version used — enables exact reconstruction of the batch.' },
+    ]
+  },
+  {
+    cte: 'CTE 6 — Point of Sale / Distribution',
+    rule: 'FSMA Rule 204 § 1.1345',
+    intro: 'The final CTE for retail and foodservice. When a recall is triggered, this is where the consumer-facing exposure is quantified. MDM links the store GLN to the banner hierarchy; PIM links the GTIN to the UPC on the shelf label — enabling a complete scope-of-exposure report in minutes.',
+    kdes: [
+      { code: 'KDE-POS-01', name: 'Traceability Lot Code', desc: 'The TLC sold — required for consumer notification and scope mapping.' },
+      { code: 'KDE-POS-02', name: 'GTIN / UPC', desc: 'The product sold — links to PIM for consumer-facing product description.' },
+      { code: 'KDE-POS-03', name: 'Sale Date', desc: 'Date of consumer sale or distribution.' },
+      { code: 'KDE-POS-04', name: 'Selling Location GLN', desc: 'The store or DC — links to MDM location master and banner hierarchy (The Chart).' },
+      { code: 'KDE-POS-05', name: 'Quantity Sold', desc: 'Units sold — defines consumer exposure scope in a recall.' },
+      { code: 'KDE-POS-06', name: 'Customer Reference', desc: 'For foodservice/B2B: the receiving entity — links to MDM customer Canonical Anchor.' },
+    ]
+  }
+];
+
+// CTE interaction
+(function(){
+  const nodes = document.querySelectorAll('.cte-node');
+  const panel = document.getElementById('kde-panel');
+  const content = document.getElementById('kde-content');
+
+  nodes.forEach(node => {
+    function activate(){
+      const idx = parseInt(node.dataset.event);
+      const wasActive = node.classList.contains('active');
+
+      nodes.forEach(n => { n.classList.remove('active'); n.setAttribute('aria-expanded','false'); });
+
+      if(wasActive){ panel.classList.remove('show'); return; }
+
+      node.classList.add('active');
+      node.setAttribute('aria-expanded','true');
+
+      const d = kdeData[idx];
+      content.innerHTML = `
+        <div style="margin-bottom:0.8rem;">
+          <span style="font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber-lt);">${d.rule}</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--white);margin:0.2rem 0 0.5rem;">${d.cte}</h3>
+          <p style="font-size:0.78rem;color:var(--fog-lt);line-height:1.65;max-width:680px;">${d.intro}</p>
+        </div>
+        <p style="font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--fog);margin-bottom:0.6rem;">Required Key Data Elements — MDM/PIM must own or anchor each one</p>
+        <div class="kde-grid">${d.kdes.map(k => `
+          <div class="kde-item">
+            <div class="kde-code">${k.code}</div>
+            <div class="kde-name">${k.name}</div>
+            <div class="kde-desc">${k.desc}</div>
+          </div>
+        `).join('')}</div>
+      `;
+      panel.classList.add('show');
+
+      // Scroll panel into view
+      setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+    }
+
+    node.addEventListener('click', activate);
+    node.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activate(); } });
+  });
+})();
+
+// Spec card toggle
+(function(){
+  const cards = document.querySelectorAll('.spec-card');
+  cards.forEach(card => {
+    function toggle(){
+      const was = card.classList.contains('active');
+      cards.forEach(c => { c.classList.remove('active'); c.setAttribute('aria-expanded','false'); const d=c.querySelector('.sc-detail'); if(d) d.setAttribute('aria-hidden','true'); });
+      if(!was){ card.classList.add('active'); card.setAttribute('aria-expanded','true'); const d=card.querySelector('.sc-detail'); if(d) d.setAttribute('aria-hidden','false'); }
+    }
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  });
+})();
+
+// Scroll reveal
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, {threshold:0.06});
+    els.forEach(el => obs.observe(el));
+  } else {
+    els.forEach(el => el.classList.add('visible'));
+  }
+})();
+</script>
+</body>
+</html>
