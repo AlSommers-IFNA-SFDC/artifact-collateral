@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatica MDM - GDSN Grocery Environment</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        header p { font-size: 1.2rem; opacity: 0.95; }
+
+        .content { padding: 2rem; }
+
+        .section { margin-bottom: 3rem; }
+
+        .section h2 {
+            font-size: 1.8rem;
+            color: #11998e;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #11998e;
+        }
+
+        .section h3 {
+            font-size: 1.3rem;
+            color: #0d7a70;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #11998e;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card h4 { color: #11998e; margin-bottom: 0.5rem; font-size: 1.1rem; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #11998e;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge.success { background: #51cf66; }
+        .badge.warning { background: #ffd43b; color: #1a1a1a; }
+        .badge.info { background: #4dabf7; }
+        .badge.purple { background: #845ef7; }
+        .badge.orange { background: #fd7e14; }
+        .badge.gray { background: #868e96; }
+
+        ul { margin-left: 1.5rem; margin-top: 0.5rem; }
+        ul li { margin-bottom: 0.5rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e9ecef; }
+        th { background: #11998e; color: white; font-weight: 600; }
+        tr:hover { background: #f8f9fa; }
+
+        .status-active { color: #51cf66; font-weight: 600; }
+        .status-configured { color: #4dabf7; font-weight: 600; }
+
+        .highlight {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #11998e;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* ERD styles */
+        .erd-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #f0faf5;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid #c3e6d8;
+        }
+
+        #erd-svg { display: block; margin: 0 auto; }
+
+        .erd-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .erd-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .erd-legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .entity-count-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .count-card {
+            text-align: center;
+            padding: 1.2rem 0.75rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .count-card .num { font-size: 2rem; font-weight: 700; }
+        .count-card .lbl { font-size: 0.85rem; opacity: 0.9; }
+
+        .tech-stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+
+        .rel-table-wrap { overflow-x: auto; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>🛒 GDSN Grocery</h1>
+        <p>Informatica MDM SaaS · Business 360 Environment Overview</p>
+    </header>
+
+    <div class="content">
+
+        <!-- ── OVERVIEW ───────────────────────────────────── -->
+        <section class="section">
+            <h2>Environment Overview</h2>
+            <div class="card">
+                <h4>Environment Name</h4>
+                <p><strong>GDSNGrocery</strong> — Informatica MDM SaaS demonstration environment for grocery product master data management, built on the Global Data Synchronisation Network (GDSN) standard. Combines a full product-to-supply-chain model with a quick-service restaurant (QSR) menu-mastering overlay.</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>Environment Type</h4>
+                    <p><span class="badge success">Production-Ready Demo</span></p>
+                    <p>Designed for retailer and CPG customer-facing demonstrations, data model workshops, and proof-of-concept engagements.</p>
+                </div>
+                <div class="card">
+                    <h4>Primary Domains</h4>
+                    <p>
+                        <span class="badge info">Product / GDSN</span>
+                        <span class="badge purple">Supplier</span>
+                        <span class="badge orange">QSR Menu Mastering</span>
+                        <span class="badge">Location</span>
+                    </p>
+                    <p>Product and trade-item mastering aligned with GS1/GDSN standards, supplier data, and a complete QSR menu graph.</p>
+                </div>
+            </div>
+
+            <div class="entity-count-grid" style="margin-top:1.5rem">
+                <div class="count-card" style="background:#11998e">
+                    <div class="num">22</div>
+                    <div class="lbl">Business Entities</div>
+                </div>
+                <div class="count-card" style="background:#0d7a70">
+                    <div class="num">29</div>
+                    <div class="lbl">Relationships</div>
+                </div>
+                <div class="count-card" style="background:#38ef7d; color:#1a1a1a">
+                    <div class="num">14</div>
+                    <div class="lbl">Hierarchies</div>
+                </div>
+                <div class="count-card" style="background:#845ef7">
+                    <div class="num">12</div>
+                    <div class="lbl">Accelerator Entities</div>
+                </div>
+                <div class="count-card" style="background:#fd7e14">
+                    <div class="num">10</div>
+                    <div class="lbl">Custom Entities</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── USE CASES ──────────────────────────────────── -->
+        <section class="section">
+            <h2>Use Cases &amp; Capabilities</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>GDSN Trade Item Synchronisation</h4>
+                    <ul>
+                        <li>Onboard and validate trade items against GS1 standards</li>
+                        <li>Manage GTINs, barcodes, and packaging hierarchies</li>
+                        <li>Synchronise item attributes with trading partners</li>
+                        <li>Track item lifecycle from creation to discontinuation</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Product Content &amp; Enrichment</h4>
+                    <ul>
+                        <li>Manage marketing copy, images, and digital assets</li>
+                        <li>Enrich items with nutritional, allergen, and regulatory data</li>
+                        <li>Maintain variant and product-line relationships</li>
+                        <li>Drive e-commerce product syndication</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Supplier &amp; Vendor Management</h4>
+                    <ul>
+                        <li>Golden record for vendor/supplier organisations</li>
+                        <li>Link items to manufacturing, packaging, and warehouse locations</li>
+                        <li>Manage supplier hierarchy and contact relationships</li>
+                        <li>Track supplier performance and certifications</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Supply Chain &amp; Packaging</h4>
+                    <ul>
+                        <li>Model full GDSN packaging hierarchy (unit → inner → case → pallet)</li>
+                        <li>Track production, packaging, and warehousing locations</li>
+                        <li>Support material-level manufacturing and BOM traceability</li>
+                        <li>Contract manufacturing and cross-dock scenarios</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>QSR Menu Mastering</h4>
+                    <ul>
+                        <li>Master menu catalogs with item, recipe, and ingredient hierarchies</li>
+                        <li>Manage modifier groups, customisations, and substitutions</li>
+                        <li>Track ingredient availability by location</li>
+                        <li>Support menu evolution and seasonal changes</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Product Classification &amp; Taxonomy</h4>
+                    <ul>
+                        <li>GS1 / GDSN category taxonomy management</li>
+                        <li>SAP material classification alignment</li>
+                        <li>Attribute management and schema governance</li>
+                        <li>Multi-taxonomy cross-mapping</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── BUSINESS ENTITIES ─────────────────────────── -->
+        <section class="section">
+            <h2>Business Entities</h2>
+
+            <div class="highlight">
+                <strong>Note on accelerator entities:</strong> Entities marked with an accelerator badge are shipped as part of an Informatica 360 accelerator and carry a namespaced GUID. Renamed entities (e.g. <em>Vendor</em> = <code>s360.supplier</code>) expose standard accelerator objects under environment-specific labels.
+            </div>
+
+            <h3>Product 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Category</strong></td><td><code>p360.category</code></td><td>Product category nodes used for classification and taxonomy management</td></tr>
+                    <tr><td><strong>Classification</strong></td><td><code>p360.classification</code></td><td>Classification scheme definitions mapping items to category trees</td></tr>
+                    <tr><td><strong>Item</strong></td><td><code>p360.item</code></td><td>Core trade item / SKU master — the primary product entity in GDSN contexts</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Customer 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Organization</strong></td><td><code>c360.organization</code></td><td>Company and corporate entity master for buyers, retailers, and distributors</td></tr>
+                    <tr><td><strong>Person</strong></td><td><code>c360.person</code></td><td>Individual contact master for key business contacts</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Supplier 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Vendor</strong> <span class="badge warning">renamed</span></td><td><code>s360.supplier</code></td><td>Standard Supplier 360 supplier entity, exposed as "Vendor" in this environment</td></tr>
+                    <tr><td><strong>Contact</strong></td><td><code>s360.contact</code></td><td>Supplier and vendor contact records</td></tr>
+                    <tr><td><strong>Supplier Hierarchy Entity</strong></td><td><code>s360.supplierhierarchyentity</code></td><td>Node entity enabling supplier parent-child hierarchy structures</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Location 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Location</strong></td><td><code>infa360loc_location</code></td><td>Physical sites — factories, warehouses, distribution centres, stores</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Material Management Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Material</strong></td><td><code>infap360mm_material</code></td><td>Raw and processed material master for ingredient and BOM traceability</td></tr>
+                    <tr><td><strong>Material Category</strong></td><td><code>infap360mm_material_category</code></td><td>Classification nodes for the material taxonomy</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Product Collection (Retail Accelerator)</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Product Collection</strong> <span class="badge warning">renamed</span></td><td><code>infa360rtl_product</code></td><td>Retail accelerator product entity, used here to group items into assortments or product lines</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Custom Entities</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Shipping Packaging</strong></td><td><code>shipping_packaging</code></td><td>Outer shipping units — cases, master cases, and shipping containers</td></tr>
+                    <tr><td><strong>Pallet</strong></td><td><code>pallet</code></td><td>Pallet configuration master for logistics and space planning</td></tr>
+                    <tr><td><strong>Non-Food Item</strong></td><td><code>non_food_item</code></td><td>General merchandise and non-food SKUs managed alongside food trade items</td></tr>
+                    <tr><td><strong>Variant</strong></td><td><code>variant</code></td><td>Product variant records (size, flavour, packaging format) linked to parent items</td></tr>
+                    <tr><td><strong>Catalog</strong></td><td><code>catalog</code></td><td>Product catalog container grouping items for retailer or channel syndication</td></tr>
+                    <tr><td><strong>Menu Catalog</strong></td><td><code>menu_catalog</code></td><td>QSR menu catalog master grouping menu items, modifiers, and recipes</td></tr>
+                    <tr><td><strong>Recipe</strong></td><td><code>recipe</code></td><td>Recipe master specifying ingredients, quantities, and preparation instructions</td></tr>
+                    <tr><td><strong>Ingredient</strong></td><td><code>ingredient</code></td><td>Ingredient master linked to recipes, modifiers, and material records</td></tr>
+                    <tr><td><strong>Modifier Group</strong></td><td><code>modifier_group</code></td><td>Named set of customisation options (e.g. "Choice of Bread", "Add-ons") for QSR items</td></tr>
+                    <tr><td><strong>Character</strong></td><td><code>character</code></td><td>Brand character / mascot entity used for licensed product and promotional item tagging</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ── ERD ───────────────────────────────────────── -->
+        <section class="section">
+            <h2>Entity Relationship Diagram</h2>
+            <p style="margin-bottom:1rem; color:#555">Interactive SVG — hover over entities for accent highlighting. Arrows represent configured graph relationships.</p>
+
+            <div class="erd-container">
+                <svg id="erd-svg" viewBox="0 0 1200 900" width="1160" height="900" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+                    <defs>
+                        <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+                        </marker>
+                        <marker id="arrow-supply" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#11998e"/>
+                        </marker>
+                        <marker id="arrow-qsr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#845ef7"/>
+                        </marker>
+                        <marker id="arrow-supplier" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#4dabf7"/>
+                        </marker>
+                    </defs>
+
+                    <!-- ── ZONE BACKGROUNDS ── -->
+                    <!-- Product zone -->
+                    <rect x="20" y="20" width="440" height="280" rx="14" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1.5"/>
+                    <text x="35" y="44" font-size="13" font-weight="600" fill="#388e3c">PRODUCT / GDSN</text>
+
+                    <!-- Supply Chain zone -->
+                    <rect x="20" y="320" width="440" height="220" rx="14" fill="#e3f2fd" stroke="#90caf9" stroke-width="1.5"/>
+                    <text x="35" y="344" font-size="13" font-weight="600" fill="#1565c0">SUPPLY CHAIN &amp; PACKAGING</text>
+
+                    <!-- Supplier zone -->
+                    <rect x="480" y="20" width="320" height="200" rx="14" fill="#fce4ec" stroke="#f48fb1" stroke-width="1.5"/>
+                    <text x="495" y="44" font-size="13" font-weight="600" fill="#c62828">SUPPLIER / VENDOR</text>
+
+                    <!-- Classification zone -->
+                    <rect x="820" y="20" width="360" height="200" rx="14" fill="#fff9c4" stroke="#fff176" stroke-width="1.5"/>
+                    <text x="835" y="44" font-size="13" font-weight="600" fill="#f57f17">CLASSIFICATION</text>
+
+                    <!-- QSR Menu zone -->
+                    <rect x="480" y="240" width="700" height="420" rx="14" fill="#ede7f6" stroke="#ce93d8" stroke-width="1.5"/>
+                    <text x="495" y="264" font-size="13" font-weight="600" fill="#6a1b9a">QSR MENU MASTERING</text>
+
+                    <!-- Location zone -->
+                    <rect x="20" y="560" width="440" height="100" rx="14" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5"/>
+                    <text x="35" y="584" font-size="13" font-weight="600" fill="#e65100">LOCATION</text>
+
+                    <!-- ── ENTITY NODES ─────────────────────── -->
+                    <!-- Product zone -->
+                    <!-- Item -->
+                    <rect x="60" y="60" width="140" height="50" rx="8" fill="#11998e" stroke="#0d7a70" stroke-width="2"/>
+                    <text x="130" y="81" text-anchor="middle" font-size="13" font-weight="700" fill="white">Item</text>
+                    <text x="130" y="97" text-anchor="middle" font-size="10" fill="#c8f7e9">p360.item</text>
+
+                    <!-- Category -->
+                    <rect x="240" y="60" width="140" height="50" rx="8" fill="#11998e" stroke="#0d7a70" stroke-width="2"/>
+                    <text x="310" y="81" text-anchor="middle" font-size="13" font-weight="700" fill="white">Category</text>
+                    <text x="310" y="97" text-anchor="middle" font-size="10" fill="#c8f7e9">p360.category</text>
+
+                    <!-- Classification -->
+                    <rect x="60" y="140" width="140" height="50" rx="8" fill="#11998e" stroke="#0d7a70" stroke-width="2"/>
+                    <text x="130" y="161" text-anchor="middle" font-size="13" font-weight="700" fill="white">Classification</text>
+                    <text x="130" y="177" text-anchor="middle" font-size="10" fill="#c8f7e9">p360.classification</text>
+
+                    <!-- Product Collection -->
+                    <rect x="240" y="140" width="160" height="50" rx="8" fill="#2e7d32" stroke="#1b5e20" stroke-width="2"/>
+                    <text x="320" y="161" text-anchor="middle" font-size="12" font-weight="700" fill="white">Product Collection</text>
+                    <text x="320" y="177" text-anchor="middle" font-size="10" fill="#a5d6a7">infa360rtl_product</text>
+
+                    <!-- Non-Food Item -->
+                    <rect x="60" y="220" width="140" height="50" rx="8" fill="#558b2f" stroke="#33691e" stroke-width="2"/>
+                    <text x="130" y="241" text-anchor="middle" font-size="12" font-weight="700" fill="white">Non-Food Item</text>
+                    <text x="130" y="257" text-anchor="middle" font-size="10" fill="#dcedc8">non_food_item</text>
+
+                    <!-- Variant -->
+                    <rect x="240" y="220" width="140" height="50" rx="8" fill="#558b2f" stroke="#33691e" stroke-width="2"/>
+                    <text x="310" y="241" text-anchor="middle" font-size="12" font-weight="700" fill="white">Variant</text>
+                    <text x="310" y="257" text-anchor="middle" font-size="10" fill="#dcedc8">variant</text>
+
+                    <!-- Supply Chain zone -->
+                    <!-- Shipping Packaging -->
+                    <rect x="40" y="360" width="160" height="50" rx="8" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+                    <text x="120" y="381" text-anchor="middle" font-size="12" font-weight="700" fill="white">Shipping Packaging</text>
+                    <text x="120" y="397" text-anchor="middle" font-size="10" fill="#bbdefb">shipping_packaging</text>
+
+                    <!-- Pallet -->
+                    <rect x="240" y="360" width="140" height="50" rx="8" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+                    <text x="310" y="381" text-anchor="middle" font-size="12" font-weight="700" fill="white">Pallet</text>
+                    <text x="310" y="397" text-anchor="middle" font-size="10" fill="#bbdefb">pallet</text>
+
+                    <!-- Material -->
+                    <rect x="40" y="440" width="140" height="50" rx="8" fill="#0277bd" stroke="#01579b" stroke-width="2"/>
+                    <text x="110" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="white">Material</text>
+                    <text x="110" y="477" text-anchor="middle" font-size="10" fill="#b3e5fc">infap360mm_material</text>
+
+                    <!-- Material Category -->
+                    <rect x="240" y="440" width="160" height="50" rx="8" fill="#0277bd" stroke="#01579b" stroke-width="2"/>
+                    <text x="320" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="white">Material Category</text>
+                    <text x="320" y="477" text-anchor="middle" font-size="10" fill="#b3e5fc">infap360mm_mat_cat</text>
+
+                    <!-- Location zone -->
+                    <rect x="120" y="590" width="140" height="50" rx="8" fill="#e65100" stroke="#bf360c" stroke-width="2"/>
+                    <text x="190" y="611" text-anchor="middle" font-size="12" font-weight="700" fill="white">Location</text>
+                    <text x="190" y="627" text-anchor="middle" font-size="10" fill="#ffe0b2">infa360loc_location</text>
+
+                    <!-- Supplier zone -->
+                    <!-- Vendor -->
+                    <rect x="500" y="60" width="140" height="50" rx="8" fill="#c62828" stroke="#b71c1c" stroke-width="2"/>
+                    <text x="570" y="78" text-anchor="middle" font-size="12" font-weight="700" fill="white">Vendor</text>
+                    <text x="570" y="94" text-anchor="middle" font-size="10" fill="#ffcdd2">s360.supplier ⚠</text>
+
+                    <!-- Contact -->
+                    <rect x="500" y="130" width="140" height="50" rx="8" fill="#c62828" stroke="#b71c1c" stroke-width="2"/>
+                    <text x="570" y="151" text-anchor="middle" font-size="12" font-weight="700" fill="white">Contact</text>
+                    <text x="570" y="167" text-anchor="middle" font-size="10" fill="#ffcdd2">s360.contact</text>
+
+                    <!-- Supplier Hierarchy Entity -->
+                    <rect x="660" y="60" width="120" height="50" rx="8" fill="#ad1457" stroke="#880e4f" stroke-width="2"/>
+                    <text x="720" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="white">Supplier</text>
+                    <text x="720" y="91" text-anchor="middle" font-size="11" font-weight="700" fill="white">Hierarchy</text>
+                    <text x="720" y="104" text-anchor="middle" font-size="9" fill="#f8bbd0">s360.supplierhier.</text>
+
+                    <!-- Organization -->
+                    <rect x="660" y="130" width="120" height="50" rx="8" fill="#6a1b9a" stroke="#4a148c" stroke-width="2"/>
+                    <text x="720" y="151" text-anchor="middle" font-size="12" font-weight="700" fill="white">Organization</text>
+                    <text x="720" y="167" text-anchor="middle" font-size="10" fill="#e1bee7">c360.organization</text>
+
+                    <!-- Classification zone -->
+                    <!-- Catalog -->
+                    <rect x="840" y="60" width="140" height="50" rx="8" fill="#f57f17" stroke="#e65100" stroke-width="2"/>
+                    <text x="910" y="81" text-anchor="middle" font-size="12" font-weight="700" fill="white">Catalog</text>
+                    <text x="910" y="97" text-anchor="middle" font-size="10" fill="#fff8e1">catalog</text>
+
+                    <!-- Character -->
+                    <rect x="840" y="130" width="140" height="50" rx="8" fill="#f57f17" stroke="#e65100" stroke-width="2"/>
+                    <text x="910" y="151" text-anchor="middle" font-size="12" font-weight="700" fill="white">Character</text>
+                    <text x="910" y="167" text-anchor="middle" font-size="10" fill="#fff8e1">character</text>
+
+                    <!-- Person -->
+                    <rect x="1000" y="60" width="140" height="50" rx="8" fill="#6a1b9a" stroke="#4a148c" stroke-width="2"/>
+                    <text x="1070" y="81" text-anchor="middle" font-size="12" font-weight="700" fill="white">Person</text>
+                    <text x="1070" y="97" text-anchor="middle" font-size="10" fill="#e1bee7">c360.person</text>
+
+                    <!-- QSR zone -->
+                    <!-- Menu Catalog -->
+                    <rect x="500" y="280" width="140" height="50" rx="8" fill="#6a1b9a" stroke="#4a148c" stroke-width="2"/>
+                    <text x="570" y="301" text-anchor="middle" font-size="12" font-weight="700" fill="white">Menu Catalog</text>
+                    <text x="570" y="317" text-anchor="middle" font-size="10" fill="#e1bee7">menu_catalog</text>
+
+                    <!-- Recipe -->
+                    <rect x="500" y="360" width="140" height="50" rx="8" fill="#7b1fa2" stroke="#6a1b9a" stroke-width="2"/>
+                    <text x="570" y="381" text-anchor="middle" font-size="12" font-weight="700" fill="white">Recipe</text>
+                    <text x="570" y="397" text-anchor="middle" font-size="10" fill="#e1bee7">recipe</text>
+
+                    <!-- Ingredient -->
+                    <rect x="500" y="440" width="140" height="50" rx="8" fill="#7b1fa2" stroke="#6a1b9a" stroke-width="2"/>
+                    <text x="570" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="white">Ingredient</text>
+                    <text x="570" y="477" text-anchor="middle" font-size="10" fill="#e1bee7">ingredient</text>
+
+                    <!-- Modifier Group -->
+                    <rect x="680" y="360" width="150" height="50" rx="8" fill="#7b1fa2" stroke="#6a1b9a" stroke-width="2"/>
+                    <text x="755" y="381" text-anchor="middle" font-size="12" font-weight="700" fill="white">Modifier Group</text>
+                    <text x="755" y="397" text-anchor="middle" font-size="10" fill="#e1bee7">modifier_group</text>
+
+                    <!-- Variant in QSR context (cross-ref arrow target already drawn above) -->
+
+                    <!-- ── RELATIONSHIPS (arrows) ──────────── -->
+
+                    <!-- SUPPLY CHAIN: Item → Shipping Packaging (Packaging of Trade Item) -->
+                    <line x1="130" y1="110" x2="120" y2="358" stroke="#11998e" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-supply)"/>
+                    <text x="55" y="238" font-size="9" fill="#11998e" transform="rotate(-90 55 238)">Packaging of Trade Item</text>
+
+                    <!-- Shipping Packaging → Pallet -->
+                    <line x1="200" y1="385" x2="238" y2="385" stroke="#11998e" stroke-width="1.5" marker-end="url(#arrow-supply)"/>
+                    <text x="205" y="378" font-size="9" fill="#1565c0">In Pallet</text>
+
+                    <!-- Item → Location (Produced At / Packaged At / Warehoused At) -->
+                    <line x1="130" y1="110" x2="190" y2="588" stroke="#fd7e14" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+                    <text x="100" y="380" font-size="9" fill="#e65100">Produced/Packaged/Warehoused At</text>
+
+                    <!-- Item → Product Collection (SKU in Product Line) -->
+                    <line x1="200" y1="85" x2="238" y2="165" stroke="#2e7d32" stroke-width="1.5" marker-end="url(#arrow-supply)"/>
+                    <text x="205" y="130" font-size="9" fill="#2e7d32">SKU in Product Line</text>
+
+                    <!-- Item → Variant (Variant of Product) -->
+                    <line x1="200" y1="95" x2="240" y2="235" stroke="#558b2f" stroke-width="1.5" marker-end="url(#arrow-supply)"/>
+                    <text x="212" y="190" font-size="9" fill="#558b2f">Variant of Product</text>
+
+                    <!-- Variant → Catalog (Variant in Catalog) -->
+                    <line x1="380" y1="245" x2="840" y2="85" stroke="#f57f17" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+                    <text x="590" y="148" font-size="9" fill="#f57f17">Variant in Catalog</text>
+
+                    <!-- Vendor → Item (supplier produces item — implied via location) -->
+                    <line x1="500" y1="85" x2="430" y2="105" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+                    <text x="440" y="78" font-size="9" fill="#c62828">Supplies</text>
+
+                    <!-- Vendor → Contact -->
+                    <line x1="570" y1="110" x2="570" y2="128" stroke="#c62828" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+                    <!-- Vendor → Supplier Hierarchy Entity -->
+                    <line x1="640" y1="85" x2="660" y2="85" stroke="#ad1457" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+                    <!-- Recipe → Ingredient -->
+                    <line x1="570" y1="410" x2="570" y2="438" stroke="#7b1fa2" stroke-width="1.5" marker-end="url(#arrow-qsr)"/>
+                    <text x="575" y="428" font-size="9" fill="#7b1fa2">Default Ingredient</text>
+
+                    <!-- Recipe → Modifier Group -->
+                    <line x1="640" y1="385" x2="678" y2="385" stroke="#7b1fa2" stroke-width="1.5" marker-end="url(#arrow-qsr)"/>
+                    <text x="645" y="378" font-size="9" fill="#7b1fa2">Modifier</text>
+
+                    <!-- Ingredient → Modifier Group (Ingredient to Modifier Group) -->
+                    <line x1="640" y1="465" x2="678" y2="405" stroke="#845ef7" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-qsr)"/>
+
+                    <!-- Modifier Group → Ingredient (Available Modifier Groups / Options) -->
+                    <line x1="755" y1="410" x2="660" y2="490" stroke="#845ef7" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-qsr)"/>
+                    <text x="660" y="460" font-size="9" fill="#845ef7">Options</text>
+
+                    <!-- Menu Catalog → Recipe -->
+                    <line x1="570" y1="330" x2="570" y2="358" stroke="#6a1b9a" stroke-width="1.5" marker-end="url(#arrow-qsr)"/>
+                    <text x="575" y="348" font-size="9" fill="#6a1b9a">WB Recipe</text>
+
+                    <!-- Ingredient → Location (Ingredient Not Available At) -->
+                    <line x1="500" y1="480" x2="280" y2="600" stroke="#e65100" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+                    <text x="340" y="555" font-size="9" fill="#e65100">Not Available At</text>
+
+                    <!-- Material → Item (material-level traceability) -->
+                    <line x1="180" y1="465" x2="130" y2="195" stroke="#0277bd" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+
+                    <!-- Character → Item (Related Character) -->
+                    <line x1="910" y1="180" x2="420" y2="225" stroke="#f57f17" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+                    <text x="620" y="215" font-size="9" fill="#f57f17">Related Character</text>
+
+                    <!-- Item self-ref Related SKU -->
+                    <path d="M 200 70 Q 225 30 200 60" stroke="#11998e" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow-supply)"/>
+                    <text x="207" y="42" font-size="9" fill="#11998e">Related SKU</text>
+
+                    <!-- Variant self-ref Related Variant -->
+                    <path d="M 380 230 Q 420 205 380 220" stroke="#558b2f" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow-supply)"/>
+                    <text x="390" y="208" font-size="9" fill="#558b2f">Related Variant</text>
+
+                </svg>
+            </div>
+
+            <div class="erd-legend">
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#11998e"></div> Product / GDSN (p360)</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#1565c0"></div> Supply Chain &amp; Packaging</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#c62828"></div> Supplier / Vendor (s360)</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#6a1b9a"></div> Party (c360) / QSR Menu</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#f57f17"></div> Classification &amp; Catalog</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#e65100"></div> Location (infa360loc)</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#0277bd"></div> Material Mgmt (infap360mm)</div>
+            </div>
+        </section>
+
+        <!-- ── RELATIONSHIPS ─────────────────────────────── -->
+        <section class="section">
+            <h2>Graph Relationships</h2>
+            <div class="rel-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Relationship</th><th>Domain</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Packaging of Trade Item</strong></td><td><span class="badge info">Supply Chain</span></td><td>Links a trade item (Item) to its shipping packaging unit</td></tr>
+                        <tr><td><strong>Packaging In Pallet</strong></td><td><span class="badge info">Supply Chain</span></td><td>Links shipping packaging to the pallet configuration</td></tr>
+                        <tr><td><strong>SKU in Product Line</strong></td><td><span class="badge success">Product</span></td><td>Associates an Item SKU with a Product Collection / product line</td></tr>
+                        <tr><td><strong>Item Produced At</strong></td><td><span class="badge info">Supply Chain</span></td><td>Links an Item to the Location where it is manufactured</td></tr>
+                        <tr><td><strong>Item Packaged At</strong></td><td><span class="badge info">Supply Chain</span></td><td>Links an Item to the Location where it is packaged</td></tr>
+                        <tr><td><strong>Item Manufactured and Packed At</strong></td><td><span class="badge info">Supply Chain</span></td><td>Combined manufacture + pack location for co-located operations</td></tr>
+                        <tr><td><strong>Item Warehoused At</strong></td><td><span class="badge info">Supply Chain</span></td><td>Links an Item to its primary warehousing Location</td></tr>
+                        <tr><td><strong>Related SKU</strong></td><td><span class="badge success">Product</span></td><td>Peer relationship between items (e.g. substitutes, complementary products)</td></tr>
+                        <tr><td><strong>Variant of Product</strong></td><td><span class="badge success">Product</span></td><td>Links a Variant to its parent Item</td></tr>
+                        <tr><td><strong>Cross Sell Set</strong></td><td><span class="badge success">Product</span></td><td>Groups items that are cross-sold together</td></tr>
+                        <tr><td><strong>Variant in Catalog</strong></td><td><span class="badge orange">Catalog</span></td><td>Adds a Variant to a specific product Catalog</td></tr>
+                        <tr><td><strong>Related Variant</strong></td><td><span class="badge success">Product</span></td><td>Peer relationship between Variant records</td></tr>
+                        <tr><td><strong>WB Recipe</strong></td><td><span class="badge purple">QSR</span></td><td>Links a Menu Catalog item to its Recipe</td></tr>
+                        <tr><td><strong>Modifier</strong></td><td><span class="badge purple">QSR</span></td><td>Associates a Recipe with a Modifier Group</td></tr>
+                        <tr><td><strong>Default Ingredient</strong></td><td><span class="badge purple">QSR</span></td><td>Specifies the default Ingredients included in a Recipe</td></tr>
+                        <tr><td><strong>Ingredient to Modifier Group</strong></td><td><span class="badge purple">QSR</span></td><td>Links an Ingredient as an option within a Modifier Group</td></tr>
+                        <tr><td><strong>Substitutions</strong></td><td><span class="badge purple">QSR</span></td><td>Defines valid ingredient substitution pairs</td></tr>
+                        <tr><td><strong>Modifier Group Options</strong></td><td><span class="badge purple">QSR</span></td><td>Lists selectable Ingredient options within a Modifier Group</td></tr>
+                        <tr><td><strong>Available Modifier Groups</strong></td><td><span class="badge purple">QSR</span></td><td>Defines which Modifier Groups apply to a given menu item</td></tr>
+                        <tr><td><strong>Evolutions</strong></td><td><span class="badge purple">QSR</span></td><td>Tracks menu item evolution over time (seasonal / LTO changes)</td></tr>
+                        <tr><td><strong>Related Character</strong></td><td><span class="badge orange">Product</span></td><td>Links a Character / brand mascot to associated Items</td></tr>
+                        <tr><td><strong>Part of Bundle</strong></td><td><span class="badge success">Product</span></td><td>Groups Items into promotional or value bundles</td></tr>
+                        <tr><td><strong>Ingredient Not Available At</strong></td><td><span class="badge purple">QSR</span></td><td>Marks an Ingredient as unavailable at a specific Location</td></tr>
+                        <tr><td><strong>Popular Add Ons BSHD</strong></td><td><span class="badge purple">QSR</span></td><td>Curated add-on suggestion set for breakfast/snack/happy-hour/dinner</td></tr>
+                        <tr><td><strong>Dipping Sauces Add</strong></td><td><span class="badge purple">QSR</span></td><td>Curated dipping sauce add-on suggestions</td></tr>
+                        <tr><td><strong>Bread</strong></td><td><span class="badge purple">QSR</span></td><td>Bread choice modifier relationship for sandwich/burger items</td></tr>
+                        <tr><td><strong>Popular Desserts Add A la Carte</strong></td><td><span class="badge purple">QSR</span></td><td>Dessert up-sell suggestion relationship</td></tr>
+                        <tr><td><strong>Cheese Add Burgers</strong></td><td><span class="badge purple">QSR</span></td><td>Cheese modifier add-on for burger items</td></tr>
+                        <tr><td><strong>Popular Add Ons Burgers</strong></td><td><span class="badge purple">QSR</span></td><td>Curated popular add-on suggestions for burgers</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ── HIERARCHIES ───────────────────────────────── -->
+        <section class="section">
+            <h2>Hierarchies</h2>
+            <table>
+                <thead>
+                    <tr><th>Hierarchy</th><th>GUID</th><th>Domain</th><th>Purpose</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Trade Item Hierarchy</strong></td>
+                        <td><code>trade_item_hierarchy</code></td>
+                        <td><span class="badge success">Product</span></td>
+                        <td>GDSN packaging hierarchy: each-unit → inner pack → case → pallet</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Product Classification</strong></td>
+                        <td><code>product_classification</code></td>
+                        <td><span class="badge success">Product</span></td>
+                        <td>GS1/GPC classification tree for product categorisation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Product Taxonomy</strong></td>
+                        <td><code>product_taxonomy</code></td>
+                        <td><span class="badge success">Product</span></td>
+                        <td>Internal product taxonomy used for search, filtering, and navigation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Product Assortments</strong></td>
+                        <td><code>product_assortments</code></td>
+                        <td><span class="badge success">Product</span></td>
+                        <td>Retailer-specific product assortment groupings</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Attribute Management Taxonomy</strong></td>
+                        <td><code>attribute_management_taxonomy</code></td>
+                        <td><span class="badge success">Product</span></td>
+                        <td>Governs attribute schemas and inheritance across item categories</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SAP Categorization</strong></td>
+                        <td><code>sap_categorization</code></td>
+                        <td><span class="badge info">Integration</span></td>
+                        <td>SAP material group / category hierarchy for ERP alignment</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Material Classification</strong></td>
+                        <td><code>infap360mm_material_classification</code></td>
+                        <td><span class="badge info">Material</span></td>
+                        <td>Material category tree from the Material Management accelerator</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Location Hierarchy</strong></td>
+                        <td><code>infa360loc_location_hierarchy</code></td>
+                        <td><span class="badge orange">Location</span></td>
+                        <td>Region → country → site → facility hierarchy for supply chain mapping</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Market Basket Items</strong></td>
+                        <td><code>market_basket_items</code></td>
+                        <td><span class="badge success">Product</span></td>
+                        <td>Co-purchase groupings for basket analysis and recommendations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Menu</strong> (×2)</td>
+                        <td><code>menu_hierarchy</code>, <code>menu_1779896391513</code></td>
+                        <td><span class="badge purple">QSR</span></td>
+                        <td>Two menu hierarchy instances — full menu tree for structured menu display</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WB Customization</strong></td>
+                        <td><code>wb_customization</code></td>
+                        <td><span class="badge purple">QSR</span></td>
+                        <td>Customisation option hierarchy for QSR item personalisation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recipe Modifications</strong></td>
+                        <td><code>recipe_modifications</code></td>
+                        <td><span class="badge purple">QSR</span></td>
+                        <td>Hierarchy of allowed recipe modification paths (add / remove / substitute)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Modifier Grouping</strong></td>
+                        <td><code>modifier_grouping</code></td>
+                        <td><span class="badge purple">QSR</span></td>
+                        <td>Parent-child structure of modifier groups and their nested options</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top:0.75rem; font-size:0.85rem; color:#888">Note: <code>pokemoncom</code> hierarchy excluded — test/demo artifact with no domain entity relationships.</p>
+        </section>
+
+        <!-- ── TECHNICAL SETUP ───────────────────────────── -->
+        <section class="section">
+            <h2>Technical Environment Setup</h2>
+
+            <h3>MDM Configuration</h3>
+            <table>
+                <thead><tr><th>Component</th><th>Configuration</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>MDM Platform</strong></td><td>Informatica MDM SaaS — Business 360</td><td><span class="status-active">● Active</span></td></tr>
+                    <tr><td><strong>Accelerators</strong></td><td>Product 360, Customer 360, Supplier 360, Location 360, Material Mgmt, Retail</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>Business Entities</strong></td><td>22 domain entities (12 accelerator, 10 custom)</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>Graph Relationships</strong></td><td>29 storage=graph relationships</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>Hierarchies</strong></td><td>14 hierarchy definitions (excl. test artifact)</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>API Access</strong></td><td>REST API, Batch import/export</td><td><span class="status-active">● Active</span></td></tr>
+                </tbody>
+            </table>
+
+            <h3>Technology Stack</h3>
+            <div class="tech-stack">
+                <span class="badge">Informatica MDM SaaS</span>
+                <span class="badge">Business 360 Console</span>
+                <span class="badge">Product 360</span>
+                <span class="badge">Supplier 360</span>
+                <span class="badge">Customer 360</span>
+                <span class="badge">Location 360</span>
+                <span class="badge">Material Management</span>
+                <span class="badge">Hierarchy Manager</span>
+                <span class="badge">Relationship Manager</span>
+                <span class="badge">REST API</span>
+                <span class="badge">GS1 / GDSN</span>
+            </div>
+
+            <h3>Key Integration Points</h3>
+            <div class="card">
+                <h4>Upstream Sources</h4>
+                <ul>
+                    <li><strong>GDSN Data Pool</strong> — trade item onboarding via GS1 data synchronisation</li>
+                    <li><strong>SAP / ERP</strong> — material groups, cost centres, purchasing data</li>
+                    <li><strong>Supplier Portals</strong> — vendor onboarding, product specs, compliance docs</li>
+                    <li><strong>PIM Systems</strong> — marketing copy, digital assets, channel-specific content</li>
+                    <li><strong>QSR Operations Platform</strong> — menu lifecycle, location availability, modifier configs</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Downstream Consumers</h4>
+                <ul>
+                    <li><strong>E-commerce / DTC</strong> — enriched product content syndication</li>
+                    <li><strong>Retailer Trading Partners</strong> — GDSN-compliant item synchronisation</li>
+                    <li><strong>Supply Chain Systems</strong> — location-linked item master for logistics</li>
+                    <li><strong>POS / In-Store</strong> — item and category data for register systems</li>
+                    <li><strong>Menu Boards &amp; Ordering Apps</strong> — real-time menu and modifier data</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ── ACCELERATOR NOTE ──────────────────────────── -->
+        <section class="section">
+            <h2>Accelerator vs. Custom Model</h2>
+            <div class="highlight">
+                <strong>12 of 22 entities</strong> are shipped Informatica 360 accelerator content — they carry forward standard data models, match rules, and relationship definitions out of the box. <strong>10 entities</strong> are custom-built for the grocery/QSR demo context. Two accelerator entities have been <strong>renamed</strong> in this environment:
+                <ul style="margin-top:0.5rem">
+                    <li><code>s360.supplier</code> → <strong>Vendor</strong> (reflects retail industry terminology)</li>
+                    <li><code>infa360rtl_product</code> → <strong>Product Collection</strong> (used for assortment grouping)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Dual-Domain Design</h4>
+                <p>This environment is intentionally dual-purpose: the core GDSN grocery model handles trade-item and supply-chain mastering, while the QSR menu-mastering overlay (Menu Catalog → Recipe → Ingredient → Modifier Group) demonstrates Informatica MDM's flexibility for food-service and restaurant data. Both domains share the same Location, Supplier, and Material entities, avoiding duplication.</p>
+            </div>
+        </section>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>Informatica MDM SaaS · GDSN Grocery Environment · Business 360</p>
+        <p style="margin-top:0.5rem; opacity:0.7; font-size:0.9rem">Generated from GDSNGrocery_BE.json environment metadata export</p>
+    </footer>
+
+</div><!-- /container -->
+</body>
+</html>
