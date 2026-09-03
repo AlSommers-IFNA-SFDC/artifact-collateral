@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatica MDM - B2B2C Distribution Network Environment</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #0d47a1 0%, #1976d2 50%, #42a5f5 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        header p { font-size: 1.2rem; opacity: 0.9; }
+
+        .content { padding: 2rem; }
+        .section { margin-bottom: 3rem; }
+
+        .section h2 {
+            font-size: 1.8rem;
+            color: #0d47a1;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #0d47a1;
+        }
+
+        .section h3 { font-size: 1.3rem; color: #1565c0; margin: 1.5rem 0 0.75rem 0; }
+
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #1976d2;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card h4 { color: #0d47a1; margin-bottom: 0.5rem; font-size: 1.1rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+
+        .badge {
+            display: inline-block;
+            background: #1976d2;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .badge.success  { background: #2e7d32; }
+        .badge.warning  { background: #f57f17; }
+        .badge.info     { background: #0277bd; }
+        .badge.purple   { background: #6a1b9a; }
+        .badge.teal     { background: #00695c; }
+        .badge.red      { background: #c62828; }
+        .badge.orange   { background: #e64a19; }
+        .badge.gray     { background: #546e7a; }
+
+        ul { margin-left: 1.5rem; margin-top: 0.5rem; }
+        ul li { margin-bottom: 0.5rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e9ecef; }
+        th { background: #0d47a1; color: white; font-weight: 600; }
+        tr:hover { background: #f8f9fa; }
+
+        .status-active     { color: #2e7d32; font-weight: 600; }
+        .status-configured { color: #0277bd; font-weight: 600; }
+
+        .highlight {
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #1976d2;
+        }
+
+        footer { background: #0d47a1; color: white; padding: 2rem; text-align: center; }
+
+        .erd-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #f0f4ff;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid #bbdefb;
+        }
+
+        #erd-svg { display: block; margin: 0 auto; }
+
+        .erd-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .erd-legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
+        .erd-legend-dot  { width: 14px; height: 14px; border-radius: 3px; }
+
+        .entity-count-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .count-card { text-align: center; padding: 1.2rem 0.75rem; border-radius: 10px; color: white; }
+        .count-card .num { font-size: 2rem; font-weight: 700; }
+        .count-card .lbl { font-size: 0.85rem; opacity: 0.9; }
+
+        .tech-stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+        .rel-table-wrap { overflow-x: auto; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>🔗 B2B2C Distribution Network</h1>
+        <p>Informatica MDM SaaS · Business 360 Environment Overview</p>
+    </header>
+
+    <div class="content">
+
+        <!-- ── OVERVIEW ── -->
+        <section class="section">
+            <h2>Environment Overview</h2>
+            <div class="card">
+                <h4>Environment Name</h4>
+                <p><strong>b2b2c</strong> — Informatica MDM SaaS demonstration environment for B2B2C distribution network master data management. Models the full channel from supplier through distributor and carrier to end customer, including product registration, household relationships, employment, and carrier-provided product agreements. Includes an Apple US B2B device distribution scenario as the reference use case.</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>Environment Type</h4>
+                    <p><span class="badge success">Production-Ready Demo</span></p>
+                    <p>Designed for telecommunications, technology distribution, and multi-tier channel sales demonstrations.</p>
+                </div>
+                <div class="card">
+                    <h4>Primary Domains</h4>
+                    <p>
+                        <span class="badge info">Customer &amp; Household</span>
+                        <span class="badge orange">Product &amp; Item</span>
+                        <span class="badge teal">Supplier &amp; Distributor</span>
+                        <span class="badge purple">B2B Account</span>
+                    </p>
+                    <p>A focused, tightly-integrated model spanning consumer customers, business accounts, distributors, carriers, and registered products — optimised for multi-tier channel scenarios.</p>
+                </div>
+            </div>
+
+            <div class="entity-count-grid" style="margin-top:1.5rem">
+                <div class="count-card" style="background:#0d47a1">
+                    <div class="num">11</div>
+                    <div class="lbl">Business Entities</div>
+                </div>
+                <div class="count-card" style="background:#1565c0">
+                    <div class="num">14</div>
+                    <div class="lbl">Relationships</div>
+                </div>
+                <div class="count-card" style="background:#1976d2">
+                    <div class="num">6</div>
+                    <div class="lbl">Hierarchies</div>
+                </div>
+                <div class="count-card" style="background:#0277bd">
+                    <div class="num">8</div>
+                    <div class="lbl">Accelerator Entities</div>
+                </div>
+                <div class="count-card" style="background:#6a1b9a">
+                    <div class="num">3</div>
+                    <div class="lbl">Custom Entities</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── USE CASES ── -->
+        <section class="section">
+            <h2>Use Cases &amp; Capabilities</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>B2B2C Channel Master Data</h4>
+                    <ul>
+                        <li>Model the full supplier → distributor → carrier → customer chain</li>
+                        <li>Track carrier product agreements and distribution accounts</li>
+                        <li>Manage multi-tier account and customer relationships</li>
+                        <li>Support Apple US B2B device distribution scenarios</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Product Registration &amp; Ownership</h4>
+                    <ul>
+                        <li>Register sold items to end customers (product registration)</li>
+                        <li>Track person-owns-item and company-has-product relationships</li>
+                        <li>Manage product replacement numbers and serial-level traceability</li>
+                        <li>Support warranty, recall, and post-sale service workflows</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Customer &amp; Household Identity</h4>
+                    <ul>
+                        <li>B2C customer (person) golden record with household grouping</li>
+                        <li>In-household and dependent relationship modeling</li>
+                        <li>Employment link between person and business account</li>
+                        <li>Unified view across consumer and corporate identities</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Account &amp; Distributor Management</h4>
+                    <ul>
+                        <li>B2B organisation (account) master with hierarchy</li>
+                        <li>Distribution account and carrier agreement tracking</li>
+                        <li>Account-level product and accessory inventory</li>
+                        <li>Upsell and accessory relationship management</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Supplier &amp; Product Catalogue</h4>
+                    <ul>
+                        <li>Supplier golden record with hierarchy for brand/vendor management</li>
+                        <li>Item and product catalogue mastering</li>
+                        <li>Category and classification taxonomy for device product lines</li>
+                        <li>Included and related accessory relationships</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>eCommerce &amp; Channel Taxonomy</h4>
+                    <ul>
+                        <li>eCommerce hierarchy for digital channel product navigation</li>
+                        <li>Brand category and product variant hierarchies</li>
+                        <li>B2B categorisation (Apple US reference model)</li>
+                        <li>Customer account and household hierarchy structures</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── BUSINESS ENTITIES ── -->
+        <section class="section">
+            <h2>Business Entities</h2>
+
+            <div class="highlight">
+                <strong>Note on accelerator entities:</strong> 8 of 11 entities are shipped Informatica 360 accelerator content. Two are renamed: <strong>Customers</strong> uses <code>c360.person</code> (the individual consumer) and <strong>Accounts</strong> uses <code>c360.organization</code> (the B2B account). Three custom entities — Household, Product, and Distributors — extend the model for multi-tier channel scenarios.
+            </div>
+
+            <h3>Customer 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Customers</strong> <span class="badge warning">renamed</span></td><td><code>c360.person</code></td><td>B2C end customer (individual consumer) — the C360 person entity scoped to registered device owners and channel buyers</td></tr>
+                    <tr><td><strong>Accounts</strong> <span class="badge warning">renamed</span></td><td><code>c360.organization</code></td><td>B2B organisation account — corporate buyers, resellers, and enterprise accounts in the distribution channel</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Product 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Item</strong></td><td><code>p360.item</code></td><td>Individual device/product SKU — the sellable unit registered to a customer or account</td></tr>
+                    <tr><td><strong>Category</strong></td><td><code>p360.category</code></td><td>Product category nodes for device and accessory classification</td></tr>
+                    <tr><td><strong>Classification</strong></td><td><code>p360.classification</code></td><td>Classification scheme definitions mapping items to category trees</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Supplier 360 Accelerator</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Supplier</strong></td><td><code>s360.supplier</code></td><td>Supplier / brand golden record (e.g. Apple as a supplier to the distribution channel)</td></tr>
+                    <tr><td><strong>Contact</strong></td><td><code>s360.contact</code></td><td>Supplier and distributor contact records</td></tr>
+                    <tr><td><strong>Supplier Hierarchy Entity</strong></td><td><code>s360.supplierhierarchyentity</code></td><td>Node entity enabling supplier and brand parent-child hierarchy structures</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Custom Entities</h3>
+            <table>
+                <thead><tr><th>Entity</th><th>GUID</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Household</strong></td><td><code>household</code></td><td>Household grouping linking individual customers by shared residence — supports family plan and household-level analytics</td></tr>
+                    <tr><td><strong>Product</strong></td><td><code>product</code></td><td>Product line or model master above the item/SKU level — groups items by product family (e.g. iPhone 15 line)</td></tr>
+                    <tr><td><strong>Distributors</strong></td><td><code>distributors</code></td><td>Distributor and carrier organisation master — the B2B intermediary in the supplier → distributor → customer chain</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ── ERD ── -->
+        <section class="section">
+            <h2>Entity Relationship Diagram</h2>
+            <p style="margin-bottom:1rem; color:#555">Color-coded by domain zone. Arrows represent configured graph relationships (storage=graph).</p>
+
+            <div class="erd-container">
+                <svg id="erd-svg" viewBox="0 0 1060 700" width="1020" height="700" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
+                    <defs>
+                        <marker id="arr"      markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+                        <marker id="arr-cust" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0d47a1"/></marker>
+                        <marker id="arr-prod" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e64a19"/></marker>
+                        <marker id="arr-sup"  markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#00695c"/></marker>
+                        <marker id="arr-dist" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#6a1b9a"/></marker>
+                    </defs>
+
+                    <!-- ZONE BACKGROUNDS -->
+                    <!-- Customer / Household -->
+                    <rect x="20" y="20" width="380" height="300" rx="14" fill="#e3f2fd" stroke="#90caf9" stroke-width="1.5"/>
+                    <text x="35" y="44" font-size="13" font-weight="600" fill="#0d47a1">CUSTOMER &amp; HOUSEHOLD</text>
+
+                    <!-- Product -->
+                    <rect x="420" y="20" width="380" height="220" rx="14" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5"/>
+                    <text x="435" y="44" font-size="13" font-weight="600" fill="#e64a19">PRODUCT &amp; ITEM</text>
+
+                    <!-- Supplier / Distributor -->
+                    <rect x="20" y="340" width="780" height="200" rx="14" fill="#e0f2f1" stroke="#80cbc4" stroke-width="1.5"/>
+                    <text x="35" y="364" font-size="13" font-weight="600" fill="#00695c">SUPPLIER &amp; DISTRIBUTOR</text>
+
+                    <!-- Account -->
+                    <rect x="820" y="20" width="220" height="520" rx="14" fill="#f3e5f5" stroke="#ce93d8" stroke-width="1.5"/>
+                    <text x="835" y="44" font-size="13" font-weight="600" fill="#6a1b9a">B2B ACCOUNT</text>
+
+                    <!-- ── ENTITIES ── -->
+
+                    <!-- Customers (c360.person) -->
+                    <rect x="40" y="60" width="150" height="52" rx="8" fill="#0d47a1" stroke="#0a3880" stroke-width="2"/>
+                    <text x="115" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="white">Customers</text>
+                    <text x="115" y="100" text-anchor="middle" font-size="10" fill="#bbdefb">c360.person ⚠</text>
+
+                    <!-- Household -->
+                    <rect x="220" y="60" width="150" height="52" rx="8" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+                    <text x="295" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="white">Household</text>
+                    <text x="295" y="100" text-anchor="middle" font-size="10" fill="#bbdefb">household</text>
+
+                    <!-- Person relationships zone (annotation) -->
+                    <rect x="40" y="140" width="330" height="60" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1" stroke-dasharray="5,3"/>
+                    <text x="205" y="164" text-anchor="middle" font-size="11" fill="#1565c0" font-style="italic">In Household · Dependent</text>
+                    <text x="205" y="182" text-anchor="middle" font-size="10" fill="#1e40af">Employment (Person → Account)</text>
+
+                    <!-- Product -->
+                    <rect x="440" y="60" width="150" height="52" rx="8" fill="#e64a19" stroke="#bf360c" stroke-width="2"/>
+                    <text x="515" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="white">Product</text>
+                    <text x="515" y="100" text-anchor="middle" font-size="10" fill="#ffccbc">product</text>
+
+                    <!-- Item (p360.item) -->
+                    <rect x="620" y="60" width="150" height="52" rx="8" fill="#d84315" stroke="#bf360c" stroke-width="2"/>
+                    <text x="695" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="white">Item</text>
+                    <text x="695" y="100" text-anchor="middle" font-size="10" fill="#ffccbc">p360.item</text>
+
+                    <!-- Category -->
+                    <rect x="440" y="140" width="150" height="52" rx="8" fill="#f4511e" stroke="#e64a19" stroke-width="2"/>
+                    <text x="515" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="white">Category</text>
+                    <text x="515" y="178" text-anchor="middle" font-size="10" fill="#ffccbc">p360.category</text>
+
+                    <!-- Classification -->
+                    <rect x="620" y="140" width="150" height="52" rx="8" fill="#f4511e" stroke="#e64a19" stroke-width="2"/>
+                    <text x="695" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="white">Classification</text>
+                    <text x="695" y="178" text-anchor="middle" font-size="10" fill="#ffccbc">p360.classification</text>
+
+                    <!-- Supplier -->
+                    <rect x="40" y="380" width="150" height="52" rx="8" fill="#00695c" stroke="#004d40" stroke-width="2"/>
+                    <text x="115" y="402" text-anchor="middle" font-size="13" font-weight="700" fill="white">Supplier</text>
+                    <text x="115" y="420" text-anchor="middle" font-size="10" fill="#b2dfdb">s360.supplier</text>
+
+                    <!-- Contact -->
+                    <rect x="220" y="380" width="150" height="52" rx="8" fill="#00796b" stroke="#00695c" stroke-width="2"/>
+                    <text x="295" y="402" text-anchor="middle" font-size="13" font-weight="700" fill="white">Contact</text>
+                    <text x="295" y="420" text-anchor="middle" font-size="10" fill="#b2dfdb">s360.contact</text>
+
+                    <!-- Supplier Hierarchy Entity -->
+                    <rect x="400" y="380" width="150" height="52" rx="8" fill="#00897b" stroke="#00695c" stroke-width="2"/>
+                    <text x="475" y="398" text-anchor="middle" font-size="11" font-weight="700" fill="white">Supplier</text>
+                    <text x="475" y="411" text-anchor="middle" font-size="11" font-weight="700" fill="white">Hierarchy Entity</text>
+                    <text x="475" y="424" text-anchor="middle" font-size="9" fill="#b2dfdb">s360.supplierhier.</text>
+
+                    <!-- Distributors -->
+                    <rect x="580" y="380" width="150" height="52" rx="8" fill="#004d40" stroke="#00352b" stroke-width="2"/>
+                    <text x="655" y="402" text-anchor="middle" font-size="13" font-weight="700" fill="white">Distributors</text>
+                    <text x="655" y="420" text-anchor="middle" font-size="10" fill="#b2dfdb">distributors</text>
+
+                    <!-- Accounts (c360.organization) -->
+                    <rect x="840" y="60" width="170" height="52" rx="8" fill="#6a1b9a" stroke="#4a148c" stroke-width="2"/>
+                    <text x="925" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="white">Accounts</text>
+                    <text x="925" y="100" text-anchor="middle" font-size="10" fill="#e1bee7">c360.organization ⚠</text>
+
+                    <!-- account relationships annotation -->
+                    <rect x="840" y="140" width="170" height="80" rx="8" fill="#ede7f6" stroke="#ce93d8" stroke-width="1" stroke-dasharray="5,3"/>
+                    <text x="925" y="162" text-anchor="middle" font-size="10" fill="#6a1b9a" font-style="italic">Company Has Product</text>
+                    <text x="925" y="178" text-anchor="middle" font-size="10" fill="#6a1b9a">Account Items</text>
+                    <text x="925" y="194" text-anchor="middle" font-size="10" fill="#6a1b9a">Distribution Account</text>
+
+                    <!-- ── RELATIONSHIPS (arrows) ── -->
+
+                    <!-- Customer → Household (In Household) -->
+                    <line x1="190" y1="86" x2="218" y2="86" stroke="#0d47a1" stroke-width="1.5" marker-end="url(#arr-cust)"/>
+                    <text x="193" y="79" font-size="9" fill="#0d47a1">In Household</text>
+
+                    <!-- Customer → Household (Dependent) -->
+                    <line x1="190" y1="98" x2="218" y2="98" stroke="#0d47a1" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-cust)"/>
+                    <text x="193" y="110" font-size="9" fill="#0d47a1">Dependent</text>
+
+                    <!-- Customer → Item (Person Owns Item / Item Registered By) -->
+                    <line x1="190" y1="75" x2="618" y2="75" stroke="#0d47a1" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-cust)"/>
+                    <text x="350" y="68" font-size="9" fill="#0d47a1">Person Owns Item / Item Registered By</text>
+
+                    <!-- Customer → Item (Product Replacement Number) -->
+                    <line x1="190" y1="100" x2="618" y2="95" stroke="#0d47a1" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arr-cust)"/>
+                    <text x="340" y="108" font-size="9" fill="#0d47a1">Product Replacement Number</text>
+
+                    <!-- Customer → Accounts (Employment) -->
+                    <line x1="190" y1="86" x2="838" y2="86" stroke="#6a1b9a" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-dist)"/>
+                    <text x="490" y="55" font-size="9" fill="#6a1b9a">Employment</text>
+
+                    <!-- Item → Product (parent) -->
+                    <line x1="695" y1="60" x2="590" y2="60" stroke="#e64a19" stroke-width="1.5" marker-end="url(#arr-prod)"/>
+                    <text x="618" y="53" font-size="9" fill="#e64a19">belongs to</text>
+
+                    <!-- Item self-ref (Upsell / Related Accessory / Included Accessory) -->
+                    <path d="M 770 60 Q 820 20 770 50" stroke="#e64a19" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arr-prod)"/>
+                    <text x="775" y="18" font-size="9" fill="#e64a19">Upsell / Accessory</text>
+
+                    <!-- Item → Category -->
+                    <line x1="620" y1="112" x2="590" y2="140" stroke="#f4511e" stroke-width="1.5" marker-end="url(#arr-prod)"/>
+
+                    <!-- Supplier → Item (Carrier Provides Product) -->
+                    <line x1="115" y1="380" x2="620" y2="112" stroke="#00695c" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-sup)"/>
+                    <text x="290" y="230" font-size="9" fill="#00695c">Carrier Provides Product</text>
+
+                    <!-- Supplier → Contact -->
+                    <line x1="190" y1="406" x2="218" y2="406" stroke="#00695c" stroke-width="1.5" marker-end="url(#arr-sup)"/>
+
+                    <!-- Supplier → Supplier Hierarchy Entity -->
+                    <line x1="190" y1="390" x2="398" y2="390" stroke="#00695c" stroke-width="1.5" marker-end="url(#arr-sup)"/>
+
+                    <!-- Distributors → Accounts (Distribution Account) -->
+                    <line x1="730" y1="406" x2="838" y2="140" stroke="#6a1b9a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-dist)"/>
+                    <text x="755" y="280" font-size="9" fill="#6a1b9a">Distribution Account</text>
+
+                    <!-- Distributors → Item (Carrier Agreement) -->
+                    <line x1="655" y1="380" x2="720" y2="114" stroke="#00695c" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-sup)"/>
+                    <text x="660" y="260" font-size="9" fill="#00695c">Carrier Agreement</text>
+
+                    <!-- Accounts → Item (Account Items) -->
+                    <line x1="838" y1="86" x2="772" y2="86" stroke="#6a1b9a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-dist)"/>
+                    <text x="790" y="79" font-size="9" fill="#6a1b9a">Account Items</text>
+
+                    <!-- Accounts → Product (Company Has Product) -->
+                    <line x1="838" y1="92" x2="592" y2="88" stroke="#6a1b9a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-dist)"/>
+                    <text x="680" y="82" font-size="9" fill="#6a1b9a">Company Has Product</text>
+
+                </svg>
+            </div>
+
+            <div class="erd-legend">
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#0d47a1"></div> Customer &amp; Household (c360.person)</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#e64a19"></div> Product &amp; Item (p360)</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#00695c"></div> Supplier &amp; Distributor (s360)</div>
+                <div class="erd-legend-item"><div class="erd-legend-dot" style="background:#6a1b9a"></div> B2B Account (c360.organization)</div>
+            </div>
+        </section>
+
+        <!-- ── RELATIONSHIPS ── -->
+        <section class="section">
+            <h2>Graph Relationships</h2>
+            <div class="rel-table-wrap">
+                <table>
+                    <thead><tr><th>Relationship</th><th>Domain</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Person Owns Item</strong></td><td><span class="badge info">Customer</span></td><td>Links an individual customer to an item/device they own or have purchased</td></tr>
+                        <tr><td><strong>Item Registered By</strong></td><td><span class="badge info">Customer</span></td><td>Reverse registration link — associates a product/item with the customer who registered it</td></tr>
+                        <tr><td><strong>Product Replacement Number</strong></td><td><span class="badge info">Customer</span></td><td>Links a customer to the replacement item issued for their registered product</td></tr>
+                        <tr><td><strong>In Household</strong></td><td><span class="badge info">Customer</span></td><td>Associates an individual customer with their household record</td></tr>
+                        <tr><td><strong>Dependent</strong></td><td><span class="badge info">Customer</span></td><td>Models a dependent relationship between two persons within a household</td></tr>
+                        <tr><td><strong>Employment</strong></td><td><span class="badge info">Customer</span></td><td>Links a customer (person) to the business account (org) that employs them</td></tr>
+                        <tr><td><strong>Related Accessory</strong></td><td><span class="badge orange">Product</span></td><td>Peer relationship between a product/item and a related accessory</td></tr>
+                        <tr><td><strong>Included Accessory</strong></td><td><span class="badge orange">Product</span></td><td>Links an item to accessories bundled in the box or included in the product package</td></tr>
+                        <tr><td><strong>Upsell Item</strong></td><td><span class="badge orange">Product</span></td><td>Links a product to a higher-tier upsell recommendation</td></tr>
+                        <tr><td><strong>Carrier Agreement</strong></td><td><span class="badge teal">Distributor</span></td><td>Associates a distributor/carrier with the items available under their carrier agreement</td></tr>
+                        <tr><td><strong>Carrier Provides Product</strong></td><td><span class="badge teal">Distributor</span></td><td>Links a supplier/carrier to the products they provide through the distribution channel</td></tr>
+                        <tr><td><strong>Distribution Account</strong></td><td><span class="badge purple">Account</span></td><td>Associates a distributor with the B2B accounts in their distribution territory</td></tr>
+                        <tr><td><strong>Company Has Product</strong></td><td><span class="badge purple">Account</span></td><td>Links a B2B account to the products/items they hold or are assigned</td></tr>
+                        <tr><td><strong>Account Items</strong></td><td><span class="badge purple">Account</span></td><td>Direct link between a B2B account and its registered or allocated items</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ── HIERARCHIES ── -->
+        <section class="section">
+            <h2>Hierarchies</h2>
+            <table>
+                <thead><tr><th>Hierarchy</th><th>GUID</th><th>Domain</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Apple US B2B Categorization</strong></td>
+                        <td><code>apple_us_b2b_categorization</code></td>
+                        <td><span class="badge orange">Product</span></td>
+                        <td>Product category tree modelled on Apple's US B2B device programme categorisation — Mac, iPhone, iPad, accessories</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Brands Categories</strong></td>
+                        <td><code>brands_categories</code></td>
+                        <td><span class="badge orange">Product</span></td>
+                        <td>Brand-level category hierarchy grouping product lines by supplier brand</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Product Variants</strong></td>
+                        <td><code>product_variants</code></td>
+                        <td><span class="badge orange">Product</span></td>
+                        <td>Variant hierarchy linking product models to their colour, storage, and configuration variants</td>
+                    </tr>
+                    <tr>
+                        <td><strong>eCommerce</strong></td>
+                        <td><code>ecommerce</code></td>
+                        <td><span class="badge warning">Channel</span></td>
+                        <td>eCommerce storefront navigation hierarchy for online channel product display and browse</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Accounts</strong></td>
+                        <td><code>customer_accounts</code></td>
+                        <td><span class="badge info">Customer</span></td>
+                        <td>Account hierarchy linking B2B customers by corporate structure (parent → subsidiary → location)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Hierarchy</strong></td>
+                        <td><code>customer_hierarchy</code></td>
+                        <td><span class="badge info">Customer</span></td>
+                        <td>Household and consumer customer hierarchy for loyalty, family plans, and segmentation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ── TECHNICAL SETUP ── -->
+        <section class="section">
+            <h2>Technical Environment Setup</h2>
+
+            <h3>MDM Configuration</h3>
+            <table>
+                <thead><tr><th>Component</th><th>Configuration</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>MDM Platform</strong></td><td>Informatica MDM SaaS — Business 360</td><td><span class="status-active">● Active</span></td></tr>
+                    <tr><td><strong>Accelerators</strong></td><td>Customer 360, Product 360, Supplier 360</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>Business Entities</strong></td><td>11 domain entities (8 accelerator, 3 custom)</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>Graph Relationships</strong></td><td>14 storage=graph relationships</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>Hierarchies</strong></td><td>6 hierarchy definitions</td><td><span class="status-configured">● Configured</span></td></tr>
+                    <tr><td><strong>API Access</strong></td><td>REST API, Batch import/export</td><td><span class="status-active">● Active</span></td></tr>
+                </tbody>
+            </table>
+
+            <h3>Technology Stack</h3>
+            <div class="tech-stack">
+                <span class="badge">Informatica MDM SaaS</span>
+                <span class="badge">Business 360 Console</span>
+                <span class="badge">Customer 360</span>
+                <span class="badge">Product 360</span>
+                <span class="badge">Supplier 360</span>
+                <span class="badge">Hierarchy Manager</span>
+                <span class="badge">Relationship Manager</span>
+                <span class="badge">REST API</span>
+            </div>
+
+            <h3>Key Integration Points</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Upstream Sources</h4>
+                    <ul>
+                        <li><strong>Brand / Supplier Systems</strong> — device product catalogue and item data (e.g. Apple B2B programme)</li>
+                        <li><strong>Carrier &amp; Distributor Portals</strong> — carrier agreements, account onboarding</li>
+                        <li><strong>CRM</strong> — customer and account records, employment data</li>
+                        <li><strong>eCommerce Platform</strong> — product registration, ownership events</li>
+                        <li><strong>HR / Identity Systems</strong> — employment and household relationship data</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Downstream Consumers</h4>
+                    <ul>
+                        <li><strong>Customer Service</strong> — registered product and warranty lookup</li>
+                        <li><strong>Marketing</strong> — household and account segmentation for campaigns</li>
+                        <li><strong>eCommerce</strong> — personalised product and accessory recommendations</li>
+                        <li><strong>Distribution Management</strong> — carrier agreement and territory reporting</li>
+                        <li><strong>Finance</strong> — account-level product allocation and billing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── ACCELERATOR VS CUSTOM ── -->
+        <section class="section">
+            <h2>Accelerator vs. Custom Model</h2>
+            <div class="highlight">
+                <strong>8 of 11 entities</strong> are shipped Informatica 360 accelerator content — the highest accelerator-to-custom ratio of all six Business 360 environments. Two accelerator entities are <strong>renamed</strong>:
+                <ul style="margin-top:0.5rem">
+                    <li><code>c360.person</code> → <strong>Customers</strong> (B2C individual consumer)</li>
+                    <li><code>c360.organization</code> → <strong>Accounts</strong> (B2B enterprise account)</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Smallest and Most Focused Environment</h4>
+                <p>With 11 entities, 14 relationships, and 6 hierarchies, b2b2c is the most concise of the six Business 360 environments. Its design prioritises depth over breadth — the 14 relationships are densely connected across a small entity graph, making it well-suited for demonstrating Informatica MDM's relationship and hierarchy management capabilities without the complexity of the larger product-master environments.</p>
+            </div>
+            <div class="card">
+                <h4>Apple US B2B Reference Scenario</h4>
+                <p>The <em>Apple US B2B Categorization</em> hierarchy and the <em>Carrier Agreement / Carrier Provides Product</em> relationships are modelled on an Apple US B2B device distribution scenario — supplier (Apple) → distributor/carrier → enterprise account → individual employee. This makes the environment particularly relevant for technology distribution, telecom, and device-as-a-service demonstrations.</p>
+            </div>
+            <div class="card">
+                <h4>Dual-Identity Customer Model</h4>
+                <p>Unlike most environments that model either B2B or B2C customers, b2b2c explicitly models both: <strong>Customers</strong> (<code>c360.person</code>) for consumers and household members, and <strong>Accounts</strong> (<code>c360.organization</code>) for corporate buyers — linked by the <em>Employment</em> relationship. This dual-identity graph is the defining architectural feature of the environment.</p>
+            </div>
+        </section>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>Informatica MDM SaaS · B2B2C Distribution Network Environment · Business 360</p>
+        <p style="margin-top:0.5rem; opacity:0.7; font-size:0.9rem">Generated from b2b2c_BE.json environment metadata export</p>
+    </footer>
+
+</div><!-- /container -->
+</body>
+</html>
